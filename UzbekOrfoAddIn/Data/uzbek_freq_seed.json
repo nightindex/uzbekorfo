@@ -1,0 +1,25 @@
+{
+  "version": "uzbekorfo-freq-v1",
+  "priors": {
+    "va": 0.98,
+    "ham": 0.95,
+    "uchun": 0.94,
+    "bilan": 0.92,
+    "bu": 0.91,
+    "bir": 0.90,
+    "emas": 0.88,
+    "bor": 0.87,
+    "qilish": 0.86,
+    "bo'lish": 0.85,
+    "yoki": 0.84,
+    "lekin": 0.83,
+    "so'z": 0.82,
+    "matn": 0.80,
+    "hujjat": 0.79,
+    "imlo": 0.78,
+    "lug'at": 0.77,
+    "to'g'ri": 0.76,
+    "xato": 0.75,
+    "tahrirlash": 0.72
+  }
+}

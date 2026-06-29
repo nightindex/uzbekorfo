@@ -1,0 +1,34 @@
+# Visual Studio / VSTO build output
+.vs/
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+
+# ClickOnce / publish artifacts
+publish/
+*.zip
+*.application
+*.deploy
+*.manifest
+*.vsto
+
+# Local signing material and machine-specific build props
+*.pfx
+*.snk
+*.cer
+Directory.Build.props
+!Directory.Build.props.example
+
+# User/machine files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*_top.txt
+~$*

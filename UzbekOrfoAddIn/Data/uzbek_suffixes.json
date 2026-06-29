@@ -1,0 +1,456 @@
+{
+  "version": "uzbekorfo-suffixes-v1",
+  "suffixes": [
+    {
+      "id": "PL",
+      "cyrillic": "лар",
+      "latin": "lar",
+      "category": "plural",
+      "attachesTo": "noun|adjective",
+      "order": 2,
+      "description": "Кўплик қўшимчаси"
+    },
+    {
+      "id": "GEN",
+      "cyrillic": "нинг",
+      "latin": "ning",
+      "category": "case_genitive",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "default",
+      "description": "Қаратқич келишиги"
+    },
+    {
+      "id": "DAT_GA",
+      "cyrillic": "га",
+      "latin": "ga",
+      "category": "case_dative",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "default",
+      "description": "Жўналиш келишиги (умумий)"
+    },
+    {
+      "id": "DAT_KA",
+      "cyrillic": "ка",
+      "latin": "ka",
+      "category": "case_dative",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "stemEndsIn:к",
+      "description": "Жўналиш келишиги (-к ундошдан кейин)"
+    },
+    {
+      "id": "DAT_QA",
+      "cyrillic": "қа",
+      "latin": "qa",
+      "category": "case_dative",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "stemEndsIn:қ,ғ",
+      "description": "Жўналиш келишиги (-қ/-ғ ундошдан кейин)"
+    },
+    {
+      "id": "ACC",
+      "cyrillic": "ни",
+      "latin": "ni",
+      "category": "case_accusative",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "default",
+      "description": "Тушум келишиги"
+    },
+    {
+      "id": "LOC_DA",
+      "cyrillic": "да",
+      "latin": "da",
+      "category": "case_locative",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "default",
+      "description": "Ўрин-пайт келишиги (жарангли)"
+    },
+    {
+      "id": "LOC_TA",
+      "cyrillic": "та",
+      "latin": "ta",
+      "category": "case_locative",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "stemEndsIn:к,қ,п,т,с,ш,ч,ф,ҳ,х,ц",
+      "description": "Ўрин-пайт келишиги (жарангсиз)"
+    },
+    {
+      "id": "ABL_DAN",
+      "cyrillic": "дан",
+      "latin": "dan",
+      "category": "case_ablative",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "default",
+      "description": "Чиқиш келишиги (жарангли)"
+    },
+    {
+      "id": "ABL_TAN",
+      "cyrillic": "тан",
+      "latin": "tan",
+      "category": "case_ablative",
+      "attachesTo": "noun",
+      "order": 3,
+      "allomorphCondition": "stemEndsIn:к,қ,п,т,с,ш,ч,ф,ҳ,х,ц",
+      "description": "Чиқиш келишиги (жарангсиз)"
+    },
+    {
+      "id": "POSS_1S",
+      "cyrillic": "им",
+      "latin": "im",
+      "category": "possessive",
+      "attachesTo": "noun",
+      "order": 1,
+      "person": "1s",
+      "mutatesRoot": "к→г,қ→ғ",
+      "description": "Эгалик (мен)"
+    },
+    {
+      "id": "POSS_2S",
+      "cyrillic": "инг",
+      "latin": "ing",
+      "category": "possessive",
+      "attachesTo": "noun",
+      "order": 1,
+      "person": "2s",
+      "mutatesRoot": "к→г,қ→ғ",
+      "description": "Эгалик (сен)"
+    },
+    {
+      "id": "POSS_3S",
+      "cyrillic": "и",
+      "latin": "i",
+      "category": "possessive",
+      "attachesTo": "noun",
+      "order": 1,
+      "person": "3s",
+      "mutatesRoot": "к→г,қ→ғ",
+      "description": "Эгалик (у)"
+    },
+    {
+      "id": "POSS_3S_SI",
+      "cyrillic": "си",
+      "latin": "si",
+      "category": "possessive",
+      "attachesTo": "noun",
+      "order": 1,
+      "person": "3s",
+      "allomorphCondition": "stemEndsInVowel",
+      "mutatesRoot": "к→г,қ→ғ",
+      "description": "Эгалик (у, унли ундан кейин)"
+    },
+    {
+      "id": "POSS_1P",
+      "cyrillic": "имиз",
+      "latin": "imiz",
+      "category": "possessive",
+      "attachesTo": "noun",
+      "order": 1,
+      "person": "1p",
+      "mutatesRoot": "к→г,қ→ғ",
+      "description": "Эгалик (биз)"
+    },
+    {
+      "id": "POSS_2P",
+      "cyrillic": "ингиз",
+      "latin": "ingiz",
+      "category": "possessive",
+      "attachesTo": "noun",
+      "order": 1,
+      "person": "2p",
+      "mutatesRoot": "к→г,қ→ғ",
+      "description": "Эгалик (сиз)"
+    },
+    {
+      "id": "V_INF",
+      "cyrillic": "моқ",
+      "latin": "moq",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Ҳаракат номи (масдар)"
+    },
+    {
+      "id": "V_PRES",
+      "cyrillic": "а",
+      "latin": "a",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Ҳозирги-келаси замон"
+    },
+    {
+      "id": "V_PRES_Y",
+      "cyrillic": "й",
+      "latin": "y",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "allomorphCondition": "stemEndsInVowel",
+      "description": "Ҳозирги-келаси замон (унлидан кейин)"
+    },
+    {
+      "id": "V_FOCAL",
+      "cyrillic": "яп",
+      "latin": "yap",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Ҳозирги замон давомий"
+    },
+    {
+      "id": "V_PROG",
+      "cyrillic": "моқда",
+      "latin": "moqda",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Давомли ҳозирги замон"
+    },
+    {
+      "id": "V_PPERF",
+      "cyrillic": "ган",
+      "latin": "gan",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Ўтган замон сифатдош"
+    },
+    {
+      "id": "V_PAST",
+      "cyrillic": "ди",
+      "latin": "di",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Ўтган замон"
+    },
+    {
+      "id": "V_IND_PAST",
+      "cyrillic": "иб",
+      "latin": "ib",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Ўтган замон равишдош"
+    },
+    {
+      "id": "V_FUT",
+      "cyrillic": "ажак",
+      "latin": "ajak",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Аниқ келаси замон"
+    },
+    {
+      "id": "V_OBL_FUT",
+      "cyrillic": "адиган",
+      "latin": "adigan",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Мажбурий келаси замон"
+    },
+    {
+      "id": "V_COND",
+      "cyrillic": "са",
+      "latin": "sa",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Шарт майл"
+    },
+    {
+      "id": "V_INT",
+      "cyrillic": "моқчи",
+      "latin": "moqchi",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Ният майли"
+    },
+    {
+      "id": "V_NEG",
+      "cyrillic": "ма",
+      "latin": "ma",
+      "category": "verb_negation",
+      "attachesTo": "verb",
+      "order": 3,
+      "description": "Инкор шакли"
+    },
+    {
+      "id": "V_GERUND",
+      "cyrillic": "иш",
+      "latin": "ish",
+      "category": "verb_gerund",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Ҳаракат номи (герундий)"
+    },
+    {
+      "id": "V_IMP_ING",
+      "cyrillic": "инг",
+      "latin": "ing",
+      "category": "verb_imperative",
+      "attachesTo": "verb",
+      "order": 5,
+      "description": "Буйруқ майли (сиз)"
+    },
+    {
+      "id": "V_IMP_SIN",
+      "cyrillic": "син",
+      "latin": "sin",
+      "category": "verb_imperative",
+      "attachesTo": "verb",
+      "order": 5,
+      "description": "Буйруқ майли (у)"
+    },
+    {
+      "id": "AGR_MAN",
+      "cyrillic": "ман",
+      "latin": "man",
+      "category": "verb_agreement",
+      "attachesTo": "verb",
+      "order": 6,
+      "person": "1s",
+      "description": "Шахс-сон (мен)"
+    },
+    {
+      "id": "AGR_SAN",
+      "cyrillic": "сан",
+      "latin": "san",
+      "category": "verb_agreement",
+      "attachesTo": "verb",
+      "order": 6,
+      "person": "2s",
+      "description": "Шахс-сон (сен)"
+    },
+    {
+      "id": "AGR_MIZ",
+      "cyrillic": "миз",
+      "latin": "miz",
+      "category": "verb_agreement",
+      "attachesTo": "verb",
+      "order": 6,
+      "person": "1p",
+      "description": "Шахс-сон (биз)"
+    },
+    {
+      "id": "AGR_SIZ",
+      "cyrillic": "сиз",
+      "latin": "siz",
+      "category": "verb_agreement",
+      "attachesTo": "verb",
+      "order": 6,
+      "person": "2p",
+      "description": "Шахс-сон (сиз)"
+    },
+    {
+      "id": "AGR_LAR",
+      "cyrillic": "лар",
+      "latin": "lar",
+      "category": "verb_agreement",
+      "attachesTo": "verb",
+      "order": 6,
+      "person": "3p",
+      "description": "Шахс-сон (улар)"
+    },
+    {
+      "id": "ADJ_LI",
+      "cyrillic": "ли",
+      "latin": "li",
+      "category": "adjective",
+      "attachesTo": "noun",
+      "order": 1,
+      "description": "Сифат ясовчи (-ли)"
+    },
+    {
+      "id": "ADJ_SIZ",
+      "cyrillic": "сиз",
+      "latin": "siz",
+      "category": "adjective",
+      "attachesTo": "noun",
+      "order": 1,
+      "description": "Сифат ясовчи (-сиз)"
+    },
+    {
+      "id": "NOUN_LIK",
+      "cyrillic": "лик",
+      "latin": "lik",
+      "category": "derivational",
+      "attachesTo": "noun|adjective",
+      "order": 1,
+      "description": "От ясовчи (-лик)"
+    },
+    {
+      "id": "NOUN_CHI",
+      "cyrillic": "чи",
+      "latin": "chi",
+      "category": "derivational",
+      "attachesTo": "noun|verb",
+      "order": 1,
+      "description": "Касб ясовчи (-чи)"
+    },
+    {
+      "id": "ADJ_IY",
+      "cyrillic": "ий",
+      "latin": "iy",
+      "category": "adjective",
+      "attachesTo": "noun",
+      "order": 1,
+      "description": "Нисбий сифат (-ий)"
+    },
+    {
+      "id": "SIM_DAY",
+      "cyrillic": "дай",
+      "latin": "day",
+      "category": "similative",
+      "attachesTo": "noun",
+      "order": 3,
+      "description": "Ўхшатиш (-дай)"
+    },
+    {
+      "id": "SIM_DEK",
+      "cyrillic": "дек",
+      "latin": "dek",
+      "category": "similative",
+      "attachesTo": "noun",
+      "order": 3,
+      "description": "Ўхшатиш (-дек)"
+    },
+    {
+      "id": "INST_LA",
+      "cyrillic": "ла",
+      "latin": "la",
+      "category": "instrumental",
+      "attachesTo": "noun",
+      "order": 3,
+      "description": "Восита (-ла)"
+    },
+    {
+      "id": "V_YOTIR",
+      "cyrillic": "йотир",
+      "latin": "yotir",
+      "category": "verb_tense",
+      "attachesTo": "verb",
+      "order": 4,
+      "description": "Лаҳзавий ҳозирги замон"
+    },
+    {
+      "id": "V_AYLIK",
+      "cyrillic": "айлик",
+      "latin": "aylik",
+      "category": "verb_imperative",
+      "attachesTo": "verb",
+      "order": 5,
+      "description": "Буйруқ майли (биз)"
+    }
+  ]
+}

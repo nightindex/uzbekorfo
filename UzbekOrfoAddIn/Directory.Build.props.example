@@ -1,0 +1,10 @@
+<Project>
+  <!--
+    Copy this file to Directory.Build.props (do not commit secrets),
+    then set real signing certificate values for production builds.
+  -->
+  <PropertyGroup>
+    <ManifestKeyFile>$(MSBuildThisFileDirectory)certs\UzbekOrfoProduction.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>REPLACE_WITH_REAL_THUMBPRINT</ManifestCertificateThumbprint>
+  </PropertyGroup>
+</Project>

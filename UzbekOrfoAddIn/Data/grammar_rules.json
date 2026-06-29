@@ -1,0 +1,140 @@
+{
+  "version": "uzbekorfo-grammar-rules-v1",
+  "rules": [
+    {
+      "ruleId": "DAT_ALLOMORPH",
+      "category": "morphological",
+      "priority": 1,
+      "isEnabled": true,
+      "severity": "Grammar",
+      "description_uz": "Жўналиш келишиги қўшимчаси нотўғри танланган (-га/-ка/-қа)",
+      "description_en": "Wrong dative case allomorph (-ga/-ka/-qa)"
+    },
+    {
+      "ruleId": "LOC_VOICING",
+      "category": "morphological",
+      "priority": 2,
+      "isEnabled": true,
+      "severity": "Grammar",
+      "description_uz": "Ўрин-пайт келишиги жарангли/жарангсиз мослиги хато (-да/-та)",
+      "description_en": "Locative voiced/voiceless mismatch (-da/-ta)"
+    },
+    {
+      "ruleId": "ABL_VOICING",
+      "category": "morphological",
+      "priority": 2,
+      "isEnabled": true,
+      "severity": "Grammar",
+      "description_uz": "Чиқиш келишиги жарангли/жарангсиз мослиги хато (-дан/-тан)",
+      "description_en": "Ablative voiced/voiceless mismatch (-dan/-tan)"
+    },
+    {
+      "ruleId": "DOUBLE_PLURAL",
+      "category": "morphological",
+      "priority": 3,
+      "isEnabled": true,
+      "severity": "Grammar",
+      "description_uz": "Кўплик қўшимчаси такрорланган",
+      "description_en": "Double plural suffix"
+    },
+    {
+      "ruleId": "POSS_MUTATION",
+      "category": "morphological",
+      "priority": 4,
+      "isEnabled": true,
+      "severity": "Grammar",
+      "description_uz": "Эгалик қўшимчаси олдида ундош ўзгариши бўлмаган (к→г, қ→ғ)",
+      "description_en": "Missing consonant mutation before possessive suffix"
+    },
+    {
+      "ruleId": "VERB_AGREEMENT",
+      "category": "agreement",
+      "priority": 5,
+      "isEnabled": true,
+      "severity": "Grammar",
+      "description_uz": "Феъл-эга мослиги хато",
+      "description_en": "Verb-subject agreement mismatch"
+    },
+    {
+      "ruleId": "COPULA_SPACING",
+      "category": "agreement",
+      "priority": 6,
+      "isEnabled": true,
+      "severity": "Grammar",
+      "description_uz": "Кўмакчи феъл бўлиниши хато (масалан: эмас ман → эмасман)",
+      "description_en": "Copula negation with wrong spacing"
+    },
+    {
+      "ruleId": "SENT_CAPITALIZATION",
+      "category": "punctuation",
+      "priority": 7,
+      "isEnabled": true,
+      "severity": "Punctuation",
+      "description_uz": "Гап бошида бош ҳарф ёзилмаган",
+      "description_en": "Missing capitalization at sentence start"
+    },
+    {
+      "ruleId": "COMMA_SPACE",
+      "category": "punctuation",
+      "priority": 8,
+      "isEnabled": true,
+      "severity": "Punctuation",
+      "description_uz": "Вергулдан кейин бўшлиқ йўқ ёки олдида бўшлиқ бор",
+      "description_en": "Missing/wrong spacing around comma"
+    },
+    {
+      "ruleId": "PERIOD_SPACE",
+      "category": "punctuation",
+      "priority": 9,
+      "isEnabled": true,
+      "severity": "Punctuation",
+      "description_uz": "Нуқтадан кейин бўшлиқ ёки бош ҳарф йўқ",
+      "description_en": "Missing space or capital after period"
+    },
+    {
+      "ruleId": "DOUBLE_SPACE",
+      "category": "punctuation",
+      "priority": 10,
+      "isEnabled": true,
+      "severity": "Style",
+      "description_uz": "Ортиқча бўшлиқ",
+      "description_en": "Multiple consecutive spaces"
+    },
+    {
+      "ruleId": "REPEATED_WORD",
+      "category": "style",
+      "priority": 11,
+      "isEnabled": true,
+      "severity": "Style",
+      "description_uz": "Сўз кетма-кет такрорланган",
+      "description_en": "Consecutive repeated word"
+    },
+    {
+      "ruleId": "PROPER_NOUN_CAPS",
+      "category": "punctuation",
+      "priority": 12,
+      "isEnabled": true,
+      "severity": "Grammar",
+      "description_uz": "Атоқли от кичик ҳарф билан ёзилган",
+      "description_en": "Proper noun not capitalized"
+    },
+    {
+      "ruleId": "BRACKET_MATCH",
+      "category": "punctuation",
+      "priority": 14,
+      "isEnabled": true,
+      "severity": "Punctuation",
+      "description_uz": "Қавс жуфтлиги топилмади",
+      "description_en": "Unmatched bracket/parenthesis"
+    },
+    {
+      "ruleId": "NEG_DOUBLE",
+      "category": "agreement",
+      "priority": 13,
+      "isEnabled": false,
+      "severity": "Style",
+      "description_uz": "Икки марта инкор ишлатилган",
+      "description_en": "Double negation"
+    }
+  ]
+}

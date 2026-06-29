@@ -1,0 +1,36 @@
+# Build outputs
+bin/
+obj/
+Debug/
+Release/
+AppPackages/
+publish/
+TestResults/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS/SDK tooling
+.vscode/
+.idea/
+.dotnet/
+
+# VSTO/ClickOnce artifacts
+*.vsto
+*.manifest
+*.application
+
+# Logs and temp
+*.log
+*.tmp
+*.bak
+
+# Signing keys (keep local)
+*.pfx
+*.snk
+*.p12
+*.key
