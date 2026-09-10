@@ -1,5 +1,5 @@
 param(
-    [string]$ProjectPath = ".\\UzbekOrfoAddIn.csproj"
+    [string]$ProjectPath = (Join-Path $PSScriptRoot "..\\src\\UzbekOrfoAddIn\\UzbekOrfoAddIn.csproj")
 )
 
 $ErrorActionPreference = "Stop"
@@ -17,7 +17,7 @@ $failures = New-Object System.Collections.Generic.List[string]
 $warnings = New-Object System.Collections.Generic.List[string]
 
 $projectDir = Split-Path -Parent (Resolve-Path $ProjectPath)
-$repoRoot = Split-Path -Parent $projectDir
+$repoRoot = Split-Path -Parent (Split-Path -Parent $projectDir)
 if (-not (Test-Path (Join-Path $repoRoot ".gitignore"))) {
     $repoRoot = $projectDir
 }
@@ -30,7 +30,7 @@ $requiredData = @(
     "uzbek_suffixes.json",
     "grammar_rules.json",
     "proper_nouns.json",
-    "uzbekorfo_dictionary_20260312_161705.json"
+    "uzbek_dictionary.json"
 )
 
 foreach ($f in $requiredData) {
@@ -88,7 +88,7 @@ if (-not $vsToolsTarget) {
     $warnings.Add("VSTO Office targets were not found under standard Visual Studio/MSBuild installation roots.")
 }
 
-$localProps = Join-Path $projectDir "Directory.Build.props"
+$localProps = Join-Path $repoRoot "Directory.Build.props"
 if (Test-Path $localProps) {
     $propsText = Get-Content -Raw $localProps
     if ($propsText -match "REPLACE_WITH_REAL_THUMBPRINT") {
@@ -98,7 +98,8 @@ if (Test-Path $localProps) {
     $warnings.Add("Directory.Build.props not found. This is expected for clean clones; copy Directory.Build.props.example locally when signing a release.")
 }
 
-$testFiles = Get-ChildItem -Path $projectDir -Recurse -File -Include *.cs,*.csproj |
+$testsDir = Join-Path $repoRoot "tests"
+$testFiles = Get-ChildItem -Path $testsDir -Recurse -File -Include *.cs,*.csproj -ErrorAction SilentlyContinue |
     Where-Object { $_.Name -match "Test|Tests" } |
     Select-Object -First 1
 if (-not $testFiles) {

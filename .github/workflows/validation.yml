@@ -1,0 +1,18 @@
+name: Validation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  preflight-and-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run repository preflight
+        shell: pwsh
+        run: ./eng/preflight.ps1
+      - name: Restore test dependencies
+        run: dotnet restore ./tests/UzbekOrfoAddIn.UnitTests/UzbekOrfoAddIn.UnitTests.csproj
+      - name: Run host-independent unit tests
+        run: dotnet test ./tests/UzbekOrfoAddIn.UnitTests/UzbekOrfoAddIn.UnitTests.csproj --configuration Release --no-restore

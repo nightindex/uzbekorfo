@@ -17,6 +17,8 @@ publish/
 *.pfx
 *.snk
 *.cer
+*.p12
+*.key
 Directory.Build.props
 !Directory.Build.props.example
 
@@ -32,3 +34,8 @@ Directory.Build.props
 *.bak
 *_top.txt
 ~$*
+
+# Test results and coverage reports
+TestResults/
+coverage/
+coverage.xml
