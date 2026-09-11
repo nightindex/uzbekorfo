@@ -338,11 +338,25 @@ internal static class Program
                 {
                     scale.Invoke(form, new object[] { dpi });
                     form.MinimumSize = Size.Empty;
-                    form.Size = new Size(ScreenGeometry.Scale(800, dpi), ScreenGeometry.Scale(600, dpi));
+                    var requestedSize = new Size(ScreenGeometry.Scale(800, dpi), ScreenGeometry.Scale(600, dpi));
+                    form.Size = requestedSize;
                     form.PerformLayout();
                     var footer = (ScrollableControl)form.ActionBar.Parent;
-                    Require(!footer.HorizontalScroll.Visible && !footer.VerticalScroll.Visible,
-                        "Error dialog footer fits an 800-logical-pixel window at " + dpi);
+                    // Windows runners with a small virtual monitor can cap a high-DPI
+                    // window below its requested physical size. Only assert that the
+                    // footer needs no scrollbars when the 800-logical-pixel size was
+                    // actually granted; ModernForm covers the constrained case with
+                    // a horizontally scrollable action viewport.
+                    if (form.Width >= requestedSize.Width && form.Height >= requestedSize.Height)
+                    {
+                        Require(!footer.HorizontalScroll.Visible && !footer.VerticalScroll.Visible,
+                            "Error dialog footer fits an 800-logical-pixel window at " + dpi);
+                    }
+                    else
+                    {
+                        Require(!footer.VerticalScroll.Visible,
+                            "Constrained error dialog footer remains horizontally scrollable at " + dpi);
+                    }
                     foreach (var button in Descendants(form.ActionBar).OfType<ModernButton>().Where(b => b.Visible))
                     {
                         var bounds = form.ActionBar.RectangleToClient(button.RectangleToScreen(button.ClientRectangle));
