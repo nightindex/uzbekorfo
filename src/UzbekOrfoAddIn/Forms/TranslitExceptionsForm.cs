@@ -94,7 +94,11 @@ namespace UzbekOrfoAddIn.Forms
             ResumeLayout(false);
             PerformLayout();
 
-            Shown += (s, ev) => { RefreshData(); _searchBox.Focus(); };
+            // Populate the native grid before the window becomes visible. Loading
+            // on Shown can race with an initial DPI/layout message and briefly
+            // display an empty exceptions list.
+            Load += (s, ev) => RefreshData();
+            Shown += (s, ev) => _searchBox.Focus();
         }
 
         // =================================================================
