@@ -10,10 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run repository preflight
-        shell: pwsh
+        # Dictionary validation uses the .NET Framework JSON serializer so
+        # generated artifacts remain byte-for-byte deterministic.
+        shell: powershell
         run: ./eng/preflight.ps1
       - name: Validate generated dictionary artifact
-        shell: pwsh
+        shell: powershell
         run: ./eng/validate-dictionary-sync.ps1
       - name: Check Windows UI scaling and scrolling
         shell: pwsh
