@@ -1,48 +1,54 @@
-# Uzbek Orfo Add-in
+# Uzbek Orfo qoʻshimchasi
 
-Uzbek Orfo is a Microsoft Word VSTO add-in for Uzbek spelling/grammar assistance, dictionary management, and script conversion.
+Uzbek Orfo — Microsoft Word uchun oʻzbekcha imlo va grammatika tekshiruvi, lugʻat boshqaruvi hamda yozuvlar orasida oʻgirish imkoniyatini beruvchi VSTO qoʻshimchasidir.
 
-## Features
-- Spell and grammar checking with error lists
-- Suggestions and replace-all workflows
-- Personal dictionary management (add/import/export)
-- Definitions/explanations lookup
-- Latin - Cyrillic transliteration helpers
-- Export utilities (errors, reports)
+## Imkoniyatlari
 
-## Requirements
+- Xatolar roʻyxati bilan imlo va grammatika tekshiruvi
+- Takliflar va barcha mos holatlarni almashtirish
+- Shaxsiy lugʻatni boshqarish: soʻz qoʻshish, import va eksport qilish
+- Soʻz taʼrifi va izohini qidirish
+- Lotin va kirill yozuvlari orasida oʻgirish yordamchilari
+- Xatolar va hisobotlarni eksport qilish
+
+## Talablar
+
 - Windows
-- Microsoft Word (Office 2016+ recommended)
-- Visual Studio with Office/VSTO tools
+- Microsoft Word (`Office 2016+` tavsiya etiladi)
+- Office/VSTO vositalari oʻrnatilgan Visual Studio
 - .NET Framework 4.7.2
 
-## Build and Run
-1. Open `UzbekOrfoAddIn.slnx` in Visual Studio.
-2. Copy `Directory.Build.props.example` to the Git-ignored `Directory.Build.props` and configure your local signing certificate. VSTO requires signed manifests for a runnable add-in, including local debugging.
-3. Build the project (Debug or Release).
-4. Start debugging to launch Word with the add-in.
+## Yigʻish va ishga tushirish
 
-The VSTO workload and a compatible local installation of Microsoft Word are required for a full build and debug session.
+1. Visual Studioʼda `UzbekOrfoAddIn.slnx` faylini oching.
+2. `Directory.Build.props.example` faylidan Git kuzatmaydigan `Directory.Build.props` nusxasini yarating va mahalliy imzolash sertifikatingizni sozlang. VSTO ishga tushadigan qoʻshimcha uchun, jumladan mahalliy nosozliklarni tuzatish jarayonida ham, imzolangan manifestlarni talab qiladi.
+3. Loyihani `Debug` yoki `Release` rejimida yigʻing.
+4. Wordʼni qoʻshimcha bilan ishga tushirish uchun debuggingʼni boshlang.
 
-## Project Structure
-- `src/UzbekOrfoAddIn/`  The VSTO host and application source
-- `eng/`                Repository validation and engineering scripts
-- `tests/`              Automated tests for host-independent logic
-- `docs/`               Architecture and contributor documentation
-- `.github/workflows/`  Continuous-integration checks
+Toʻliq yigʻish va debugging jarayoni uchun VSTO workload hamda kompyuterga mos Microsoft Word oʻrnatilgan boʻlishi kerak.
 
-Within `src/UzbekOrfoAddIn/`, `Core/` contains contracts, `Models/` contains domain data, `Services/` contains application logic, `Forms/` and `UI/` contain presentation code, and `Data/` contains bundled dictionaries and rules.
+## Loyiha tuzilmasi
 
-## Notes
-- `Data/` files are embedded as resources and copied to output for debugging.
-- Signing keys (`*.pfx`) and local `Directory.Build.props` are excluded via the repo `.gitignore`. Copy the root `Directory.Build.props.example` to `Directory.Build.props` locally and set signing values when creating release builds. Do not add certificate files or thumbprints to the project file.
+- `src/UzbekOrfoAddIn/` — VSTO host va ilova manba kodi
+- `eng/` — repozitoriy tekshiruvlari va muhandislik skriptlari
+- `tests/` — hostga bogʻliq boʻlmagan mantiq uchun avtomatlashtirilgan testlar
+- `docs/` — arxitektura va hissa qoʻshuvchilar uchun hujjatlar
+- `.github/workflows/` — uzluksiz integratsiya tekshiruvlari
 
-## Publishing
-Production publishing is a signed ClickOnce Release build. See [the release process](docs/release.md) for signing setup, offline versus web update channels, the required release branch, and the single release-verification command. Publish output is intentionally ignored by Git.
+`src/UzbekOrfoAddIn/` ichida `Core/` shartnomalarni, `Models/` domen maʼlumotlarini, `Services/` ilova mantiqini, `Forms/` va `UI/` interfeys kodini, `Data/` esa ilova bilan birga keladigan lugʻatlar va qoidalarni saqlaydi.
 
-## Validation
+## Eslatmalar
 
-Run the repository checks from the root:
+- `Data/` fayllari resurs sifatida ilovaga joylanadi va debugging uchun chiqish papkasiga nusxalanadi.
+- Imzolash kalitlari (`*.pfx`) va mahalliy `Directory.Build.props` fayli repozitoriy `.gitignore` qoidalari orqali Gitʼga kiritilmaydi. Ildizdagi `Directory.Build.props.example` faylidan mahalliy `Directory.Build.props` nusxasini yarating va release build yaratishdan oldin imzolash qiymatlarini sozlang. Sertifikat fayli yoki thumbprintʼni loyiha fayliga qoʻshmang.
+
+## Reliz tayyorlash
+
+Ishlab chiqarish uchun reliz — imzolangan ClickOnce `Release` buildʼidir. Imzolash sozlamalari, offline va web yangilash kanallari, kerakli release branch hamda bitta reliz-tekshiruv buyrugʻi uchun [reliz jarayoni](docs/release.md) hujjatiga qarang. Publish natijalari ataylab Git tomonidan eʼtiborga olinmaydi.
+
+## Tekshirish
+
+Repozitoriy ildizida quyidagi tekshiruvlarni ishga tushiring:
 
 ```powershell
 .\eng\preflight.ps1
@@ -50,10 +56,10 @@ Run the repository checks from the root:
 .\eng\test-unit.ps1
 ```
 
-The test project covers helper logic, atomic settings writes, and correction/highlight safety using an in-memory Word double. It does not require Word and does not replace COM integration testing. VSTO build validation requires a Windows machine with the Office development workload installed.
+Test loyihasi helper mantiqini, sozlamalarni atomik yozishni hamda xatoni tuzatish va belgilash xavfsizligini xotiradagi Word double orqali tekshiradi. U Wordʼni talab qilmaydi va COM integratsiyasi testlarining oʻrnini bosmaydi. VSTO buildʼini tekshirish uchun Office development workload oʻrnatilgan Windows kompyuteri talab qilinadi.
 
-The Windows UI harness requires Visual Studio's C# compiler but not Word. It checks DPI scaling, scrollbar regressions, and small-window layouts. See [display compatibility](docs/display-compatibility.md) for scope and manual checks.
+Windows UI test vositasi Visual Studio C# kompilyatorini talab qiladi, biroq Wordʼni talab qilmaydi. U DPI masshtablanishi, scrollbar regressiyalari va kichik oynalardagi joylashuvlarni tekshiradi. Qamrovi va qoʻlda bajariladigan tekshiruvlar uchun [ekran mosligi](docs/display-compatibility.md) hujjatiga qarang.
 
-Validate bundled dictionary parity with `./eng/validate-dictionary-sync.ps1`. If the two source files intentionally need to be regenerated, run `./eng/sync-dictionary-data.ps1`; it keeps matching JSON metadata and adds empty metadata fields for spelling-only words.
+Ilovaga biriktirilgan lugʻat fayllarining mosligini `./eng/validate-dictionary-sync.ps1` orqali tekshiring. Agar ikki hosil qilinadigan faylni yangidan yaratish kerak boʻlsa, `./eng/sync-dictionary-data.ps1` buyrugʻini ishga tushiring; u mos JSON metadataʼni saqlaydi va faqat imlo tekshiruvi uchun moʻljallangan soʻzlarga boʻsh metadata maydonlarini qoʻshadi.
 
-See [document safety and review fixes](docs/review-fixes.md) for behavior changes and Word smoke tests.
+Xulq-atvordagi oʻzgarishlar va Word smoke testlari haqida [hujjat xavfsizligi hamda review tuzatishlari](docs/review-fixes.md) sahifasidan oʻqing.
