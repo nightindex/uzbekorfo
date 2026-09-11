@@ -1,5 +1,7 @@
 # Uzbek Orfo qoʻshimchasi
 
+> Oʻzbek tili imlo tekshiruvchisi va Microsoft Word uchun grammatika tekshiruvchi qoʻshimcha. Lotin va kirill yozuvlarini qoʻllab-quvvatlaydi.
+
 Uzbek Orfo — Microsoft Word uchun oʻzbekcha imlo va grammatika tekshiruvi, lugʻat boshqaruvi hamda yozuvlar orasida oʻgirish imkoniyatini beruvchi VSTO qoʻshimchasidir.
 
 ## Imkoniyatlari
