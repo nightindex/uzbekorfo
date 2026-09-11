@@ -32,6 +32,9 @@ namespace UzbekOrfoAddIn.Services
         /// <summary>Path to the main (built-in) dictionary file.</summary>
         public string MainDictionaryPath => Path.Combine(AppDataDir, "uzbek_main.dic");
 
+        /// <summary>Path to the lazily used generated built-in metadata index.</summary>
+        public string DictionaryMetadataPath => Path.Combine(AppDataDir, "uzbek_dictionary_metadata.json");
+
         /// <summary>Path to the user's personal custom dictionary.</summary>
         public string UserDictionaryPath => Path.Combine(AppDataDir, "user_custom.dic");
 
@@ -233,15 +236,7 @@ namespace UzbekOrfoAddIn.Services
                     $"MaxSpellingSuggestions={MaxSpellingSuggestions}"
                 };
 
-                // Atomic write: write to a temp file, then rename over the target.
-                // File.Move on Windows is atomic on the same volume.
-                string tempPath = SettingsFilePath + ".tmp";
-                File.WriteAllLines(tempPath, lines);
-
-                // Delete old file, then move temp into place
-                if (File.Exists(SettingsFilePath))
-                    File.Delete(SettingsFilePath);
-                File.Move(tempPath, SettingsFilePath);
+                Helpers.AtomicFile.WriteAllLines(SettingsFilePath, lines);
             }
             catch (Exception ex)
             {

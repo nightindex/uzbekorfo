@@ -11,6 +11,9 @@ namespace UzbekOrfoAddIn.UI.Controls
     /// </summary>
     public class ModernToggle : Control
     {
+        private int Px(int value) => DpiLayout.Pixels(this, value);
+        private Font UiFont(Font value) => DpiLayout.Font(this, value);
+
         private bool _isOn;
         private float _thumbPosition; // 0.0 (off) to 1.0 (on) for animation
         private Timer _animTimer;
@@ -26,6 +29,7 @@ namespace UzbekOrfoAddIn.UI.Controls
                 if (_isOn == value) return;
                 _isOn = value;
                 StartAnimation();
+                AccessibilityNotifyClients(AccessibleEvents.StateChange, -1);
                 Toggled?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -59,6 +63,9 @@ namespace UzbekOrfoAddIn.UI.Controls
 
             Size = new Size(ShowLabel ? 90 : 48, 26);
             Cursor = Cursors.Hand;
+            TabStop = true;
+            AccessibleRole = AccessibleRole.CheckButton;
+            SetStyle(ControlStyles.Selectable, true);
 
             _animTimer = new Timer { Interval = 16 }; // ~60fps
             _animTimer.Tick += OnAnimTick;
@@ -99,10 +106,10 @@ namespace UzbekOrfoAddIn.UI.Controls
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
-            int trackWidth = 44;
-            int trackHeight = 24;
-            int thumbSize = 18;
-            int thumbPad = 3;
+            int trackWidth = Px(44);
+            int trackHeight = Px(24);
+            int thumbSize = Px(18);
+            int thumbPad = Px(3);
 
             // Track
             var trackRect = new Rectangle(0, (Height - trackHeight) / 2, trackWidth, trackHeight);
@@ -138,15 +145,18 @@ namespace UzbekOrfoAddIn.UI.Controls
                 Color labelColor = _isOn ? ThemeManager.Primary : ThemeManager.TextSecondary;
                 using (var brush = new SolidBrush(labelColor))
                 {
-                    var textRect = new RectangleF(trackWidth + 8, 0, Width - trackWidth - 8, Height);
+                    var textRect = new RectangleF(trackWidth + Px(8), 0, Width - trackWidth - Px(8), Height);
                     var sf = new StringFormat
                     {
                         Alignment = StringAlignment.Near,
                         LineAlignment = StringAlignment.Center
                     };
-                    g.DrawString(label, ThemeManager.FontBase, brush, textRect, sf);
+                    g.DrawString(label, UiFont(ThemeManager.FontBase), brush, textRect, sf);
                 }
             }
+            if (Focused && ShowFocusCues)
+                ControlPaint.DrawFocusRectangle(g, Rectangle.Inflate(ClientRectangle, -1, -1),
+                    ThemeManager.TextPrimary, BackColor);
         }
 
         // =====================================================================
@@ -155,8 +165,45 @@ namespace UzbekOrfoAddIn.UI.Controls
 
         protected override void OnClick(EventArgs e)
         {
+            if (!Enabled) return;
+            Focus();
             base.OnClick(e);
             IsOn = !IsOn;
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (Enabled && e.KeyCode == Keys.Space && e.Modifiers == Keys.None)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+            base.OnKeyDown(e);
+        }
+
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            if (Enabled && e.KeyCode == Keys.Space && e.Modifiers == Keys.None)
+            {
+                OnClick(EventArgs.Empty);
+                e.Handled = true;
+            }
+            base.OnKeyUp(e);
+        }
+
+        protected override void OnGotFocus(EventArgs e) { base.OnGotFocus(e); Invalidate(); }
+        protected override void OnLostFocus(EventArgs e) { base.OnLostFocus(e); Invalidate(); }
+
+        protected override AccessibleObject CreateAccessibilityInstance() => new ToggleAccessibleObject(this);
+
+        private sealed class ToggleAccessibleObject : ControlAccessibleObject
+        {
+            private readonly ModernToggle _toggle;
+            public ToggleAccessibleObject(ModernToggle toggle) : base(toggle) { _toggle = toggle; }
+            public override AccessibleStates State => base.State |
+                (_toggle.IsOn ? AccessibleStates.Checked : AccessibleStates.None);
+            public override string DefaultAction => "Toggle";
+            public override void DoDefaultAction() { if (_toggle.Enabled) _toggle.OnClick(EventArgs.Empty); }
         }
 
         // =====================================================================

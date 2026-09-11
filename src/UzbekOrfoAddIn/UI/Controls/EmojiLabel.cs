@@ -51,11 +51,11 @@ namespace UzbekOrfoAddIn.UI.Controls
             }
         }
 
-        private Size _maximumSize = Size.Empty;
+        private GraphicsUnit _lastEmojiFontUnit;
         public new Size MaximumSize
         {
-            get => _maximumSize;
-            set { _maximumSize = value; if (_autoSizeEnabled) RecalcSize(); }
+            get => base.MaximumSize;
+            set { base.MaximumSize = value; if (_autoSizeEnabled) RecalcSize(); }
         }
 
         private ContentAlignment _textAlign = ContentAlignment.TopLeft;
@@ -97,14 +97,14 @@ namespace UzbekOrfoAddIn.UI.Controls
             using (var g = CreateGraphics())
             {
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                var maxW = _maximumSize.Width > 0 ? _maximumSize.Width - Padding.Horizontal : 9999;
+                var maxW = base.MaximumSize.Width > 0 ? base.MaximumSize.Width - Padding.Horizontal : 9999;
                 var sz = MeasureTextMixed(g, Text, Font, maxW);
 
                 int w = (int)Math.Ceiling(sz.Width) + Padding.Horizontal + 2;
                 int h = (int)Math.Ceiling(sz.Height) + Padding.Vertical + 2;
 
-                if (_maximumSize.Width > 0 && w > _maximumSize.Width)
-                    w = _maximumSize.Width;
+                if (base.MaximumSize.Width > 0 && w > base.MaximumSize.Width)
+                    w = base.MaximumSize.Width;
 
                 Size = new Size(w, h);
             }
@@ -177,7 +177,7 @@ namespace UzbekOrfoAddIn.UI.Controls
         /// </summary>
         private void DrawTextMixed(Graphics g, string text, Font font, Color color, float x, float y, float maxWidth)
         {
-            EnsureEmojiFont(font.Size);
+            EnsureEmojiFont(font.Size, font.Unit);
 
             float startX = x;
             float textLineH = font.GetHeight(g);
@@ -226,7 +226,7 @@ namespace UzbekOrfoAddIn.UI.Controls
 
         private SizeF MeasureTextMixed(Graphics g, string text, Font font, float maxWidth)
         {
-            EnsureEmojiFont(font.Size);
+            EnsureEmojiFont(font.Size, font.Unit);
 
             float x = 0, y = 0;
             float maxX = 0;
@@ -327,13 +327,14 @@ namespace UzbekOrfoAddIn.UI.Controls
         //  FONT CACHE
         // =====================================================================
 
-        private void EnsureEmojiFont(float size)
+        private void EnsureEmojiFont(float size, GraphicsUnit unit)
         {
-            if (_emojiFont == null || Math.Abs(_lastEmojiFontSize - size) > 0.01f)
+            if (_emojiFont == null || Math.Abs(_lastEmojiFontSize - size) > 0.01f || _lastEmojiFontUnit != unit)
             {
                 _emojiFont?.Dispose();
-                _emojiFont = new Font("Segoe UI Emoji", size, FontStyle.Regular);
+                _emojiFont = new Font("Segoe UI Emoji", size, FontStyle.Regular, unit);
                 _lastEmojiFontSize = size;
+                _lastEmojiFontUnit = unit;
             }
         }
 

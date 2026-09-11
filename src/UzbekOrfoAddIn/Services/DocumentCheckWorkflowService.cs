@@ -39,6 +39,8 @@ namespace UzbekOrfoAddIn.Services
             setSpellHighlightFlag?.Invoke(false);
 
             List<ErrorEntry> spellingErrors = _spellingEngine.Check(range) ?? new List<ErrorEntry>();
+            foreach (var error in spellingErrors)
+                error.OriginalText = error.Range?.Text;
             _errorStore.SetErrors(spellingErrors);
             _spellingEngine.HighlightErrors(spellingErrors);
             result.SpellingErrorCount = spellingErrors.Count;
@@ -47,6 +49,8 @@ namespace UzbekOrfoAddIn.Services
             if (_grammarEngine != null)
             {
                 List<ErrorEntry> grammarErrors = _grammarEngine.CheckRange(range) ?? new List<ErrorEntry>();
+                foreach (var error in grammarErrors)
+                    error.OriginalText = error.Range?.Text;
                 _errorStore.AddErrors(grammarErrors);
                 _grammarEngine.HighlightErrors(grammarErrors);
                 result.GrammarErrorCount = grammarErrors.Count;

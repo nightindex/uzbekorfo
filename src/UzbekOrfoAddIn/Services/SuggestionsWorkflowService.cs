@@ -177,6 +177,7 @@ namespace UzbekOrfoAddIn.Services
             Image titleIcon)
         {
             var suggestions = BuildGrammarAwareSuggestions(grammarMatch, spellingSuggestions);
+            var target = CaptureTarget(grammarReplaceRange ?? replaceRange, trimTrailingWhitespace: false);
 
             var form = new SuggestionsForm(
                 word,
@@ -185,12 +186,7 @@ namespace UzbekOrfoAddIn.Services
                 {
                     SafeExecutor.Execute(() =>
                     {
-                        if (grammarReplaceRange != null)
-                            DocumentHelper.ReplaceRangeText(grammarReplaceRange, replacement);
-                        else if (replaceRange != null)
-                            DocumentHelper.ReplaceRangeText(replaceRange, replacement);
-                        else if (selection != null)
-                            DocumentHelper.ReplaceRangeText(selection.Range, replacement);
+                        ApplySuggestion(target, replacement);
                     }, "Алмаштириш");
                 },
                 onReplaceAll: null,
@@ -199,6 +195,7 @@ namespace UzbekOrfoAddIn.Services
                 grammarMessage: grammarMatch?.Message);
 
             try { form.TitleIcon = titleIcon; } catch { }
+            form.FormClosed += (s, e) => ReleaseTarget(target);
             form.Show();
         }
 
@@ -209,6 +206,7 @@ namespace UzbekOrfoAddIn.Services
             Word.Selection selection,
             Image titleIcon)
         {
+            var target = CaptureTarget(replaceRange, trimTrailingWhitespace: true);
             var form = new SuggestionsForm(
                 word,
                 suggestions,
@@ -216,16 +214,19 @@ namespace UzbekOrfoAddIn.Services
                 {
                     SafeExecutor.Execute(() =>
                     {
-                        if (replaceRange != null)
-                            DocumentHelper.ReplaceRangeText(replaceRange, replacement);
-                        else if (selection != null)
-                            DocumentHelper.ReplaceRangeText(selection.Range, replacement);
+                        ApplySuggestion(target, replacement);
                     }, "Алмаштириш");
                 },
                 onReplaceAll: replacement =>
                 {
                     SafeExecutor.Execute(() =>
                     {
+                        if (target?.Range == null ||
+                            !DocumentHelper.IsSameDocument(target.Range.Document, DocumentHelper.ActiveDoc))
+                        {
+                            SafeExecutor.ShowWarning("Ҳужжат ўзгарган. Керакли ҳужжатда вариантларни қайта очинг.");
+                            return;
+                        }
                         _replaceAllInDocument?.Invoke(word, replacement);
                     }, "Барчасини алмаштириш");
                 },
@@ -237,7 +238,35 @@ namespace UzbekOrfoAddIn.Services
                 });
 
             try { form.TitleIcon = titleIcon; } catch { }
+            form.FormClosed += (s, e) => ReleaseTarget(target);
             form.Show();
+        }
+
+        private static ErrorEntry CaptureTarget(Word.Range range, bool trimTrailingWhitespace)
+        {
+            if (range == null) return null;
+            var owned = range.Duplicate;
+            if (trimTrailingWhitespace)
+                owned.End = owned.Start + (owned.Text ?? string.Empty).TrimEnd().Length;
+            return new ErrorEntry { Range = owned, Word = owned.Text, OriginalText = owned.Text };
+        }
+
+        private static void ApplySuggestion(ErrorEntry target, string replacement)
+        {
+            DocumentHelper.BeginUndoRecord("Алмаштириш");
+            try
+            {
+                if (!DocumentHelper.TryReplaceError(target, DocumentHelper.ActiveDoc, replacement))
+                    SafeExecutor.ShowWarning("Ҳужжат ёки матн ўзгарган. Вариантларни қайта очинг.");
+            }
+            finally { DocumentHelper.EndUndoRecord(); }
+        }
+
+        private static void ReleaseTarget(ErrorEntry target)
+        {
+            if (target?.Range == null) return;
+            try { System.Runtime.InteropServices.Marshal.ReleaseComObject(target.Range); } catch { }
+            target.Range = null;
         }
     }
 }

@@ -11,6 +11,9 @@ namespace UzbekOrfoAddIn.UI.Controls
     /// </summary>
     public class ModernCard : Panel
     {
+        private int Px(int value) => DpiLayout.Pixels(this, value);
+        private Font UiFont(Font value) => DpiLayout.Font(this, value);
+
         private string _header;
         private int _cornerRadius = 8;
 
@@ -46,9 +49,9 @@ namespace UzbekOrfoAddIn.UI.Controls
         private void UpdatePadding()
         {
             int topPad = string.IsNullOrEmpty(_header)
-                ? ThemeManager.SpaceLG
-                : ThemeManager.SpaceLG + 28; // header height + spacing
-            Padding = new Padding(ThemeManager.SpaceLG, topPad, ThemeManager.SpaceLG, ThemeManager.SpaceLG);
+                ? Px(ThemeManager.SpaceLG)
+                : Px(ThemeManager.SpaceLG) + Px(28); // header height + spacing
+            Padding = new Padding(Px(ThemeManager.SpaceLG), topPad, Px(ThemeManager.SpaceLG), Px(ThemeManager.SpaceLG));
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -60,14 +63,14 @@ namespace UzbekOrfoAddIn.UI.Controls
             var rect = new Rectangle(0, 0, Width - 1, Height - 1);
 
             // Background
-            using (var path = CreateRoundedRect(rect, _cornerRadius))
+            using (var path = CreateRoundedRect(rect, Px(_cornerRadius)))
             using (var brush = new SolidBrush(ThemeManager.Surface))
             {
                 g.FillPath(brush, path);
             }
 
             // Border
-            using (var path = CreateRoundedRect(rect, _cornerRadius))
+            using (var path = CreateRoundedRect(rect, Px(_cornerRadius)))
             using (var pen = new Pen(ThemeManager.Border))
             {
                 g.DrawPath(pen, path);
@@ -78,15 +81,15 @@ namespace UzbekOrfoAddIn.UI.Controls
             {
                 using (var brush = new SolidBrush(ThemeManager.TextSecondary))
                 {
-                    g.DrawString(_header, ThemeManager.FontBaseBold, brush,
-                        ThemeManager.SpaceLG, ThemeManager.SpaceMD);
+                    g.DrawString(_header, UiFont(ThemeManager.FontBaseBold), brush,
+                        Px(ThemeManager.SpaceLG), Px(ThemeManager.SpaceMD));
                 }
 
                 // Header separator line
-                int lineY = ThemeManager.SpaceMD + 22;
+                int lineY = Px(ThemeManager.SpaceMD) + Px(22);
                 using (var pen = new Pen(ThemeManager.Border))
                 {
-                    g.DrawLine(pen, ThemeManager.SpaceMD, lineY, Width - ThemeManager.SpaceMD, lineY);
+                    g.DrawLine(pen, Px(ThemeManager.SpaceMD), lineY, Width - Px(ThemeManager.SpaceMD), lineY);
                 }
             }
         }
@@ -94,7 +97,7 @@ namespace UzbekOrfoAddIn.UI.Controls
         private static GraphicsPath CreateRoundedRect(Rectangle rect, int radius)
         {
             var path = new GraphicsPath();
-            int d = radius * 2;
+            int d = Math.Max(1, Math.Min(radius * 2, Math.Min(rect.Width, rect.Height)));
             path.AddArc(rect.X, rect.Y, d, d, 180, 90);
             path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
             path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);

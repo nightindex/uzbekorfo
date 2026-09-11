@@ -54,7 +54,7 @@ namespace UzbekOrfoAddIn.Forms
             ShowMinimizeButton = false;
 
             BuildUI();
-            PositionNearCursor();
+            Shown += (s, e) => PositionNearCursor();
         }
 
         private void BuildUI()
@@ -201,30 +201,30 @@ namespace UzbekOrfoAddIn.Forms
             }
 
             // Star for best match
-            int textX = e.Bounds.X + 12;
+            int textX = e.Bounds.X + Px(12);
             if (isBest)
             {
                 using (var brush = new SolidBrush(ThemeManager.Warning))
                 {
-                    e.Graphics.DrawString("★", ThemeManager.FontBase, brush, textX, e.Bounds.Y + 8);
+                    e.Graphics.DrawString("★", UiFont(ThemeManager.FontBase), brush, textX, e.Bounds.Y + Px(8));
                 }
-                textX += 20;
+                textX += Px(20);
             }
 
             // Suggestion text
-            var textFont = isBest ? ThemeManager.FontLGBold : ThemeManager.FontLG;
+            var textFont = UiFont(isBest ? ThemeManager.FontLGBold : ThemeManager.FontLG);
             using (var brush = new SolidBrush(ThemeManager.TextPrimary))
             {
-                e.Graphics.DrawString(suggestion.Text, textFont, brush, textX, e.Bounds.Y + 7);
+                e.Graphics.DrawString(suggestion.Text, textFont, brush, textX, e.Bounds.Y + Px(7));
             }
 
             // Confidence percentage on right
             string confText = $"{suggestion.Confidence:P0}";
-            var confSize = e.Graphics.MeasureString(confText, ThemeManager.FontSM);
+            var confSize = e.Graphics.MeasureString(confText, UiFont(ThemeManager.FontSM));
             using (var brush = new SolidBrush(ThemeManager.TextSecondary))
             {
-                e.Graphics.DrawString(confText, ThemeManager.FontSM, brush,
-                    e.Bounds.Right - confSize.Width - 12, e.Bounds.Y + 10);
+                e.Graphics.DrawString(confText, UiFont(ThemeManager.FontSM), brush,
+                    e.Bounds.Right - confSize.Width - Px(12), e.Bounds.Y + Px(10));
             }
 
             // Bottom border
@@ -273,11 +273,11 @@ namespace UzbekOrfoAddIn.Forms
                 window.GetPoint(out left, out top, out width, out height,
                     Globals.ThisAddIn.Application.Selection.Range);
 
-                var screen = Screen.PrimaryScreen.WorkingArea;
-                int x = Math.Min(left + width + 10, screen.Right - Width);
+                var screen = Screen.FromPoint(new Point(left, top)).WorkingArea;
+                int x = Math.Min(left + width + Px(10), screen.Right - Width);
                 int y = Math.Min(top, screen.Bottom - Height);
 
-                Location = new Point(Math.Max(0, x), Math.Max(0, y));
+                Bounds = ScreenGeometry.Fit(new Rectangle(x, y, Width, Height), screen);
                 StartPosition = FormStartPosition.Manual;
             }
             catch
@@ -288,4 +288,3 @@ namespace UzbekOrfoAddIn.Forms
         }
     }
 }
-

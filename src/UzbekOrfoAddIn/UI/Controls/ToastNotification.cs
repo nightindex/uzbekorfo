@@ -12,7 +12,7 @@ namespace UzbekOrfoAddIn.UI.Controls
     /// 
     /// Usage: ToastNotification.Show("Текширув тугади", "14 та хато топилди", ToastType.Success);
     /// </summary>
-    public class ToastNotification : Form
+    public class ToastNotification : DpiForm
     {
         public enum ToastType { Success, Error, Warning, Info }
 
@@ -29,8 +29,8 @@ namespace UzbekOrfoAddIn.UI.Controls
 
         private const int TOAST_WIDTH = 400;
         private const int TOAST_HEIGHT = 90;
-        private const int MARGIN = 20;
-        private const int ACCENT_WIDTH = 5;
+        private int MARGIN => Px(20);
+        private int ACCENT_WIDTH => Px(5);
 
         // Cached icon font to avoid GDI leak in OnPaint
         private static readonly Font _iconFont = new Font("Segoe UI", 20f);
@@ -51,13 +51,13 @@ namespace UzbekOrfoAddIn.UI.Controls
             BackColor = ThemeManager.SurfaceElevated;
 
             // Position: bottom-right of screen
-            var screen = Screen.PrimaryScreen.WorkingArea;
+            var screen = DpiLayout.ActiveScreen().WorkingArea;
             Location = new Point(
                 screen.Right - Width - MARGIN,
                 screen.Bottom - Height - MARGIN);
 
             // Rounded corners
-            using (var path = CreateRoundedRect(new Rectangle(0, 0, Width, Height), ThemeManager.RadiusMD))
+            using (var path = CreateRoundedRect(new Rectangle(0, 0, Width, Height), Px(ThemeManager.RadiusMD)))
             {
                 Region = new Region(path);
             }
@@ -79,7 +79,7 @@ namespace UzbekOrfoAddIn.UI.Controls
                 if (_hovered) return; // pause when hovering
                 _progress -= 30f / _durationMs;
                 if (_progress < 0) _progress = 0;
-                Invalidate(new Rectangle(0, Height - 3, Width, 3));
+                Invalidate(new Rectangle(0, Height - Px(3), Width, Px(3)));
             };
         }
 
@@ -168,7 +168,7 @@ namespace UzbekOrfoAddIn.UI.Controls
             }
 
             // Border
-            using (var path = CreateRoundedRect(new Rectangle(0, 0, Width - 1, Height - 1), ThemeManager.RadiusMD))
+            using (var path = CreateRoundedRect(new Rectangle(0, 0, Width - 1, Height - 1), Px(ThemeManager.RadiusMD)))
             using (var pen = new Pen(ThemeManager.Border))
             {
                 g.DrawPath(pen, path);
@@ -178,20 +178,20 @@ namespace UzbekOrfoAddIn.UI.Controls
             Color accentColor = GetAccentColor();
             using (var brush = new SolidBrush(accentColor))
             {
-                g.FillRectangle(brush, 0, 8, ACCENT_WIDTH, Height - 16);
+                g.FillRectangle(brush, 0, Px(8), ACCENT_WIDTH, Height - Px(16));
             }
 
             // Icon
             string icon = GetIcon();
             using (var brush = new SolidBrush(accentColor))
             {
-                g.DrawString(icon, _iconFont, brush, 14, 16);
+                g.DrawString(icon, UiFont(_iconFont), brush, Px(14), Px(16));
             }
 
             // Title
             using (var brush = new SolidBrush(ThemeManager.TextPrimary))
             {
-                g.DrawString(_title, ThemeManager.FontLGBold, brush, 52, 16);
+                g.DrawString(_title, UiFont(ThemeManager.FontLGBold), brush, Px(52), Px(16));
             }
 
             // Message
@@ -199,13 +199,13 @@ namespace UzbekOrfoAddIn.UI.Controls
             {
                 using (var brush = new SolidBrush(ThemeManager.TextSecondary))
                 {
-                    var msgRect = new RectangleF(52, 42, Width - 68, Height - 50);
-                    g.DrawString(_message, ThemeManager.FontBase, brush, msgRect);
+                    var msgRect = new RectangleF(Px(52), Px(42), Width - Px(68), Height - Px(50));
+                    g.DrawString(_message, UiFont(ThemeManager.FontBase), brush, msgRect);
                 }
             }
 
             // Progress bar at bottom
-            int barHeight = 3;
+            int barHeight = Px(3);
             int barY = Height - barHeight;
             using (var brush = new SolidBrush(ThemeManager.Border))
             {
@@ -215,6 +215,31 @@ namespace UzbekOrfoAddIn.UI.Controls
             using (var brush = new SolidBrush(accentColor))
             {
                 g.FillRectangle(brush, 0, barY, progressWidth, barHeight);
+            }
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            var area = Screen.FromControl(this).WorkingArea;
+            Location = new Point(area.Right - Width - MARGIN, area.Bottom - Height - MARGIN);
+            FitToScreen();
+            UpdateRegion();
+        }
+
+        protected override void OnLayoutDpiChanged()
+        {
+            base.OnLayoutDpiChanged();
+            UpdateRegion();
+        }
+
+        private void UpdateRegion()
+        {
+            using (var path = CreateRoundedRect(ClientRectangle, Px(ThemeManager.RadiusMD)))
+            {
+                var previous = Region;
+                Region = new Region(path);
+                previous?.Dispose();
             }
         }
 

@@ -19,24 +19,23 @@ namespace UzbekOrfoAddIn.Forms
     /// </summary>
     public class AddNewWordsForm : ModernForm
     {
+        protected override bool ReflowContent => true;
         public AddNewWordsMode SelectedMode { get; private set; } = AddNewWordsMode.None;
 
         public AddNewWordsForm()
         {
-            AutoScaleMode = AutoScaleMode.Dpi;
-            AutoScaleDimensions = new SizeF(96f, 96f);
-
             Title = "Сўз қўшиш";
             Size = new Size(960, 720);
-            MinimumSize = new Size(860, 620);
+            MinimumSize = new Size(420, 420);
             ShowMinimizeButton = false;
-            AllowResize = false;
+            AllowResize = true;
 
             BuildUI();
         }
 
         private void BuildUI()
         {
+            ContentPanel.AutoScroll = true;
             ContentPanel.Padding = new Padding(ThemeManager.SpaceXL, ThemeManager.SpaceLG,
                                                ThemeManager.SpaceXL, ThemeManager.SpaceLG);
 
@@ -111,6 +110,36 @@ namespace UzbekOrfoAddIn.Forms
             stack.Controls.Add(formatsLabel);
 
             ContentPanel.Controls.Add(stack);
+            bool arrangingCards = false;
+            stack.SizeChanged += (s, e) =>
+            {
+                if (arrangingCards) return;
+                arrangingCards = true;
+                try
+                {
+                    bool narrow = stack.ClientSize.Width < Px(760);
+                    cardsRow.SuspendLayout();
+                    cardsRow.Width = Math.Max(1, stack.ClientSize.Width);
+                    cardsRow.ColumnCount = narrow ? 1 : 2;
+                    cardsRow.RowCount = narrow ? 2 : 1;
+                    cardsRow.ColumnStyles.Clear();
+                    cardsRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, narrow ? 100f : 50f));
+                    if (!narrow) cardsRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+                    cardsRow.RowStyles.Clear();
+                    cardsRow.RowStyles.Add(new RowStyle(SizeType.Percent, narrow ? 50f : 100f));
+                    if (narrow) cardsRow.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
+                    cardsRow.SetCellPosition(folderCard, new TableLayoutPanelCellPosition(narrow ? 0 : 1, narrow ? 1 : 0));
+                    fileCard.Margin = new Padding(0, 0, narrow ? 0 : Px(8), narrow ? Px(12) : 0);
+                    folderCard.Margin = new Padding(narrow ? 0 : Px(8), 0, 0, 0);
+                    int cardHeight = narrow ? (stack.ClientSize.Width < Px(500) ? 360 : 260) : 380;
+                    fileCard.MinimumSize = folderCard.MinimumSize = new Size(0, Px(cardHeight - 12));
+                    cardsRow.Height = Px(narrow ? cardHeight * 2 + 16 : cardHeight + 16);
+                    cardsRow.ResumeLayout(true);
+                    subtitleLabel.MaximumSize = new Size(stack.ClientSize.Width, 0);
+                    formatsLabel.MaximumSize = new Size(stack.ClientSize.Width, 0);
+                }
+                finally { arrangingCards = false; }
+            };
 
             // Action bar
             var btnCancel = new ModernButton
@@ -158,6 +187,7 @@ namespace UzbekOrfoAddIn.Forms
             // Icon + Title side by side
             var headerRow = new TableLayoutPanel
             {
+                Dock = DockStyle.Top,
                 AutoSize = false,
                 ColumnCount = 2,
                 RowCount = 1,
@@ -187,7 +217,8 @@ namespace UzbekOrfoAddIn.Forms
                 Style = ModernButton.ButtonStyle.Primary,
                 Font = ThemeManager.FontLGBold,
                 Size = new Size(200, 48),
-                Anchor = AnchorStyles.Left | AnchorStyles.Bottom
+                MinimumSize = new Size(200, 48),
+                Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
             };
             actionButton.Click += (s, e) => SelectMode(mode);
 
@@ -213,7 +244,7 @@ namespace UzbekOrfoAddIn.Forms
 
             card.Resize += (s, e) =>
             {
-                int maxWidth = Math.Max(240, card.ClientSize.Width - pad * 2);
+                int maxWidth = Math.Max(Px(240), card.ClientSize.Width - Px(pad) * 2);
                 descLabel.MaximumSize = new Size(maxWidth, 0);
             };
 

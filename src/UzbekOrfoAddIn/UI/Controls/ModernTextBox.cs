@@ -12,6 +12,9 @@ namespace UzbekOrfoAddIn.UI.Controls
     /// </summary>
     public class ModernTextBox : UserControl
     {
+        private int Px(int value) => DpiLayout.Pixels(this, value);
+        private Font UiFont(Font value) => DpiLayout.Font(this, value);
+
         private readonly TextBox _innerTextBox;
         private readonly Label _placeholderLabel;
         private string _placeholder = "";
@@ -92,6 +95,7 @@ namespace UzbekOrfoAddIn.UI.Controls
                      ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.ResizeRedraw, true);
 
+            AutoScaleMode = AutoScaleMode.None;
             Size = new Size(240, 36);
             Padding = new Padding(12, 6, 12, 6);
 
@@ -147,8 +151,8 @@ namespace UzbekOrfoAddIn.UI.Controls
         private void UpdateLayout()
         {
             if (_innerTextBox == null) return;
-            int leftPad = _prefixIcon != null ? 34 : 12;
-            int textW = Width - leftPad - 12;
+            int leftPad = Px(_prefixIcon != null ? 34 : 12);
+            int textW = Math.Max(1, Width - leftPad - Px(12));
 
             _innerTextBox.Location = new Point(leftPad, (Height - _innerTextBox.Height) / 2);
             _innerTextBox.Width = textW;
@@ -190,7 +194,7 @@ namespace UzbekOrfoAddIn.UI.Controls
             var rect = new Rectangle(0, 0, Width - 1, Height - 1);
 
             // Background fill
-            using (var path = CreateRoundedRect(rect, _cornerRadius))
+            using (var path = CreateRoundedRect(rect, Px(_cornerRadius)))
             using (var brush = new SolidBrush(ThemeManager.Background))
             {
                 g.FillPath(brush, path);
@@ -199,7 +203,7 @@ namespace UzbekOrfoAddIn.UI.Controls
             // Border
             var borderColor = _focused ? ThemeManager.BorderFocus : ThemeManager.Border;
             int borderWidth = _focused ? 2 : 1;
-            using (var path = CreateRoundedRect(rect, _cornerRadius))
+            using (var path = CreateRoundedRect(rect, Px(_cornerRadius)))
             using (var pen = new Pen(borderColor, borderWidth))
             {
                 g.DrawPath(pen, path);
@@ -208,7 +212,7 @@ namespace UzbekOrfoAddIn.UI.Controls
             // Prefix icon
             if (_prefixIcon != null)
             {
-                g.DrawImage(_prefixIcon, new Rectangle(10, (Height - 16) / 2, 16, 16));
+                g.DrawImage(_prefixIcon, new Rectangle(Px(10), (Height - Px(16)) / 2, Px(16), Px(16)));
             }
 
             // NOTE: Placeholder is now rendered via _placeholderLabel overlay,
@@ -224,7 +228,7 @@ namespace UzbekOrfoAddIn.UI.Controls
         private static GraphicsPath CreateRoundedRect(Rectangle rect, int radius)
         {
             var path = new GraphicsPath();
-            int d = radius * 2;
+            int d = Math.Max(1, Math.Min(radius * 2, Math.Min(rect.Width, rect.Height)));
             path.AddArc(rect.X, rect.Y, d, d, 180, 90);
             path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
             path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);

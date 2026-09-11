@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1106,87 +1106,18 @@ namespace UzbekOrfoAddIn.Services
         /// </summary>
         public void HighlightErrors(List<ErrorEntry> errors)
         {
-            if (errors == null || errors.Count == 0) return;
-
-            try
-            {
-                var app = Globals.ThisAddIn.Application;
-                bool wasUpdating = app.ScreenUpdating;
-                app.ScreenUpdating = false;
-
-                try
-                {
-                    foreach (var error in errors)
-                    {
-                        if (error.Range == null || error.IsResolved) continue;
-
-                        try
-                        {
-                            error.Range.Underline = Word.WdUnderline.wdUnderlineWavy;
-                            error.Range.Font.UnderlineColor = Word.WdColor.wdColorGreen;
-                        }
-                        catch
-                        {
-                            // Range may have become invalid
-                        }
-                    }
-                }
-                finally
-                {
-                    app.ScreenUpdating = wasUpdating;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Р“СЂР°РјРјР°С‚РёРєР° С…Р°С‚РѕР»Р°СЂРёРЅРё Р±РµР»РіРёР»Р°С€РґР° С…Р°С‚Рѕ", ex);
-            }
+            if (errors == null) return;
+            foreach (var error in errors)
+                if (error != null && !error.IsResolved)
+                    DocumentHighlightService.Highlight(error.Range, Word.WdColor.wdColorGreen);
         }
 
         /// <summary>
-        /// Clears green wavy underlines from the document.
-        /// Uses font color matching to avoid removing spelling (red) underlines.
+        /// Clears this session's temporary marks without touching existing underlines.
         /// </summary>
         public void ClearHighlights(Word.Document document)
         {
-            if (document == null) return;
-
-            try
-            {
-                var app = Globals.ThisAddIn.Application;
-                bool wasUpdating = app.ScreenUpdating;
-                app.ScreenUpdating = false;
-
-                try
-                {
-                    var range = document.Content;
-                    range.Find.ClearFormatting();
-                    range.Find.Replacement.ClearFormatting();
-                    range.Find.Font.Underline = Word.WdUnderline.wdUnderlineWavy;
-                    range.Find.Font.UnderlineColor = Word.WdColor.wdColorGreen;
-                    range.Find.Replacement.Font.Underline = Word.WdUnderline.wdUnderlineNone;
-
-                    range.Find.Execute(
-                        FindText: "",
-                        MatchCase: false,
-                        MatchWholeWord: false,
-                        MatchWildcards: false,
-                        MatchSoundsLike: false,
-                        MatchAllWordForms: false,
-                        Forward: true,
-                        Wrap: Word.WdFindWrap.wdFindContinue,
-                        Format: true,
-                        ReplaceWith: "",
-                        Replace: Word.WdReplace.wdReplaceAll);
-                }
-                finally
-                {
-                    app.ScreenUpdating = wasUpdating;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Р“СЂР°РјРјР°С‚РёРєР° Р±РµР»РіРёР»Р°СЂРёРЅРё С‚РѕР·Р°Р»Р°С€РґР° С…Р°С‚Рѕ", ex);
-            }
+            DocumentHighlightService.ClearDocument(document);
         }
 
         private string ConvertToOriginalScript(string cyrillic, ScriptType targetScript)

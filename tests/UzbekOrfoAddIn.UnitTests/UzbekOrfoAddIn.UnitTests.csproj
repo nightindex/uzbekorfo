@@ -16,5 +16,18 @@
   <ItemGroup>
     <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\TextHelper.cs" Link="Helpers\TextHelper.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\UzbekStringComparer.cs" Link="Helpers\UzbekStringComparer.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\AtomicFile.cs" Link="Helpers\AtomicFile.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\ImportTextReader.cs" Link="Helpers\ImportTextReader.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\DocumentHelper.cs" Link="Helpers\DocumentHelper.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\DocumentHighlightService.cs" Link="Services\DocumentHighlightService.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\ReplaceAllWorkflowService.cs" Link="Services\ReplaceAllWorkflowService.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\ErrorStore.cs" Link="Services\ErrorStore.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\TransliterationService.cs" Link="Services\TransliterationService.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Core\IErrorStore.cs" Link="Core\IErrorStore.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Core\ITransliterator.cs" Link="Core\ITransliterator.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\ErrorEntry.cs" Link="Models\ErrorEntry.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\Suggestion.cs" Link="Models\Suggestion.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\TranslitException.cs" Link="Models\TranslitException.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\Enums.cs" Link="Models\Enums.cs" />
   </ItemGroup>
 </Project>

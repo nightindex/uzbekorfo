@@ -63,7 +63,7 @@ namespace UzbekOrfoAddIn.Forms
             ActionBar.Resize += (s, e) =>
             {
                 int y = (ActionBar.Height - btnOk.Height) / 2;
-                int right = ActionBar.Width - ThemeManager.SpaceXL;
+                int right = ActionBar.Width - Px(ThemeManager.SpaceXL);
                 btnOk.Location = new Point(right - btnOk.Width, y);
             };
 
@@ -133,9 +133,9 @@ namespace UzbekOrfoAddIn.Forms
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
             // Badge circle
-            int badgeSize = 48;
-            int badgeX = ThemeManager.SpaceXL;
-            int badgeY = ThemeManager.SpaceLG;
+            int badgeSize = Px(48);
+            int badgeX = Px(ThemeManager.SpaceXL);
+            int badgeY = Px(ThemeManager.SpaceLG);
 
             Color badgeColor = GetAccentColor();
             using (var badgeBrush = new SolidBrush(badgeColor))
@@ -149,36 +149,36 @@ namespace UzbekOrfoAddIn.Forms
             using (var iconFont = new Font("Segoe UI", 18f, FontStyle.Bold))
             using (var iconBrush = new SolidBrush(Color.White))
             {
-                var iconSize = g.MeasureString(iconChar, iconFont);
+                var iconSize = g.MeasureString(iconChar, UiFont(iconFont));
                 float ix = badgeX + (badgeSize - iconSize.Width) / 2f;
                 float iy = badgeY + (badgeSize - iconSize.Height) / 2f;
-                g.DrawString(iconChar, iconFont, iconBrush, ix, iy);
+                g.DrawString(iconChar, UiFont(iconFont), iconBrush, ix, iy);
             }
 
             // Title text next to badge
             string title = GetTitleText();
-            int textX = badgeX + badgeSize + ThemeManager.SpaceMD;
-            int textMaxW = ContentPanel.ClientSize.Width - textX - ThemeManager.SpaceXL;
+            int textX = badgeX + badgeSize + Px(ThemeManager.SpaceMD);
+            int textMaxW = ContentPanel.ClientSize.Width - textX - Px(ThemeManager.SpaceXL);
 
             using (var titleFont = new Font("Segoe UI", 16f, FontStyle.Bold))
             using (var titleBrush = new SolidBrush(ThemeManager.TextPrimary))
             {
-                var titleSize = g.MeasureString(title, titleFont);
+                var titleSize = g.MeasureString(title, UiFont(titleFont));
                 int titleY = badgeY + (badgeSize - (int)titleSize.Height) / 2;
-                g.DrawString(title, titleFont, titleBrush,
-                    new RectangleF(textX, titleY, textMaxW, 36));
+                g.DrawString(title, UiFont(titleFont), titleBrush,
+                    new RectangleF(textX, titleY, textMaxW, Px(36)));
             }
 
             // Subtitle below badge row
             string subtitle = GetSubtitleText();
             if (!string.IsNullOrEmpty(subtitle))
             {
-                int subY = badgeY + badgeSize + 6;
+                int subY = badgeY + badgeSize + Px(6);
                 using (var subFont = new Font("Segoe UI", 11f, FontStyle.Regular))
                 using (var subBrush = new SolidBrush(ThemeManager.TextSecondary))
                 {
-                    g.DrawString(subtitle, subFont, subBrush,
-                        new RectangleF(badgeX, subY, textMaxW + badgeSize + ThemeManager.SpaceMD, 24),
+                    g.DrawString(subtitle, UiFont(subFont), subBrush,
+                        new RectangleF(badgeX, subY, textMaxW + badgeSize + Px(ThemeManager.SpaceMD), Px(24)),
                         new StringFormat { Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap });
                 }
             }
@@ -222,12 +222,12 @@ namespace UzbekOrfoAddIn.Forms
             base.OnPaint(e);
             using (var brush = new SolidBrush(GetAccentColor()))
             {
-                e.Graphics.FillRectangle(brush, 0, 0, Width, 4);
+                e.Graphics.FillRectangle(brush, 0, 0, Width, Px(4));
             }
         }
 
         /// <summary>Creates a mini stat card with a large number and label.</summary>
-        private static Control CreateStatCard(string number, string label,
+        private Control CreateStatCard(string number, string label,
                                                Color accentColor)
         {
             var card = new Panel
@@ -242,7 +242,7 @@ namespace UzbekOrfoAddIn.Forms
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
-                int r = ThemeManager.RadiusSM;
+                int r = Px(ThemeManager.RadiusSM);
                 var rect = new Rectangle(0, 0, card.Width - 1, card.Height - 1);
                 using (var path = RoundedRect(rect, r))
                 {
@@ -257,7 +257,7 @@ namespace UzbekOrfoAddIn.Forms
 
                 // Accent bar on left
                 using (var accentBrush = new SolidBrush(accentColor))
-                    g.FillRectangle(accentBrush, 0, 6, 4, card.Height - 12);
+                    g.FillRectangle(accentBrush, 0, Px(6), Px(4), card.Height - Px(12));
 
                 // Number — auto-scale font for large numbers
                 float numFontSize = number.Length > 9 ? 13f
@@ -267,16 +267,16 @@ namespace UzbekOrfoAddIn.Forms
                 using (var numFont = new Font("Segoe UI", numFontSize, FontStyle.Bold))
                 using (var numBrush = new SolidBrush(accentColor))
                 {
-                    var numSize = g.MeasureString(number, numFont);
-                    float numY = 6 + (30 - numSize.Height) / 2f;
-                    g.DrawString(number, numFont, numBrush, 16, Math.Max(4, numY));
+                    var numSize = g.MeasureString(number, UiFont(numFont));
+                    float numY = Px(6) + (Px(30) - numSize.Height) / 2f;
+                    g.DrawString(number, UiFont(numFont), numBrush, Px(16), Math.Max(Px(4), numY));
                 }
 
                 // Label
                 using (var lblFont = new Font("Segoe UI", 10.5f, FontStyle.Regular))
                 using (var lblBrush = new SolidBrush(ThemeManager.TextSecondary))
                 {
-                    g.DrawString(label, lblFont, lblBrush, 16, 42);
+                    g.DrawString(label, UiFont(lblFont), lblBrush, Px(16), Px(42));
                 }
             };
 

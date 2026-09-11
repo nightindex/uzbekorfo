@@ -455,78 +455,17 @@ namespace UzbekOrfoAddIn.Services
         /// <inheritdoc/>
         public void HighlightErrors(List<ErrorEntry> errors)
         {
-            if (errors == null || errors.Count == 0) return;
-
-            try
-            {
-                // Suspend screen updates while applying highlights
-                var app = Globals.ThisAddIn.Application;
-                bool wasUpdating = app.ScreenUpdating;
-                app.ScreenUpdating = false;
-
-                try
-                {
-                    foreach (var error in errors)
-                    {
-                        if (error.Range == null || error.IsResolved) continue;
-
-                        try
-                        {
-                            // Apply red wavy underline
-                            error.Range.Underline = Word.WdUnderline.wdUnderlineWavy;
-                            error.Range.Font.UnderlineColor = Word.WdColor.wdColorRed;
-                        }
-                        catch
-                        {
-                            // Range may have become invalid if document was modified
-                        }
-                    }
-                }
-                finally
-                {
-                    app.ScreenUpdating = wasUpdating;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Хатоларни белгилашда хато", ex);
-            }
+            if (errors == null) return;
+            foreach (var error in errors)
+                if (error != null && !error.IsResolved)
+                    DocumentHighlightService.Highlight(error.Range, Word.WdColor.wdColorRed);
         }
 
         /// <inheritdoc/>
-        /// <remarks>Wrapped in ScreenUpdating = false for performance.</remarks>
+        /// <remarks>Only clears temporary marks owned by this add-in session.</remarks>
         public void ClearHighlights(Word.Document document)
         {
-            if (document == null) return;
-
-            try
-            {
-                // Remove wavy underlines from entire document
-                var range = document.Content;
-                
-                // Find all wavy-underlined text and remove the underline
-                range.Find.ClearFormatting();
-                range.Find.Replacement.ClearFormatting();
-                range.Find.Font.Underline = Word.WdUnderline.wdUnderlineWavy;
-                range.Find.Replacement.Font.Underline = Word.WdUnderline.wdUnderlineNone;
-
-                range.Find.Execute(
-                    FindText: "",
-                    MatchCase: false,
-                    MatchWholeWord: false,
-                    MatchWildcards: false,
-                    MatchSoundsLike: false,
-                    MatchAllWordForms: false,
-                    Forward: true,
-                    Wrap: Word.WdFindWrap.wdFindContinue,
-                    Format: true,
-                    ReplaceWith: "",
-                    Replace: Word.WdReplace.wdReplaceAll);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Белгиларни тозалашда хато", ex);
-            }
+            DocumentHighlightService.ClearDocument(document);
         }
 
         // =====================================================================

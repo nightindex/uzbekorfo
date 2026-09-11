@@ -6,7 +6,8 @@ namespace UzbekOrfoAddIn.Services
 {
     /// <summary>
     /// Copies bundled seed data files from the add-in folder into the runtime
-    /// AppData directory when user-local files are missing.
+    /// AppData directory when user-local files are missing, while refreshing
+    /// explicitly built-in artifacts when a bundled release changes them.
     /// Supports both file-based (F5 debug) and embedded resource (ClickOnce) deployment.
     /// </summary>
     public static class DataSeedService
@@ -16,17 +17,39 @@ namespace UzbekOrfoAddIn.Services
             if (string.IsNullOrWhiteSpace(mainDictionaryPath)) return;
             try
             {
-                if (File.Exists(mainDictionaryPath)) return;
-                
-                // Try file-based first (works in F5 debug), then embedded resource (ClickOnce)
-                if (!CopyBundledDataFile("uzbek_main.dic", mainDictionaryPath, overwrite: false))
+                // The built-in dictionary has no user edits; update it when a
+                // release ships a changed generated DIC. User words remain in
+                // user_custom.dic and are never overwritten here.
+                if (!EnsureBundledDataFileCurrent("uzbek_main.dic", mainDictionaryPath, out _))
                 {
-                    ExtractEmbeddedResource("UzbekOrfoAddIn.Data.uzbek_main.dic", mainDictionaryPath);
+                    EnsureEmbeddedResourceCurrent("UzbekOrfoAddIn.Data.uzbek_main.dic", mainDictionaryPath);
                 }
             }
             catch (Exception ex)
             {
                 Helpers.Logger.Error("Failed to seed dictionary", ex);
+            }
+        }
+
+        /// <summary>
+        /// Makes the compact generated built-in metadata index available when
+        /// a definition lookup needs it. It is deliberately not read at startup.
+        /// </summary>
+        public static void SeedDictionaryMetadata(string dictionaryMetadataPath)
+        {
+            if (string.IsNullOrWhiteSpace(dictionaryMetadataPath)) return;
+            try
+            {
+                if (!EnsureBundledDataFileCurrent(
+                    "uzbek_dictionary_metadata.json", dictionaryMetadataPath, out _))
+                {
+                    EnsureEmbeddedResourceCurrent(
+                        "UzbekOrfoAddIn.Data.uzbek_dictionary_metadata.json", dictionaryMetadataPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Helpers.Logger.Error("Failed to seed dictionary metadata", ex);
             }
         }
 
@@ -90,6 +113,34 @@ namespace UzbekOrfoAddIn.Services
             {
                 ExtractEmbeddedResource(embeddedResourceName, targetPath);
             }
+        }
+
+        /// <summary>
+        /// Finds the deployed data file and replaces the local built-in copy
+        /// only when its bytes differ. This lets data updates reach existing
+        /// installations without ever replacing user-owned files.
+        /// </summary>
+        private static bool EnsureBundledDataFileCurrent(string fileName, string targetPath, out bool updated)
+        {
+            updated = false;
+            foreach (var sourcePath in GetSearchPaths(fileName))
+            {
+                if (!File.Exists(sourcePath)) continue;
+
+                if (FilesEqual(sourcePath, targetPath))
+                    return true;
+
+                string targetDir = Path.GetDirectoryName(targetPath);
+                if (!string.IsNullOrWhiteSpace(targetDir))
+                    Directory.CreateDirectory(targetDir);
+
+                File.Copy(sourcePath, targetPath, overwrite: true);
+                updated = true;
+                Helpers.Logger.Info($"Updated bundled file from: {sourcePath}");
+                return true;
+            }
+
+            return false;
         }
 
         private static bool EnsureFileWithMinimumSize(string targetPath, long minimumBytes, string bundledFileName, string embeddedResourceName)
@@ -200,6 +251,37 @@ namespace UzbekOrfoAddIn.Services
             }
         }
 
+        private static bool EnsureEmbeddedResourceCurrent(string resourceName, string targetPath)
+        {
+            try
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                using (var stream = assembly.GetManifestResourceStream(resourceName))
+                {
+                    if (stream != null)
+                        return WriteStreamToFileIfDifferent(stream, targetPath, resourceName);
+                }
+
+                foreach (var name in assembly.GetManifestResourceNames())
+                {
+                    if (!name.Equals(resourceName, StringComparison.OrdinalIgnoreCase)) continue;
+                    using (var stream = assembly.GetManifestResourceStream(name))
+                    {
+                        if (stream != null)
+                            return WriteStreamToFileIfDifferent(stream, targetPath, name);
+                    }
+                }
+
+                Helpers.Logger.Warn($"Embedded resource not found: {resourceName}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Helpers.Logger.Error($"Failed to refresh embedded resource: {resourceName}", ex);
+                return false;
+            }
+        }
+
         private static bool WriteStreamToFile(Stream stream, string targetPath, string resourceName)
         {
             string targetDir = Path.GetDirectoryName(targetPath);
@@ -213,6 +295,67 @@ namespace UzbekOrfoAddIn.Services
             
             Helpers.Logger.Info($"Seeded from embedded resource: {resourceName}");
             return true;
+        }
+
+        private static bool WriteStreamToFileIfDifferent(Stream stream, string targetPath, string resourceName)
+        {
+            string targetDir = Path.GetDirectoryName(targetPath);
+            if (!string.IsNullOrWhiteSpace(targetDir))
+                Directory.CreateDirectory(targetDir);
+
+            string tempPath = targetPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+            try
+            {
+                using (var fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write))
+                {
+                    stream.CopyTo(fileStream);
+                }
+
+                if (FilesEqual(tempPath, targetPath))
+                    return true;
+
+                File.Copy(tempPath, targetPath, overwrite: true);
+                Helpers.Logger.Info($"Updated from embedded resource: {resourceName}");
+                return true;
+            }
+            finally
+            {
+                try
+                {
+                    if (File.Exists(tempPath)) File.Delete(tempPath);
+                }
+                catch { }
+            }
+        }
+
+        private static bool FilesEqual(string firstPath, string secondPath)
+        {
+            if (!File.Exists(firstPath) || !File.Exists(secondPath)) return false;
+
+            var firstInfo = new FileInfo(firstPath);
+            var secondInfo = new FileInfo(secondPath);
+            if (firstInfo.Length != secondInfo.Length) return false;
+
+            const int BufferSize = 64 * 1024;
+            var firstBuffer = new byte[BufferSize];
+            var secondBuffer = new byte[BufferSize];
+
+            using (var first = new FileStream(firstPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var second = new FileStream(secondPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                while (true)
+                {
+                    int firstRead = first.Read(firstBuffer, 0, firstBuffer.Length);
+                    int secondRead = second.Read(secondBuffer, 0, secondBuffer.Length);
+                    if (firstRead != secondRead) return false;
+                    if (firstRead == 0) return true;
+
+                    for (int i = 0; i < firstRead; i++)
+                    {
+                        if (firstBuffer[i] != secondBuffer[i]) return false;
+                    }
+                }
+            }
         }
     }
 }

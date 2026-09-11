@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -127,6 +127,8 @@ namespace UzbekOrfoAddIn
         {
             try
             {
+                DocumentHighlightService.ClearAll();
+                ErrorStore?.Clear();
                 try { _runtime?.Shutdown(); }
                 catch (Exception ex) { Logger.Warn($"Runtime shutdown error: {ex.Message}"); }
 
@@ -618,7 +620,6 @@ namespace UzbekOrfoAddIn
             try
             {
                 ClearSpellHighlightsIfFlagged(doc, "open");
-                TryMigrateLegacySpellHighlights(doc);
             }
             catch (Exception ex)
             {
@@ -1145,8 +1146,7 @@ namespace UzbekOrfoAddIn
             {
                 var sel = Globals.ThisAddIn?.Application?.Selection;
                 if (sel?.Range == null) return;
-                sel.Range.Underline = Word.WdUnderline.wdUnderlineNone;
-                sel.Range.Font.UnderlineColor = Word.WdColor.wdColorAutomatic;
+                DocumentHighlightService.ClearRange(sel.Range);
             }
             catch { }
         }
@@ -1173,8 +1173,7 @@ namespace UzbekOrfoAddIn
                 {
                     if (m.Range != null)
                     {
-                        m.Range.Underline = Word.WdUnderline.wdUnderlineNone;
-                        m.Range.Font.UnderlineColor = Word.WdColor.wdColorAutomatic;
+                        DocumentHighlightService.ClearRange(m.Range);
                     }
                 }
                 catch { }
@@ -1234,112 +1233,10 @@ namespace UzbekOrfoAddIn
         private static void ClearSpellHighlightsIfFlagged(Word.Document doc, string reason)
         {
             if (doc == null) return;
-            if (!HasSpellHighlightFlag(doc)) return;
-
-            try
-            {
-                int clearedFromStore = ClearHighlightsFromStoreRanges(doc);
-                if (clearedFromStore == 0)
-                    SpellingEngine?.ClearHighlights(doc);
-
-                RemoveErrorsForDocument(doc);
-                // Avoid modifying freshly opened documents just to flip an internal flag.
-                // We persist flag reset only during close/save flows.
-                if (!string.Equals(reason, "open", StringComparison.OrdinalIgnoreCase))
-                    SetSpellHighlightFlag(doc, false);
-                Logger.Info($"Spell highlights cleaned on {reason}: {doc.Name}");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"Spell highlight cleanup failed on {reason}", ex);
-            }
-        }
-
-        private static void TryMigrateLegacySpellHighlights(Word.Document doc)
-        {
-            if (doc == null) return;
-            if (HasSpellHighlightFlag(doc)) return;
-            if (HasLegacyHighlightMigrationFlag(doc)) return;
-
-            try
-            {
-                if (!ContainsWavyUnderlineFormatting(doc))
-                    return;
-
-                SpellingEngine?.ClearHighlights(doc);
-                RemoveErrorsForDocument(doc);
+            DocumentHighlightService.ClearDocument(doc);
+            RemoveErrorsForDocument(doc);
+            if (!string.Equals(reason, "open", StringComparison.OrdinalIgnoreCase))
                 SetSpellHighlightFlag(doc, false);
-                SetLegacyHighlightMigrationFlag(doc, true);
-                Logger.Info($"Legacy spell highlights migrated: {doc.Name}");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Legacy spell highlight migration failed", ex);
-            }
-        }
-
-        private static bool ContainsWavyUnderlineFormatting(Word.Document doc)
-        {
-            try
-            {
-                if (doc?.Content == null) return false;
-
-                var range = doc.Content.Duplicate;
-                var find = range.Find;
-                find.ClearFormatting();
-                find.Replacement.ClearFormatting();
-                find.Text = string.Empty;
-                find.Forward = true;
-                find.Wrap = Word.WdFindWrap.wdFindStop;
-                find.MatchWildcards = false;
-                find.MatchCase = false;
-                find.MatchWholeWord = false;
-                find.MatchAllWordForms = false;
-                find.MatchSoundsLike = false;
-                find.Format = true;
-                find.Font.Underline = Word.WdUnderline.wdUnderlineWavy;
-
-                return find.Execute();
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool HasLegacyHighlightMigrationFlag(Word.Document doc)
-        {
-            if (doc == null) return false;
-            try
-            {
-                string value = null;
-                try { value = doc.Variables[SPELL_HIGHLIGHT_MIGRATED_VAR]?.Value; }
-                catch { }
-                if (string.IsNullOrWhiteSpace(value)) return false;
-                value = value.Trim();
-                return value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static void SetLegacyHighlightMigrationFlag(Word.Document doc, bool migrated)
-        {
-            if (doc == null) return;
-            try
-            {
-                Word.Variable flagVar = null;
-                try { flagVar = doc.Variables[SPELL_HIGHLIGHT_MIGRATED_VAR]; }
-                catch { }
-
-                if (flagVar == null)
-                    doc.Variables.Add(SPELL_HIGHLIGHT_MIGRATED_VAR, migrated ? "1" : "0");
-                else
-                    flagVar.Value = migrated ? "1" : "0";
-            }
-            catch { }
         }
 
         private static void RemoveErrorsForDocument(Word.Document doc)
@@ -1367,46 +1264,9 @@ namespace UzbekOrfoAddIn
             }
         }
 
-        private static int ClearHighlightsFromStoreRanges(Word.Document doc)
-        {
-            if (doc == null) return 0;
-            var store = ErrorStore;
-            if (store == null) return 0;
-
-            int cleared = 0;
-            foreach (var err in store.Errors)
-            {
-                try
-                {
-                    if (err?.Range == null) continue;
-                    if (!IsSameDocument(err.Range.Document, doc)) continue;
-
-                    err.Range.Underline = Word.WdUnderline.wdUnderlineNone;
-                    err.Range.Font.UnderlineColor = Word.WdColor.wdColorAutomatic;
-                    err.IsResolved = true;
-                    cleared++;
-                }
-                catch { }
-            }
-
-            return cleared;
-        }
-
         private static bool IsSameDocument(Word.Document a, Word.Document b)
         {
-            if (a == null || b == null) return false;
-
-            try
-            {
-                string aFull = a.FullName;
-                string bFull = b.FullName;
-                if (!string.IsNullOrWhiteSpace(aFull) && !string.IsNullOrWhiteSpace(bFull))
-                    return string.Equals(aFull, bFull, StringComparison.OrdinalIgnoreCase);
-            }
-            catch { }
-
-            try { return a == b; }
-            catch { return false; }
+            return DocumentHelper.IsSameDocument(a, b);
         }
 
         #region VSTO generated code

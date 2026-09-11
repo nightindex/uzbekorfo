@@ -46,6 +46,22 @@ namespace UzbekOrfoAddIn.Forms
         private List<ErrorEntry> _filteredSpelling = new List<ErrorEntry>();
         private List<ErrorEntry> _filteredGrammar = new List<ErrorEntry>();
         private bool _isInitialized;
+        private bool _populatingGrids;
+
+        // 498px of left actions + 170px replacement panel + 32px padding.
+        protected override int GetMinimumActionBarWidth() => 720;
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            BeginInvoke((Action)(() =>
+            {
+                if (IsDisposed || !Visible) return;
+                if (ActiveGrid.SelectedRows.Count > 0)
+                    _currentIndex = ActiveGrid.SelectedRows[0].Index;
+                UpdateDetail();
+            }));
+        }
 
         // Pill fonts
         private static readonly Font _fPill = new Font("Segoe UI Semibold", 11f, FontStyle.Bold);
@@ -143,12 +159,12 @@ namespace UzbekOrfoAddIn.Forms
             _pillGrammar = CreatePill($"Грамматик хатолар ({_filteredGrammar.Count})", 1);
 
             // Measure and position pills
-            int tw1 = TextRenderer.MeasureText(_pillSpelling.Text, _fPill).Width + 32;
-            int tw2 = TextRenderer.MeasureText(_pillGrammar.Text, _fPill).Width + 32;
-            _pillSpelling.Size = new Size(tw1, 38);
-            _pillGrammar.Size = new Size(tw2, 38);
+            int tw1 = TextRenderer.MeasureText(_pillSpelling.Text, UiFont(_fPill)).Width + Px(32);
+            int tw2 = TextRenderer.MeasureText(_pillGrammar.Text, UiFont(_fPill)).Width + Px(32);
+            _pillSpelling.Size = new Size(tw1, Px(38));
+            _pillGrammar.Size = new Size(tw2, Px(38));
             _pillSpelling.Location = new Point(0, 2);
-            _pillGrammar.Location = new Point(tw1 + 10, 2);
+            _pillGrammar.Location = new Point(tw1 + Px(10), Px(2));
 
             _pillBar.Controls.Add(_pillSpelling);
             _pillBar.Controls.Add(_pillGrammar);
@@ -313,7 +329,7 @@ namespace UzbekOrfoAddIn.Forms
 
             leftFlow.Resize += (s, e) =>
             {
-                int cy = (leftFlow.Height - btnH) / 2;
+                int cy = (leftFlow.Height - Px(btnH)) / 2;
                 foreach (Control c in leftFlow.Controls)
                     c.Margin = new Padding(c.Margin.Left, cy, c.Margin.Right, 0);
             };
@@ -346,7 +362,7 @@ namespace UzbekOrfoAddIn.Forms
 
         private DataGridView CreateGrid()
         {
-            var grid = new DataGridView
+            var grid = new DpiDataGridView
             {
                 Dock = DockStyle.Fill,
                 ReadOnly = true,
@@ -405,12 +421,21 @@ namespace UzbekOrfoAddIn.Forms
 
         private void PopulateGrids()
         {
-            PopulateSpellingGrid();
-            PopulateGrammarGrid();
-            UpdateStatusAndButtons();
-
-            if (_spellingGrid.Rows.Count > 0)
-                _spellingGrid.Rows[0].Selected = true;
+            _populatingGrids = true;
+            try
+            {
+                PopulateSpellingGrid();
+                PopulateGrammarGrid();
+                UpdateStatusAndButtons();
+                if (_spellingGrid.Rows.Count > 0)
+                    _spellingGrid.Rows[0].Selected = true;
+            }
+            finally { _populatingGrids = false; }
+            if (_isInitialized && Visible && ActiveGrid.SelectedRows.Count > 0)
+            {
+                _currentIndex = ActiveGrid.SelectedRows[0].Index;
+                UpdateDetail();
+            }
         }
         private void PopulateSpellingGrid()
         {
@@ -420,7 +445,7 @@ namespace UzbekOrfoAddIn.Forms
                 var err = _filteredSpelling[i];
                 if (err == null) continue;
 
-                string best = err.EnsureBestSuggestion();
+                string best = err.BestSuggestion;
                 _spellingGrid.Rows.Add(
                     (i + 1).ToString(),
                     err.Word ?? "",
@@ -439,7 +464,7 @@ namespace UzbekOrfoAddIn.Forms
                 var err = _filteredGrammar[i];
                 if (err == null) continue;
 
-                string best = err.EnsureBestSuggestion();
+                string best = err.BestSuggestion;
                 _grammarGrid.Rows.Add(
                     (i + 1).ToString(),
                     err.Word ?? "",
@@ -460,11 +485,11 @@ namespace UzbekOrfoAddIn.Forms
             _pillGrammar.Text = $"Грамматик хатолар ({_filteredGrammar.Count})";
 
             // Resize pills to fit new text
-            int tw1 = TextRenderer.MeasureText(_pillSpelling.Text, _fPill).Width + 32;
-            int tw2 = TextRenderer.MeasureText(_pillGrammar.Text, _fPill).Width + 32;
-            _pillSpelling.Size = new Size(tw1, 38);
-            _pillGrammar.Size = new Size(tw2, 38);
-            _pillGrammar.Location = new Point(tw1 + 10, 2);
+            int tw1 = TextRenderer.MeasureText(_pillSpelling.Text, UiFont(_fPill)).Width + Px(32);
+            int tw2 = TextRenderer.MeasureText(_pillGrammar.Text, UiFont(_fPill)).Width + Px(32);
+            _pillSpelling.Size = new Size(tw1, Px(38));
+            _pillGrammar.Size = new Size(tw2, Px(38));
+            _pillGrammar.Location = new Point(tw1 + Px(10), Px(2));
 
             _pillSpelling.Invalidate();
             _pillGrammar.Invalidate();
@@ -492,9 +517,7 @@ namespace UzbekOrfoAddIn.Forms
                     .Where(e => e != null && !e.IsResolved && MatchesQuery(e, query)).ToList();
             }
 
-            PopulateSpellingGrid();
-            PopulateGrammarGrid();
-            UpdateStatusAndButtons();
+            PopulateGrids();
         }
 
         private static bool MatchesQuery(ErrorEntry e, string query)
@@ -510,6 +533,7 @@ namespace UzbekOrfoAddIn.Forms
 
         private void Grid_SelectionChanged(object sender, EventArgs e)
         {
+            if (!_isInitialized || _populatingGrids || !Visible) return;
             var grid = sender as DataGridView;
             if (grid == null || grid != ActiveGrid) return;
             if (grid.SelectedRows.Count == 0) return;
@@ -540,7 +564,11 @@ namespace UzbekOrfoAddIn.Forms
             }
 
             _onReplace?.Invoke(error, best);
-            error.IsResolved = true;
+            if (!error.IsResolved)
+            {
+                SafeExecutor.ShowWarning("Ҳужжат ёки матн ўзгарган. Қайта текширувни ишга туширинг.");
+                return;
+            }
             FilterErrors();
             ToastNotification.Success("Алмаштирилди", $"{error.Word} \u2192 {best}");
         }
@@ -607,6 +635,10 @@ namespace UzbekOrfoAddIn.Forms
 
             // Update "Add to Dict" visibility based on current tab
             _btnAddDict.Visible = !IsGrammarTab;
+
+            // Only the selected entry performs lazy suggestion work, not every
+            // row while the dialog is being constructed or filtered.
+            error.EnsureBestSuggestion();
 
             if (error.IsGrammarError)
             {
@@ -677,8 +709,8 @@ namespace UzbekOrfoAddIn.Forms
             _grammarGrid.Visible = IsGrammarTab;
 
             // Update pill styles
-            _pillSpelling.Font = _activeTab == 0 ? _fPill : _fPillR;
-            _pillGrammar.Font = _activeTab == 1 ? _fPill : _fPillR;
+            _pillSpelling.Font = UiFont(_activeTab == 0 ? _fPill : _fPillR);
+            _pillGrammar.Font = UiFont(_activeTab == 1 ? _fPill : _fPillR);
             _pillSpelling.Invalidate();
             _pillGrammar.Invalidate();
 

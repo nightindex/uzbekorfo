@@ -30,7 +30,8 @@ $requiredData = @(
     "uzbek_suffixes.json",
     "grammar_rules.json",
     "proper_nouns.json",
-    "uzbek_dictionary.json"
+    "uzbek_dictionary.json",
+    "uzbek_dictionary_metadata.json"
 )
 
 foreach ($f in $requiredData) {
@@ -43,7 +44,7 @@ foreach ($f in $requiredData) {
 $projXml = [xml](Get-Content -Raw $ProjectPath)
 $projText = Get-Content -Raw $ProjectPath
 
-if ($projText -match "(?i)<ManifestKeyFile>[^<]*temp[^<]*\\.pfx</ManifestKeyFile>") {
+if ($projText -match "(?i)<ManifestKeyFile>[^<]*temp[^<]*\.pfx</ManifestKeyFile>") {
     $failures.Add("Project still references a temporary .pfx manifest key in the project file.")
 }
 
@@ -75,6 +76,22 @@ $vsToolsSearchRoots = @(
 ) | Where-Object { $_ -and (Test-Path $_) }
 
 $vsToolsTarget = $null
+$vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+if (Test-Path -LiteralPath $vswhere) {
+    $installedVs = & $vswhere -all -products * -property installationPath
+    $vsToolsSearchRoots = @($vsToolsSearchRoots) + @($installedVs | Where-Object { $_ -and (Test-Path -LiteralPath $_) })
+}
+
+$dictionaryValidator = Join-Path $PSScriptRoot "validate-dictionary-sync.ps1"
+if (Test-Path -LiteralPath $dictionaryValidator) {
+    try {
+        & $dictionaryValidator -DataDirectory $dataDir
+        if ($LASTEXITCODE -ne 0) { throw "Dictionary validator returned exit code $LASTEXITCODE." }
+    }
+    catch {
+        $failures.Add("Generated DIC is stale or invalid: $($_.Exception.Message)")
+    }
+}
 foreach ($root in $vsToolsSearchRoots) {
     $match = Get-ChildItem -Path $root -Recurse -Filter "Microsoft.VisualStudio.Tools.Office.targets" -ErrorAction SilentlyContinue |
         Select-Object -First 1 -ExpandProperty FullName

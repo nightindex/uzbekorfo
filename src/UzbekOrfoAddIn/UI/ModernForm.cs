@@ -1,8 +1,10 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using UzbekOrfoAddIn.UI.Controls;
 
 namespace UzbekOrfoAddIn.UI
 {
@@ -13,11 +15,11 @@ namespace UzbekOrfoAddIn.UI
     /// 
     /// Inherit from this class instead of System.Windows.Forms.Form.
     /// </summary>
-    public class ModernForm : Form
+    public class ModernForm : DpiForm
     {
         // --- Title bar ---
-        private const int TITLE_BAR_HEIGHT = 48;
-        private const int RESIZE_BORDER = 6;
+        private int TITLE_BAR_HEIGHT => Px(48);
+        private int RESIZE_BORDER => Px(6);
         private bool _isDragging;
         private Point _dragStart;
 
@@ -29,6 +31,114 @@ namespace UzbekOrfoAddIn.UI
 
         // --- Title spacer (stored for mouse forwarding) ---
         private Panel _titleSpacer;
+        private Panel _contentViewport;
+        private Panel _actionViewport;
+        private Size _contentDesignSize;
+        private Size _actionDesignSize;
+        private int _actionMinimumWidth;
+        private bool _layingOutViewports;
+
+        protected virtual bool ReflowContent => false;
+
+        protected override void OnLoad(EventArgs e)
+        {
+            using (new DpiLayout.Context())
+            {
+                if (_contentViewport == null)
+                {
+                    // Preserve the designed layout on small work areas. Both the
+                    // body and the action buttons stay reachable through scrolling.
+                    // A resizable body can shrink to the form's supported minimum.
+                    // Keeping the preferred size here makes even ordinary resizing scroll.
+                    _contentDesignSize = new Size(
+                        Math.Max(1, MinimumSize.Width - (Width - ContentPanel.Width)),
+                        Math.Max(1, MinimumSize.Height - (Height - ContentPanel.Height)));
+                    _actionDesignSize = ActionBar.Size;
+                    _actionMinimumWidth = GetMinimumActionBarWidth();
+                    _contentViewport = WrapViewport(ContentPanel, DockStyle.Fill);
+                    _actionViewport = WrapViewport(ActionBar, DockStyle.Bottom);
+                    _actionViewport.Height = ActionBar.Height;
+                    _contentViewport.Resize += (s, args) => LayoutViewports();
+                    _actionViewport.Resize += (s, args) => LayoutViewports();
+                }
+                base.OnLoad(e);
+                LayoutViewports();
+            }
+        }
+
+        protected virtual int GetMinimumActionBarWidth()
+        {
+            var buttons = ActionBar.Controls.Cast<Control>().OfType<ModernButton>().ToArray();
+            return buttons.Length == ActionBar.Controls.Count
+                ? buttons.Sum(button => button.Width) + Math.Max(0, buttons.Length - 1) * 12 + 48
+                : ActionBar.Width;
+        }
+
+        private Panel WrapViewport(Panel canvas, DockStyle dock)
+        {
+            int index = Controls.GetChildIndex(canvas);
+            var viewport = new Panel { Dock = dock, AutoScroll = true, BackColor = canvas.BackColor,
+                Margin = Padding.Empty, Padding = Padding.Empty };
+            Controls.Remove(canvas);
+            canvas.Dock = DockStyle.None;
+            canvas.Location = Point.Empty;
+            canvas.Margin = Padding.Empty;
+            viewport.Controls.Add(canvas);
+            Controls.Add(viewport);
+            Controls.SetChildIndex(viewport, index);
+            return viewport;
+        }
+
+        private void LayoutViewports()
+        {
+            if (_layingOutViewports || _contentViewport == null || _actionViewport == null) return;
+            _layingOutViewports = true;
+            try
+            {
+                bool footerScroll = _actionDesignSize.Height > 0 && _actionViewport.Width < Px(_actionMinimumWidth);
+                _actionViewport.Height = Px(_actionDesignSize.Height) +
+                    (footerScroll ? SystemInformation.HorizontalScrollBarHeight : 0);
+                ArrangeViewport(_actionViewport, ActionBar,
+                    new Size(Px(_actionMinimumWidth), Px(_actionDesignSize.Height)), false);
+                ArrangeViewport(_contentViewport, ContentPanel,
+                    ReflowContent ? Size.Empty : new Size(Px(_contentDesignSize.Width), Px(_contentDesignSize.Height)));
+            }
+            finally { _layingOutViewports = false; }
+        }
+
+        private static void ArrangeViewport(Panel viewport, Panel canvas, Size minimum, bool fillHeight = true)
+        {
+            var scroll = viewport.AutoScrollPosition;
+            viewport.SuspendLayout();
+            try
+            {
+                // Drop the cached DisplayRectangle from the previous DPI/size.
+                // WinForms otherwise retains it for anchored children after shrinking.
+                viewport.AutoScroll = false;
+                viewport.AutoScrollMinSize = Size.Empty;
+                canvas.Location = Point.Empty;
+                bool overflow = minimum.Width > viewport.ClientSize.Width || minimum.Height > viewport.ClientSize.Height;
+                if (overflow)
+                {
+                    viewport.AutoScrollMinSize = minimum;
+                    viewport.AutoScroll = true;
+                }
+                canvas.Size = new Size(Math.Max(minimum.Width, viewport.ClientSize.Width),
+                    fillHeight ? Math.Max(minimum.Height, viewport.ClientSize.Height) : minimum.Height);
+            }
+            finally { viewport.ResumeLayout(true); }
+            // Account for the space consumed by scrollbars after layout.
+            canvas.Size = new Size(Math.Max(minimum.Width, viewport.ClientSize.Width),
+                fillHeight ? Math.Max(minimum.Height, viewport.ClientSize.Height) : minimum.Height);
+            if (viewport.AutoScroll)
+                viewport.AutoScrollPosition = new Point(-scroll.X, -scroll.Y);
+        }
+
+        protected override void OnLayoutDpiChanged()
+        {
+            base.OnLayoutDpiChanged();
+            LayoutViewports();
+        }
 
         // --- Properties ---
         public string Title { get; set; } = "Ўзбек Орфо";
@@ -75,9 +185,9 @@ namespace UzbekOrfoAddIn.UI
             {
                 Dock = DockStyle.Fill,
                 BackColor = ThemeManager.Background,
-                Padding = new Padding(ThemeManager.SpaceXL, ThemeManager.SpaceLG,
-                                      ThemeManager.SpaceXL, ThemeManager.SpaceLG),
-                AutoScroll = true
+                Padding = new Padding(ThemeManager.SpaceXL, Px(ThemeManager.SpaceLG),
+                                      ThemeManager.SpaceXL, Px(ThemeManager.SpaceLG)),
+                AutoScroll = false
             };
 
             // Action bar at bottom
@@ -134,10 +244,12 @@ namespace UzbekOrfoAddIn.UI
 
         private void ApplyRoundedCorners()
         {
-            int radius = ThemeManager.RadiusLG;
+            int radius = Px(ThemeManager.RadiusLG);
             using (var path = CreateRoundedRectPath(new Rectangle(0, 0, Width, Height), radius))
             {
+                var previousRegion = Region;
                 Region = new Region(path);
+                previousRegion?.Dispose();
             }
         }
 
@@ -168,7 +280,7 @@ namespace UzbekOrfoAddIn.UI
 
             // Border
             using (var pen = new Pen(ThemeManager.Border, 1))
-            using (var path = CreateRoundedRectPath(new Rectangle(0, 0, Width - 1, Height - 1), ThemeManager.RadiusLG))
+            using (var path = CreateRoundedRectPath(new Rectangle(0, 0, Width - 1, Height - 1), Px(ThemeManager.RadiusLG)))
             {
                 g.DrawPath(pen, path);
             }
@@ -196,29 +308,31 @@ namespace UzbekOrfoAddIn.UI
             }
 
             // Title icon + text — vertically centered
-            int iconSize = 24;
+            int iconSize = Px(24);
             int iconY = (TITLE_BAR_HEIGHT - iconSize) / 2;
-            int textX = ThemeManager.SpaceLG;
+            int textX = Px(ThemeManager.SpaceLG);
 
             if (TitleIcon != null)
             {
-                g.DrawImage(TitleIcon, new Rectangle(ThemeManager.SpaceLG, iconY, iconSize, iconSize));
-                textX = ThemeManager.SpaceLG + iconSize + ThemeManager.SpaceSM;
+                g.DrawImage(TitleIcon, new Rectangle(Px(ThemeManager.SpaceLG), iconY, iconSize, iconSize));
+                textX = Px(ThemeManager.SpaceLG) + iconSize + Px(ThemeManager.SpaceSM);
             }
 
             // Title text — vertically centered, bigger font
             using (var brush = new SolidBrush(ThemeManager.TextPrimary))
             {
-                var titleFont = ThemeManager.FontLGBold;
-                var titleSize = g.MeasureString(Title, titleFont);
-                float textY = (TITLE_BAR_HEIGHT - titleSize.Height) / 2f;
-                g.DrawString(Title, titleFont, brush, textX, textY);
+                var titleFont = UiFont(ThemeManager.FontLGBold);
+                int buttonsWidth = Px(ShowMinimizeButton ? 88 : 48);
+                using (var format = new StringFormat { LineAlignment = StringAlignment.Center,
+                    Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap })
+                    g.DrawString(Title, titleFont, brush,
+                        new RectangleF(textX, 0, Math.Max(1, Width - textX - buttonsWidth), TITLE_BAR_HEIGHT), format);
             }
 
             // Close button
-            int btnSize = 32;
+            int btnSize = Px(32);
             int btnY = (TITLE_BAR_HEIGHT - btnSize) / 2;
-            _closeBtnRect = new Rectangle(Width - btnSize - 8, btnY, btnSize, btnSize);
+            _closeBtnRect = new Rectangle(Width - btnSize - Px(8), btnY, btnSize, btnSize);
             DrawTitleButton(g, _closeBtnRect, "✕", _closeHovered,
                 _closeHovered ? ThemeManager.ButtonDanger : Color.Transparent,
                 _closeHovered ? Color.White : ThemeManager.TextSecondary);
@@ -226,7 +340,7 @@ namespace UzbekOrfoAddIn.UI
             // Minimize button
             if (ShowMinimizeButton)
             {
-                _minBtnRect = new Rectangle(Width - btnSize * 2 - 12, btnY, btnSize, btnSize);
+                _minBtnRect = new Rectangle(Width - btnSize * 2 - Px(12), btnY, btnSize, btnSize);
                 DrawTitleButton(g, _minBtnRect, "─", _minHovered,
                     _minHovered ? ThemeManager.SurfaceHover : Color.Transparent,
                     ThemeManager.TextSecondary);
@@ -239,7 +353,7 @@ namespace UzbekOrfoAddIn.UI
             if (hovered)
             {
                 using (var brush = new SolidBrush(bg))
-                using (var path = CreateRoundedRectPath(rect, ThemeManager.RadiusSM))
+                using (var path = CreateRoundedRectPath(rect, Px(ThemeManager.RadiusSM)))
                 {
                     g.FillPath(brush, path);
                 }
@@ -252,7 +366,7 @@ namespace UzbekOrfoAddIn.UI
                     Alignment = StringAlignment.Center,
                     LineAlignment = StringAlignment.Center
                 };
-                g.DrawString(symbol, ThemeManager.FontBase, brush, rect, sf);
+                g.DrawString(symbol, UiFont(ThemeManager.FontBase), brush, rect, sf);
             }
         }
 
@@ -311,7 +425,9 @@ namespace UzbekOrfoAddIn.UI
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
+            bool wasDragging = _isDragging;
             _isDragging = false;
+            if (wasDragging) FitToScreen();
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -391,7 +507,9 @@ namespace UzbekOrfoAddIn.UI
                 _isResizing = true;
                 SuspendLayout();
                 // Temporarily remove region for smooth resize
+                var previousRegion = Region;
                 Region = null;
+                previousRegion?.Dispose();
                 base.WndProc(ref m);
                 return;
             }

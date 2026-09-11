@@ -121,7 +121,7 @@ namespace UzbekOrfoAddIn.Forms
 
             if (cachedData != null)
             {
-                // Cached data from a previous open ó populate instantly.
+                // Cached data from a previous open ‚Äî populate instantly.
                 _allWords = cachedData.AllWords;
                 _cyrWords = cachedData.CyrillicWords;
                 _latWords = cachedData.LatinWords;
@@ -161,13 +161,13 @@ namespace UzbekOrfoAddIn.Forms
                 _cyrWords = cachedData.CyrillicWords;
                 _latWords = cachedData.LatinWords;
                 _latToCyrMap = cachedData.LatinToCyrillicMap;
-                // Unhook the background loader ó data is already available
+                // Unhook the background loader ‚Äî data is already available
                 Shown -= _shownHandler;
                 FilterWords();
             }
             else
             {
-                // Data was invalidated ó reload on Shown
+                // Data was invalidated ‚Äî reload on Shown
                 _allWords = new List<string>();
                 _cyrWords = new List<string>();
                 _latWords = new List<string>();
@@ -472,7 +472,7 @@ namespace UzbekOrfoAddIn.Forms
 
             headerPanel.Controls.Add(_descWordLabel);
 
-            // Edit/Add button –≤–Ç‚Äù full-width under header for easy visibility
+            // Edit/Add button –†–Ü–†‚Äö–≤–Ç—ú full-width under header for easy visibility
             _btnEditSave = new ModernButton
             {
                 Text = "\u0422\u0430\u04b3\u0440\u0438\u0440",
@@ -497,7 +497,7 @@ namespace UzbekOrfoAddIn.Forms
             editButtonHost.Controls.Add(_btnEditSave);
             editButtonHost.Resize += (s, e) =>
             {
-                int w = Math.Max(220, editButtonHost.ClientSize.Width);
+                int w = Math.Max(Px(220), editButtonHost.ClientSize.Width);
                 _btnEditSave.Width = w;
                 _btnEditSave.Left = 0;
                 _btnEditSave.Top = Math.Max(0, (editButtonHost.ClientSize.Height - _btnEditSave.Height) / 2);
@@ -623,6 +623,14 @@ namespace UzbekOrfoAddIn.Forms
             try { _descriptionScrollBar.ShowScrollBar(); } catch { }
         }
 
+        protected override void OnLayoutDpiChanged()
+        {
+            base.OnLayoutDpiChanged();
+            if (_wordListRowHeightImageList != null)
+                _wordListRowHeightImageList.ImageSize = new Size(1, Math.Min(256, Px(38)));
+            ResizeWordListColumn();
+        }
+
         private void BuildEditPanel()
         {
             _editPanel = new Panel
@@ -693,7 +701,7 @@ namespace UzbekOrfoAddIn.Forms
             _editExamples = CreateEditTextBox(y, 70, editW);
             y += 78;
 
-            // Save / Cancel buttons –≤–Ç‚Äù bigger
+            // Save / Cancel buttons –†–Ü–†‚Äö–≤–Ç—ú bigger
             _btnCancelEdit = new ModernButton
             {
                 Text = "\u0411\u0435\u043a\u043e\u0440",
@@ -1001,7 +1009,7 @@ namespace UzbekOrfoAddIn.Forms
             }
             else
             {
-                // All fields empty ó remove the entry
+                // All fields empty ‚Äî remove the entry
                 _explanationProvider.Remove(saveWord);
                 ToastNotification.ShowInfo("\u0418\u0437\u043e\u04b3 \u045e\u0447\u0438\u0440\u0438\u043b\u0434\u0438", word);
             }
@@ -1016,7 +1024,7 @@ namespace UzbekOrfoAddIn.Forms
 
         private void RefreshWordList()
         {
-            // Reload asynchronously ó shows busy overlay while fetching and
+            // Reload asynchronously ‚Äî shows busy overlay while fetching and
             // transliterating ~183K words on a background System.Threading.Thread.
             QueueInitialWordLoad();
         }
@@ -1024,8 +1032,8 @@ namespace UzbekOrfoAddIn.Forms
         /// <summary>
         /// Pre-split _allWords into Cyrillic / Latin sublists once so pill
         /// switching is O(1) instead of rescanning the whole list each time.
-        /// Cyrillic words are transliterated to Latin so the "ÀÓÚËÌ" pill always
-        /// shows the full word list in Latin script ó even when the underlying
+        /// Cyrillic words are transliterated to Latin so the "–õ–æ—Ç–∏–Ω" pill always
+        /// shows the full word list in Latin script ‚Äî even when the underlying
         /// user dictionary stores only Cyrillic canonical forms.
         /// </summary>
         private void PreSplitByScript()
@@ -1042,7 +1050,7 @@ namespace UzbekOrfoAddIn.Forms
                 if (IsCyrillicWord(w))
                 {
                     cyrList.Add(w);
-                    // Generate a Latin equivalent for the ÀÓÚËÌ pill
+                    // Generate a Latin equivalent for the –õ–æ—Ç–∏–Ω pill
                     if (translit != null)
                     {
                         string lat = translit.ToLatin(w)?.ToLowerInvariant();
@@ -1055,11 +1063,11 @@ namespace UzbekOrfoAddIn.Forms
                 }
                 else
                 {
-                    // Already Latin ó keep as-is
+                    // Already Latin ‚Äî keep as-is
                     if (!map.ContainsKey(w))
                     {
                         latList.Add(w);
-                        // No reverse mapping needed ó it IS the actual word
+                        // No reverse mapping needed ‚Äî it IS the actual word
                     }
                 }
             }
@@ -1072,7 +1080,7 @@ namespace UzbekOrfoAddIn.Forms
 
         /// <summary>
         /// Returns the canonical Cyrillic form for dictionary operations.
-        /// When the "ÀÓÚËÌ" pill is active, the displayed word is Latin but the
+        /// When the "–õ–æ—Ç–∏–Ω" pill is active, the displayed word is Latin but the
         /// dictionary stores the Cyrillic canonical form. This method resolves the
         /// mapping. For Cyrillic words or words not in the map, returns the input.
         /// </summary>
@@ -1227,7 +1235,7 @@ namespace UzbekOrfoAddIn.Forms
         {
             for (int i = 0; i < _pills.Count; i++)
             {
-                _pills[i].Font = i == _activePillIndex ? _fPill : _fPillR;
+                _pills[i].Font = UiFont(i == _activePillIndex ? _fPill : _fPillR);
                 _pills[i].Invalidate();
             }
         }
@@ -1307,11 +1315,11 @@ namespace UzbekOrfoAddIn.Forms
 
             string query = _searchBox?.Text?.Trim() ?? "";
 
-            // Pill filter ó use pre-split lists (O(1) switch, no per-word scan)
+            // Pill filter ‚Äî use pre-split lists (O(1) switch, no per-word scan)
             List<string> source;
-            if      (_activePillIndex == 1) source = _latWords;   // ÀÓÚËÌ
-            else if (_activePillIndex == 2) source = _cyrWords;   //  ËËÎÎ
-            else                            source = _allWords;   // ?‡ÏÏ‡ÒË
+            if      (_activePillIndex == 1) source = _latWords;   // –õ–æ—Ç–∏–Ω
+            else if (_activePillIndex == 2) source = _cyrWords;   // –ö–∏—Ä–∏–ª–ª
+            else                            source = _allWords;   // ?–∞–º–º–∞—Å–∏
 
             if (string.IsNullOrEmpty(query))
             {
@@ -1471,7 +1479,10 @@ namespace UzbekOrfoAddIn.Forms
             using (var dialog = new SaveFileDialog())
             {
                 dialog.Title = "\u041b\u0443\u0493\u0430\u0442\u043d\u0438 \u044d\u043a\u0441\u043f\u043e\u0440\u0442 \u049b\u0438\u043b\u0438\u0448";
-                dialog.Filter = "JSON \u0444\u0430\u0439\u043b (*.json)|*.json|Excel Ù‡ÈÎ (*.xlsx)|*.xlsx|Excel 97-2003 Ù‡ÈÎ (*.xls)|*.xls";
+                dialog.Filter =
+                    "JSON \u0444\u0430\u0439\u043b ‚Äî \u0442\u045e\u043b\u0438\u049b \u0437\u0430\u0445\u0438\u0440\u0430 (*.json)|*.json|" +
+                    "\u041b\u0443\u0493\u0430\u0442 \u0440\u045e\u0439\u0445\u0430\u0442\u0438 (*.dic)|*.dic|" +
+                    "Excel \u0444\u0430\u0439\u043b (*.xlsx)|*.xlsx|Excel 97-2003 \u0444\u0430\u0439\u043b (*.xls)|*.xls";
                 dialog.DefaultExt = "json";
                 dialog.AddExtension = true;
                 dialog.FileName = $"uzbekorfo_dictionary_{DateTime.Now:yyyyMMdd_HHmmss}";
@@ -1483,10 +1494,11 @@ namespace UzbekOrfoAddIn.Forms
                 {
                     string targetPath = dialog.FileName;
                     string ext = Path.GetExtension(targetPath).ToLowerInvariant();
-                    string detail = "‘‡ÈÎ Ú‡È∏Î‡ÌÏÓ?‰‡";
-                    if (ext == ".json") detail = "JSON Ù‡ÈÎ Ú‡È∏Î‡ÌÏÓ?‰‡";
-                    else if (ext == ".xlsx") detail = "Excel (.xlsx) Ù‡ÈÎ Ú‡È∏Î‡ÌÏÓ?‰‡";
-                    else if (ext == ".xls") detail = "Excel 97-2003 (.xls) Ù‡ÈÎ Ú‡È∏Î‡ÌÏÓ?‰‡";
+                    string detail = "–§–∞–π–ª —Ç–∞–π—ë—Ä–ª–∞–Ω–º–æ?–¥–∞";
+                    if (ext == ".json") detail = "JSON —Ñ–∞–π–ª —Ç–∞–π—ë—Ä–ª–∞–Ω–º–æ?–¥–∞";
+                    else if (ext == ".dic") detail = "DIC \u0441\u045e\u0437\u043b\u0430\u0440 \u0440\u045e\u0439\u0445\u0430\u0442\u0438 \u0442\u0430\u0439\u0451\u0440\u043b\u0430\u043d\u043c\u043e\u049b\u0434\u0430";
+                    else if (ext == ".xlsx") detail = "Excel (.xlsx) —Ñ–∞–π–ª —Ç–∞–π—ë—Ä–ª–∞–Ω–º–æ?–¥–∞";
+                    else if (ext == ".xls") detail = "Excel 97-2003 (.xls) —Ñ–∞–π–ª —Ç–∞–π—ë—Ä–ª–∞–Ω–º–æ?–¥–∞";
 
                     SetBusyState(
                         true,
@@ -1508,7 +1520,7 @@ namespace UzbekOrfoAddIn.Forms
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("ÀÛ?‡Ú ËÏÔÓÚË‰‡ ı‡ÚÓ", ex);
+                    Logger.Error("\u041b\u0443\u0493\u0430\u0442 \u044d\u043a\u0441\u043f\u043e\u0440\u0442\u0438\u0434\u0430 \u0445\u0430\u0442\u043e", ex);
                     string message =
                         ex is FileNotFoundException ||
                         ex is UnauthorizedAccessException ||
@@ -1517,7 +1529,7 @@ namespace UzbekOrfoAddIn.Forms
                         ex is InvalidOperationException ||
                         ex is COMException
                             ? ex.Message
-                            : "»ÏÔÓÚ Ô‡ÈÚË‰‡ ı‡ÚÓ ˛Á ·Â‰Ë.";
+                            : "\u042d\u043a\u0441\u043f\u043e\u0440\u0442 \u043f\u0430\u0439\u0442\u0438\u0434\u0430 \u0445\u0430\u0442\u043e \u044e\u0437 \u0431\u0435\u0440\u0434\u0438.";
                     SafeExecutor.ShowWarning(message);
                 }
                 finally
@@ -1579,7 +1591,7 @@ namespace UzbekOrfoAddIn.Forms
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("ÀÛ?‡Ú ËÏÔÓÚË‰‡ ı‡ÚÓ", ex);
+                    Logger.Error("–õ—É?–∞—Ç –∏–º–ø–æ—Ä—Ç–∏–¥–∞ —Ö–∞—Ç–æ", ex);
                     string message =
                         ex is FileNotFoundException ||
                         ex is UnauthorizedAccessException ||
@@ -1588,7 +1600,7 @@ namespace UzbekOrfoAddIn.Forms
                         ex is InvalidOperationException ||
                         ex is COMException
                             ? ex.Message
-                            : "»ÏÔÓÚ Ô‡ÈÚË‰‡ ı‡ÚÓ ˛Á ·Â‰Ë.";
+                            : "–ò–º–ø–æ—Ä—Ç –ø–∞–π—Ç–∏–¥–∞ —Ö–∞—Ç–æ —é–∑ –±–µ—Ä–¥–∏.";
                     SafeExecutor.ShowWarning(message);
                 }
                 finally

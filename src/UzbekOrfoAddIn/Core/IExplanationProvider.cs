@@ -51,7 +51,8 @@ namespace UzbekOrfoAddIn.Core
         void Save();
 
         /// <summary>
-        /// Total count of available explanation entries.
+        /// Count of locally loaded, editable explanation entries. Built-in
+        /// metadata is loaded on demand and is intentionally excluded.
         /// </summary>
         int EntryCount { get; }
     }

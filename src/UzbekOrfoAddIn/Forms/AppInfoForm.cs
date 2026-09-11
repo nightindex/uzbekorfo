@@ -15,6 +15,7 @@ namespace UzbekOrfoAddIn.Forms
     /// </summary>
     public class AppInfoForm : ModernForm
     {
+        protected override bool ReflowContent => true;
         private const int InfoScrollBarWidth = 8;
 
         private Panel _sidebar;
@@ -46,7 +47,7 @@ namespace UzbekOrfoAddIn.Forms
         {
             Title = "Маълумот";
             Size = new Size(1100, 780);
-            MinimumSize = new Size(960, 680);
+            MinimumSize = new Size(420, 420);
             ShowMinimizeButton = false;
             AllowResize = true;
 
@@ -93,6 +94,33 @@ namespace UzbekOrfoAddIn.Forms
             ContentPanel.Controls.Add(_contentArea);
             ContentPanel.Controls.Add(sidebarSep);
             ContentPanel.Controls.Add(_sidebar);
+
+            var pagePicker = new ComboBox
+            {
+                Dock = DockStyle.Top,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = ThemeManager.Surface,
+                ForeColor = ThemeManager.TextPrimary,
+                Font = ThemeManager.FontBase,
+                AccessibleName = "Маълумот бўлими",
+                Visible = false
+            };
+            pagePicker.Items.AddRange(TabLabels);
+            ContentPanel.Controls.Add(pagePicker);
+            pagePicker.SelectedIndexChanged += (s, e) =>
+            {
+                if (_pages != null && _navButtons != null && pagePicker.SelectedIndex >= 0)
+                    SetActiveTab(pagePicker.SelectedIndex);
+            };
+            ContentPanel.SizeChanged += (s, e) =>
+            {
+                bool compact = ContentPanel.ClientSize.Width < Px(900);
+                _sidebar.Visible = !compact;
+                sidebarSep.Visible = !compact;
+                pagePicker.Visible = compact;
+                if (compact) pagePicker.SelectedIndex = _activeIndex;
+            };
 
             // Create pages
             _pages = new Panel[TabLabels.Length];
@@ -154,10 +182,10 @@ namespace UzbekOrfoAddIn.Forms
                 if (isActive)
                 {
                     using (var brush = new SolidBrush(ThemeManager.Primary))
-                        g.FillRectangle(brush, 0, 4, 3, btn.Height - 8);
+                        g.FillRectangle(brush, 0, Px(4), Px(3), btn.Height - Px(8));
 
                     using (var bgBrush = new SolidBrush(ThemeManager.SurfaceHover))
-                        g.FillRectangle(bgBrush, 3, 0, btn.Width - 3, btn.Height);
+                        g.FillRectangle(bgBrush, Px(3), 0, btn.Width - Px(3), btn.Height);
                 }
 
                 // Icon (Segoe MDL2 Assets for crisp glyph rendering)
@@ -165,7 +193,7 @@ namespace UzbekOrfoAddIn.Forms
                 using (var iconFont = new Font("Segoe MDL2 Assets", 15f, FontStyle.Regular))
                 using (var iconBrush = new SolidBrush(textColor))
                 {
-                    g.DrawString(icon, iconFont, iconBrush, 12, 13);
+                    g.DrawString(icon, UiFont(iconFont), iconBrush, Px(12), Px(13));
                 }
 
                 // Label text
@@ -174,7 +202,7 @@ namespace UzbekOrfoAddIn.Forms
                     isActive ? FontStyle.Bold : FontStyle.Regular))
                 using (var labelBrush = new SolidBrush(labelColor))
                 {
-                    g.DrawString(label, labelFont, labelBrush, 44, 13);
+                    g.DrawString(label, UiFont(labelFont), labelBrush, Px(44), Px(13));
                 }
             };
 
@@ -264,6 +292,12 @@ namespace UzbekOrfoAddIn.Forms
             ModernScrollBar.AttachTo(flow, InfoScrollBarWidth);
 
             page.Controls.Add(flow);
+            flow.SizeChanged += (s, e) =>
+            {
+                int available = Math.Max(1, flow.ClientSize.Width - flow.Padding.Horizontal - Px(24));
+                foreach (Control child in flow.Controls)
+                    if (child is Label) child.MaximumSize = new Size(available, 0);
+            };
             return page;
         }
 
@@ -754,7 +788,7 @@ namespace UzbekOrfoAddIn.Forms
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
-                int r = ThemeManager.RadiusSM;
+                int r = Px(ThemeManager.RadiusSM);
                 var rect = new Rectangle(0, 0, card.Width - 1, card.Height - 1);
                 using (var path = CreateRoundedPath(rect, r))
                 {
@@ -766,19 +800,19 @@ namespace UzbekOrfoAddIn.Forms
 
                 // Accent left bar
                 using (var brush = new SolidBrush(accentColor))
-                    g.FillRectangle(brush, 0, 6, 4, card.Height - 12);
+                    g.FillRectangle(brush, 0, Px(6), Px(4), card.Height - Px(12));
 
                 // Title
                 using (var font = new Font("Segoe UI", 12f, FontStyle.Bold))
                 using (var brush = new SolidBrush(ThemeManager.TextPrimary))
                 using (var fmt = new StringFormat { Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap })
-                    g.DrawString(title, font, brush, new RectangleF(16, 16, card.Width - 190, 24), fmt);
+                    g.DrawString(title, UiFont(font), brush, new RectangleF(Px(16), Px(16), card.Width - Px(190), Px(24)), fmt);
 
                 // Subtitle
                 using (var font = new Font("Segoe UI", 10.5f, FontStyle.Regular))
                 using (var brush = new SolidBrush(accentColor))
                 using (var fmt = new StringFormat { Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap })
-                    g.DrawString(subtitle, font, brush, new RectangleF(16, 50, card.Width - 190, 22), fmt);
+                    g.DrawString(subtitle, UiFont(font), brush, new RectangleF(Px(16), Px(50), card.Width - Px(190), Px(22)), fmt);
             };
 
             // Send / open button
@@ -903,7 +937,7 @@ namespace UzbekOrfoAddIn.Forms
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
-                int r = ThemeManager.RadiusSM;
+                int r = Px(ThemeManager.RadiusSM);
                 var rect = new Rectangle(0, 0, card.Width - 1, card.Height - 1);
                 using (var path = CreateRoundedPath(rect, r))
                 {
@@ -915,19 +949,19 @@ namespace UzbekOrfoAddIn.Forms
 
                 // Accent left bar
                 using (var brush = new SolidBrush(accentColor))
-                    g.FillRectangle(brush, 0, 6, 4, card.Height - 12);
+                    g.FillRectangle(brush, 0, Px(6), Px(4), card.Height - Px(12));
 
                 // Title
                 using (var font = new Font("Segoe UI", 12f, FontStyle.Bold))
                 using (var brush = new SolidBrush(ThemeManager.TextPrimary))
                 using (var fmt = new StringFormat { Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap })
-                    g.DrawString(title, font, brush, new RectangleF(16, 16, card.Width - 190, 24), fmt);
+                    g.DrawString(title, UiFont(font), brush, new RectangleF(Px(16), Px(16), card.Width - Px(190), Px(24)), fmt);
 
                 // Subtitle
                 using (var font = new Font("Segoe UI", 10.5f, FontStyle.Regular))
                 using (var brush = new SolidBrush(accentColor))
                 using (var fmt = new StringFormat { Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap })
-                    g.DrawString(subtitle, font, brush, new RectangleF(16, 50, card.Width - 190, 22), fmt);
+                    g.DrawString(subtitle, UiFont(font), brush, new RectangleF(Px(16), Px(50), card.Width - Px(190), Px(22)), fmt);
             };
 
             // Open button
@@ -993,7 +1027,7 @@ namespace UzbekOrfoAddIn.Forms
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
-                int r = ThemeManager.RadiusSM;
+                int r = Px(ThemeManager.RadiusSM);
                 var rect = new Rectangle(0, 0, panel.Width - 1, panel.Height - 1);
                 using (var path = CreateRoundedPath(rect, r))
                 {
@@ -1005,7 +1039,7 @@ namespace UzbekOrfoAddIn.Forms
 
                 using (var font = new Font("Segoe UI", 12f, FontStyle.Regular))
                 using (var brush = new SolidBrush(ThemeManager.Primary))
-                    g.DrawString(value, font, brush, 12, 9);
+                    g.DrawString(value, UiFont(font), brush, Px(12), Px(9));
             };
 
             var copyBtn = new ModernButton

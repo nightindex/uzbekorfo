@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="18.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="18.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--
     This section defines project-level properties.
@@ -37,8 +37,23 @@
     <PublishDir>publish\</PublishDir>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <!--
+      Offline is the default channel: users install a signed package manually.
+      A release pipeline can opt into web updates by setting both:
+        /p:ClickOnceUpdateChannel=Web
+        /p:ClickOnceUpdateUrl=https://downloads.example.com/uzbekorfo/
+    -->
+    <ClickOnceUpdateChannel Condition="'$(ClickOnceUpdateChannel)' == ''">Offline</ClickOnceUpdateChannel>
+    <ClickOnceUpdateUrl Condition="'$(ClickOnceUpdateUrl)' == ''"></ClickOnceUpdateUrl>
+    <InstallFrom Condition="'$(ClickOnceUpdateChannel)' == 'Web'">Web</InstallFrom>
+    <InstallFrom Condition="'$(ClickOnceUpdateChannel)' != 'Web'">Disk</InstallFrom>
+    <InstallUrl Condition="'$(ClickOnceUpdateChannel)' == 'Web'">$(ClickOnceUpdateUrl)</InstallUrl>
+    <UpdateUrl Condition="'$(ClickOnceUpdateChannel)' == 'Web'">$(ClickOnceUpdateUrl)</UpdateUrl>
+    <UpdateEnabled Condition="'$(ClickOnceUpdateChannel)' == 'Web'">true</UpdateEnabled>
+    <UpdateEnabled Condition="'$(ClickOnceUpdateChannel)' != 'Web'">false</UpdateEnabled>
+    <UpdateMode Condition="'$(ClickOnceUpdateChannel)' == 'Web'">Foreground</UpdateMode>
+    <UpdateInterval Condition="'$(ClickOnceUpdateChannel)' == 'Web'">0</UpdateInterval>
+    <UpdateIntervalUnits Condition="'$(ClickOnceUpdateChannel)' == 'Web'">Days</UpdateIntervalUnits>
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>Ўзбек Орфо</ProductName>
     <PublisherName>UzbekOrfo</PublisherName>
@@ -258,6 +273,9 @@
     <Compile Include="Helpers\DocumentHelper.cs" />
     <Compile Include="Helpers\AnimationHelper.cs" />
     <Compile Include="Helpers\HotkeyManager.cs" />
+    <Compile Include="Helpers\AtomicFile.cs" />
+    <Compile Include="Helpers\ImportTextReader.cs" />
+    <Compile Include="Services\DocumentHighlightService.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\SafeExecutor.cs" />
     <!-- Services -->
@@ -328,12 +346,16 @@
     </Compile>
     <!-- UI -->
     <Compile Include="UI\ThemeManager.cs" />
+    <Compile Include="UI\ScreenGeometry.cs" />
+    <Compile Include="UI\DpiLayout.cs" />
+    <Compile Include="UI\DpiForm.cs" />
     <Compile Include="UI\ModernForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ModernMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\Controls\DpiDataGridView.cs" />
     <Compile Include="UI\Controls\ModernButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -388,8 +410,8 @@
     <EmbeddedResource Include="Data\proper_nouns.json">
       <LogicalName>UzbekOrfoAddIn.Data.proper_nouns.json</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Data\uzbek_dictionary.json">
-      <LogicalName>UzbekOrfoAddIn.Data.uzbek_dictionary.json</LogicalName>
+    <EmbeddedResource Include="Data\uzbek_dictionary_metadata.json">
+      <LogicalName>UzbekOrfoAddIn.Data.uzbek_dictionary_metadata.json</LogicalName>
     </EmbeddedResource>
     <!-- Also copy to output for F5 debugging -->
     <Content Include="Data\uzbek_main.dic">
@@ -410,10 +432,9 @@
     <Content Include="Data\proper_nouns.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\uzbek_dictionary.json">
+    <Content Include="Data\uzbek_dictionary_metadata.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="UzbekOrfoAddIn_TemporaryKey.pfx" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -432,18 +453,29 @@
   <PropertyGroup Condition="'$(ManifestKeyFile)' != '' and Exists('$(ManifestKeyFile)')">
     <SignManifests>true</SignManifests>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>UzbekOrfoAddIn_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>78D369609A707960F3B265446986B8FB72B212A6</ManifestCertificateThumbprint>
-  </PropertyGroup>
+  <Target Name="ValidateReleasePublish" BeforeTargets="Publish" Condition="'$(Configuration)' == 'Release'">
+    <Error Condition="'$(SignManifests)' != 'true'"
+           Text="Release publishing requires a signing certificate. Set ManifestKeyFile and ManifestCertificateThumbprint in the ignored Directory.Build.props file or through secure CI properties." />
+    <Error Condition="'$(ClickOnceUpdateChannel)' != 'Offline' and '$(ClickOnceUpdateChannel)' != 'Web'"
+           Text="ClickOnceUpdateChannel must be Offline or Web." />
+    <Error Condition="'$(ClickOnceUpdateChannel)' == 'Web' and ('$(ClickOnceUpdateUrl)' == '' or !$(ClickOnceUpdateUrl.StartsWith('https://')))"
+           Text="Web ClickOnce updates require an HTTPS ClickOnceUpdateUrl." />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- Include additional build rules for an Office application add-in. -->
   <Import Project="$(VSToolsPath)\OfficeTools\Microsoft.VisualStudio.Tools.Office.targets" Condition="'$(VSToolsPath)' != '' and Exists('$(VSToolsPath)\OfficeTools\Microsoft.VisualStudio.Tools.Office.targets')" />
+  <PropertyGroup>
+    <!-- JSON is the canonical bundled dictionary. The DIC resource is generated from it. -->
+    <DictionaryDataDirectory>$(MSBuildProjectDirectory)\Data</DictionaryDataDirectory>
+    <DictionaryGenerator>$(MSBuildProjectDirectory)\..\..\eng\sync-dictionary-data.ps1</DictionaryGenerator>
+    <PowerShellExe Condition="'$(PowerShellExe)' == ''">powershell.exe</PowerShellExe>
+  </PropertyGroup>
+  <Target Name="GenerateDictionaryArtifacts"
+          BeforeTargets="PrepareForBuild"
+          Inputs="$(DictionaryGenerator);$(DictionaryDataDirectory)\uzbek_dictionary.json"
+          Outputs="$(DictionaryDataDirectory)\uzbek_main.dic;$(DictionaryDataDirectory)\uzbek_dictionary_metadata.json">
+    <Exec Command="&quot;$(PowerShellExe)&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;$(DictionaryGenerator)&quot; -DataDirectory &quot;$(DictionaryDataDirectory)&quot;" />
+  </Target>
   <!-- This section defines VSTO properties that describe the host-changeable project properties. -->
   <ProjectExtensions>
     <VisualStudio>

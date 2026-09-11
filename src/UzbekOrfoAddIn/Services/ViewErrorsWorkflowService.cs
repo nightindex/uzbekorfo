@@ -47,9 +47,13 @@ namespace UzbekOrfoAddIn.Services
                 {
                     try
                     {
-                        if (error?.Range != null)
-                            DocumentHelper.ReplaceRangeText(error.Range, suggestion);
-                        _errorStore.RemoveError(error);
+                        DocumentHelper.BeginUndoRecord("Алмаштириш");
+                        try
+                        {
+                            if (DocumentHelper.TryReplaceError(error, DocumentHelper.ActiveDoc, suggestion))
+                                _errorStore.RemoveError(error);
+                        }
+                        finally { DocumentHelper.EndUndoRecord(); }
                     }
                     catch (Exception ex)
                     {

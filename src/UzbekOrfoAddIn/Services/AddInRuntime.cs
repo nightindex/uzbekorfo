@@ -52,7 +52,10 @@ namespace UzbekOrfoAddIn.Services
 
             runtime.DictionaryService.SetTransliterator(runtime.Transliterator);
 
-            runtime.ExplanationProvider = new ExplanationProvider(runtime.Settings.ExplanationsPath);
+            runtime.ExplanationProvider = new ExplanationProvider(
+                runtime.Settings.ExplanationsPath,
+                runtime.Settings.DictionaryMetadataPath,
+                () => DataSeedService.SeedDictionaryMetadata(runtime.Settings.DictionaryMetadataPath));
             DataSeedService.SeedExplanations(runtime.Settings.ExplanationsPath);
             runtime.ExplanationProvider.Load();
             Logger.Info($"Изоҳлар юкланди: {runtime.ExplanationProvider.EntryCount} та сўз");

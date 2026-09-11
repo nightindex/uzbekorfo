@@ -1,234 +1,162 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace UzbekOrfoAddIn.Helpers
 {
     /// <summary>
-    /// Manages global keyboard shortcuts for the UzbekOrfo add-in using
-    /// RegisterHotKey + a hidden message window.
-    ///
-    /// Hotkeys are processed only when a Word window is in the foreground.
-    /// Actions are executed on the UI thread because the hidden window is
-    /// created on that thread.
-    ///
-    /// Usage:
-    ///   HotkeyManager.Register(new[] { new HotkeyDef(...), ... });
-    ///   HotkeyManager.Unregister();
+    /// Handles shortcuts on Word's UI thread without reserving system-wide keys.
+    /// Register/Unregister must run on that thread. Actions run after the hook returns.
     /// </summary>
     public static class HotkeyManager
     {
-        // =====================================================================
-        //  WIN32
-        // =====================================================================
-
-        private const int WM_HOTKEY = 0x0312;
-        private const uint MOD_ALT = 0x0001;
-        private const uint MOD_CONTROL = 0x0002;
-        private const uint MOD_SHIFT = 0x0004;
-        private const uint MOD_NOREPEAT = 0x4000;
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        // =====================================================================
-        //  PUBLIC TYPES
-        // =====================================================================
-
         [Flags]
-        public enum Modifiers : byte
-        {
-            None  = 0,
-            Ctrl  = 1,
-            Shift = 2,
-            Alt   = 4
-        }
+        public enum Modifiers : byte { None = 0, Ctrl = 1, Shift = 2, Alt = 4 }
 
         public sealed class HotkeyDef
         {
-            public Modifiers Mod    { get; }
-            public Keys      Key    { get; }
-            public Action    Action { get; }
-            public string    Label  { get; }
-
+            public Modifiers Mod { get; }
+            public Keys Key { get; }
+            public Action Action { get; }
+            public string Label { get; }
             public HotkeyDef(Modifiers mod, Keys key, Action action, string label = "")
             {
-                Mod    = mod;
-                Key    = key;
-                Action = action;
-                Label  = label;
+                Mod = mod; Key = key; Action = action; Label = label;
             }
         }
 
-        // =====================================================================
-        //  STATE
-        // =====================================================================
+        private delegate IntPtr KeyboardProc(int code, IntPtr key, IntPtr flags);
+        private static readonly KeyboardProc HookCallback = OnKeyboard;
+        private static readonly Dictionary<Keys, HotkeyDef> Hotkeys = new Dictionary<Keys, HotkeyDef>();
+        private static readonly HashSet<Keys> ConsumedKeys = new HashSet<Keys>();
+        private static IntPtr _hook;
+        private static uint _threadId;
+        private static Control _dispatcher;
+        private static bool _executing;
 
-        private static readonly Dictionary<int, HotkeyDef> _registeredHotkeys = new Dictionary<int, HotkeyDef>();
-        private static MessageWindow _window;
-        private static int _nextId = 1;
-        private static uint _wordProcId;
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr SetWindowsHookEx(int hook, KeyboardProc callback, IntPtr module, uint threadId);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hook);
+        [DllImport("user32.dll")]
+        private static extern IntPtr CallNextHookEx(IntPtr hook, int code, IntPtr key, IntPtr flags);
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentThreadId();
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr window, out uint process);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int GetClassName(IntPtr window, StringBuilder name, int count);
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowEnabled(IntPtr window);
 
-        // =====================================================================
-        //  PUBLIC API
-        // =====================================================================
-
-        /// <summary>
-        /// Registers all hotkeys. Must be called on the UI thread.
-        /// </summary>
         public static void Register(IEnumerable<HotkeyDef> hotkeys)
         {
+            if (hotkeys == null) throw new ArgumentNullException(nameof(hotkeys));
             Unregister();
-
-            _wordProcId = (uint)Process.GetCurrentProcess().Id;
-
             try
             {
-                _window = new MessageWindow();
-                _window.HotkeyPressed += OnHotkeyPressed;
-
-                int registeredCount = 0;
                 foreach (var hotkey in hotkeys)
                 {
-                    int id = _nextId++;
-                    uint modifiers = ToNativeModifiers(hotkey.Mod);
-                    uint key = (uint)hotkey.Key;
-
-                    if (RegisterHotKey(_window.Handle, id, modifiers, key))
-                    {
-                        _registeredHotkeys[id] = hotkey;
-                        registeredCount++;
-                    }
-                    else
-                    {
-                        int err = Marshal.GetLastWin32Error();
-                        Logger.Warn($"HotkeyManager: failed to register [{hotkey.Label}] (Win32 error {err}).");
-                    }
+                    if (hotkey == null || hotkey.Action == null)
+                        throw new ArgumentException("Every shortcut requires an action.", nameof(hotkeys));
+                    Keys chord = hotkey.Key & Keys.KeyCode;
+                    if ((hotkey.Mod & Modifiers.Ctrl) != 0) chord |= Keys.Control;
+                    if ((hotkey.Mod & Modifiers.Shift) != 0) chord |= Keys.Shift;
+                    if ((hotkey.Mod & Modifiers.Alt) != 0) chord |= Keys.Alt;
+                    if (Hotkeys.ContainsKey(chord))
+                        throw new ArgumentException("Duplicate shortcut: " + hotkey.Label, nameof(hotkeys));
+                    Hotkeys.Add(chord, hotkey);
                 }
-
-                Logger.Info($"HotkeyManager: registered {registeredCount} hotkeys.");
+                _threadId = GetCurrentThreadId();
+                _dispatcher = new Control();
+                var handle = _dispatcher.Handle;
+                _hook = SetWindowsHookEx(2 /* WH_KEYBOARD */, HookCallback, IntPtr.Zero, _threadId);
+                if (_hook == IntPtr.Zero) throw new Win32Exception(Marshal.GetLastWin32Error());
+                Logger.Info($"HotkeyManager: enabled {Hotkeys.Count} Word shortcuts.");
             }
             catch (Exception ex)
             {
-                Logger.Error("HotkeyManager.Register failed", ex);
+                Unregister();
+                Logger.Error("Word shortcut initialization failed", ex);
+                MessageBox.Show("?????? ?????????? ???? ???????. ????????? ??????????? ???????????.",
+                    "????? ????", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         public static void Unregister()
         {
-            if (_window != null)
+            if (_threadId != 0 && _threadId != GetCurrentThreadId())
+                throw new InvalidOperationException("Shortcuts must be removed on their UI thread.");
+            if (_hook != IntPtr.Zero)
             {
-                try
-                {
-                    foreach (var id in new List<int>(_registeredHotkeys.Keys))
-                    {
-                        try { UnregisterHotKey(_window.Handle, id); } catch { }
-                    }
-                }
-                catch { }
+                if (!UnhookWindowsHookEx(_hook))
+                    Logger.Warn("Unable to remove keyboard hook: " + Marshal.GetLastWin32Error());
+                _hook = IntPtr.Zero;
             }
-
-            _registeredHotkeys.Clear();
-
-            if (_window != null)
-            {
-                try { _window.HotkeyPressed -= OnHotkeyPressed; } catch { }
-                try { _window.Dispose(); } catch { }
-                _window = null;
-            }
+            Hotkeys.Clear();
+            ConsumedKeys.Clear();
+            _dispatcher?.Dispose();
+            _dispatcher = null;
+            _threadId = 0;
         }
 
-        // =====================================================================
-        //  HOTKEY CALLBACK
-        // =====================================================================
-
-        private static void OnHotkeyPressed(int id)
+        private static IntPtr OnKeyboard(int code, IntPtr keyValue, IntPtr flagsValue)
         {
+            // HC_NOREMOVE and negative codes must pass through unchanged.
+            if (code != 0) return CallNextHookEx(_hook, code, keyValue, flagsValue);
             try
             {
-                if (!IsForegroundWordWindow())
-                    return;
-
-                HotkeyDef hotkey;
-                if (!_registeredHotkeys.TryGetValue(id, out hotkey) || hotkey.Action == null)
-                    return;
-
-                hotkey.Action();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"HotkeyManager: execution failed for id={id}", ex);
-            }
-        }
-
-        // =====================================================================
-        //  HELPERS
-        // =====================================================================
-
-        private static uint ToNativeModifiers(Modifiers modifiers)
-        {
-            uint native = MOD_NOREPEAT;
-
-            if ((modifiers & Modifiers.Alt) != 0)
-                native |= MOD_ALT;
-            if ((modifiers & Modifiers.Ctrl) != 0)
-                native |= MOD_CONTROL;
-            if ((modifiers & Modifiers.Shift) != 0)
-                native |= MOD_SHIFT;
-
-            return native;
-        }
-
-        private sealed class MessageWindow : NativeWindow, IDisposable
-        {
-            public event Action<int> HotkeyPressed;
-
-            public MessageWindow()
-            {
-                CreateHandle(new CreateParams());
-            }
-
-            protected override void WndProc(ref Message m)
-            {
-                if (m.Msg == WM_HOTKEY)
+                var key = (Keys)keyValue.ToInt32();
+                long flags = flagsValue.ToInt64();
+                bool released = (flags & 0x80000000L) != 0;
+                if (released)
                 {
-                    var handler = HotkeyPressed;
-                    if (handler != null)
-                        handler(m.WParam.ToInt32());
+                    if (ConsumedKeys.Remove(key)) return new IntPtr(1);
                 }
-
-                base.WndProc(ref m);
+                else
+                {
+                    bool repeat = (flags & 0x40000000L) != 0;
+                    if (repeat && ConsumedKeys.Contains(key)) return new IntPtr(1);
+                    // Focus may have moved to another process before the previous
+                    // key-up reached this thread. A new press starts a fresh cycle.
+                    if (!repeat) ConsumedKeys.Remove(key);
+                    if (!repeat && !_executing && IsForegroundWordWindow() &&
+                        Hotkeys.TryGetValue(key | Control.ModifierKeys, out var hotkey))
+                    {
+                        IntPtr target = GetForegroundWindow();
+                        var dispatcher = _dispatcher;
+                        dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            if (dispatcher != _dispatcher || _executing ||
+                                GetForegroundWindow() != target || !IsForegroundWordWindow()) return;
+                            _executing = true;
+                            try { hotkey.Action(); }
+                            catch (Exception ex) { Logger.Error("Shortcut failed: " + hotkey.Label, ex); }
+                            finally { _executing = false; }
+                        }));
+                        ConsumedKeys.Add(key);
+                        return new IntPtr(1);
+                    }
+                }
             }
-
-            public void Dispose()
-            {
-                if (Handle != IntPtr.Zero)
-                    DestroyHandle();
-            }
+            catch (Exception ex) { Logger.Error("Keyboard callback failed", ex); }
+            return CallNextHookEx(_hook, code, keyValue, flagsValue);
         }
 
         private static bool IsForegroundWordWindow()
         {
-            try
-            {
-                IntPtr hwnd = GetForegroundWindow();
-                if (hwnd == IntPtr.Zero) return false;
-                uint pid;
-                GetWindowThreadProcessId(hwnd, out pid);
-                return pid == _wordProcId;
-            }
-            catch { return true; }
+            IntPtr window = GetForegroundWindow();
+            if (window == IntPtr.Zero || !IsWindowEnabled(window) ||
+                GetWindowThreadProcessId(window, out _) != _threadId) return false;
+            var name = new StringBuilder(64);
+            GetClassName(window, name, name.Capacity);
+            // Excludes Word dialogs and the add-in's modeless forms.
+            return string.Equals(name.ToString(), "OpusApp", StringComparison.Ordinal);
         }
     }
 }

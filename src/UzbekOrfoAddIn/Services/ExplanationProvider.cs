@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
 using UzbekOrfoAddIn.Core;
 using UzbekOrfoAddIn.Helpers;
 using UzbekOrfoAddIn.Models;
@@ -18,16 +19,42 @@ namespace UzbekOrfoAddIn.Services
     public class ExplanationProvider : IExplanationProvider
     {
         private readonly string _dataPath;
+        private readonly string _bundledDictionaryPath;
+        private readonly Action _ensureBundledDictionary;
+        private readonly object _bundledLoadLock = new object();
         private Dictionary<string, ExplanationEntry> _entries;
+        private Dictionary<string, ExplanationEntry> _bundledEntries;
+        private volatile bool _bundledEntriesLoaded;
+
+        private sealed class BundledDictionaryPayload
+        {
+            public List<ExplanationEntry> Entries { get; set; }
+        }
 
         // =====================================================================
         //  CONSTRUCTOR
         // =====================================================================
 
         public ExplanationProvider(string dataPath)
+            : this(dataPath, null, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates an explanation provider with an optional structured
+        /// dictionary metadata fallback. The fallback is seeded and parsed only after
+        /// a local explanation lookup misses.
+        /// </summary>
+        public ExplanationProvider(
+            string dataPath,
+            string bundledDictionaryPath,
+            Action ensureBundledDictionary)
         {
             _dataPath = dataPath;
+            _bundledDictionaryPath = bundledDictionaryPath;
+            _ensureBundledDictionary = ensureBundledDictionary;
             _entries = new Dictionary<string, ExplanationEntry>(StringComparer.OrdinalIgnoreCase);
+            _bundledEntries = new Dictionary<string, ExplanationEntry>(StringComparer.OrdinalIgnoreCase);
         }
 
         // =====================================================================
@@ -71,26 +98,23 @@ namespace UzbekOrfoAddIn.Services
 
             string normalized = TextHelper.NormalizeWord(word);
 
-            // 1. Exact match
-            if (_entries.TryGetValue(normalized, out var entry))
-                return entry;
+            // 1. Local explanations override the bundled dataset.
+            ExplanationEntry entry = FindExactOrStem(_entries, normalized);
+            if (entry != null) return entry;
 
-            // 2. Try without common Uzbek suffixes (basic stemming)
-            string stemmed = RemoveCommonSuffixes(normalized);
-            if (!string.IsNullOrEmpty(stemmed) && stemmed != normalized)
-            {
-                if (_entries.TryGetValue(stemmed, out entry))
-                    return entry;
-            }
-
-            // 3. Try fuzzy: find closest word within edit distance 1
+            // 2. Keep the existing fuzzy behavior for the small editable
+            // local store. A fuzzy scan of the full bundled dataset would be
+            // unnecessarily expensive on the UI thread.
             foreach (var kvp in _entries)
             {
                 if (TextHelper.EditDistance(normalized, kvp.Key) <= 1)
                     return kvp.Value;
             }
 
-            return null;
+            // 3. The generated metadata index contains built-in metadata. It is
+            // intentionally loaded only after the local store cannot answer.
+            EnsureBundledEntriesLoaded();
+            return FindExactOrStem(_bundledEntries, normalized);
         }
 
         /// <summary>
@@ -240,6 +264,97 @@ namespace UzbekOrfoAddIn.Services
             {
                 Logger.Error("РР·РѕТіР»Р°СЂРЅРё СЃР°Т›Р»Р°С€РґР° С…Р°С‚РѕР»РёРє", ex);
             }
+        }
+
+        private static ExplanationEntry FindExactOrStem(
+            Dictionary<string, ExplanationEntry> entries,
+            string normalizedWord)
+        {
+            if (entries == null || string.IsNullOrWhiteSpace(normalizedWord)) return null;
+
+            ExplanationEntry entry;
+            if (entries.TryGetValue(normalizedWord, out entry))
+                return entry;
+
+            string stemmed = RemoveCommonSuffixes(normalizedWord);
+            if (!string.IsNullOrEmpty(stemmed) && stemmed != normalizedWord &&
+                entries.TryGetValue(stemmed, out entry))
+            {
+                return entry;
+            }
+
+            return null;
+        }
+
+        private void EnsureBundledEntriesLoaded()
+        {
+            if (_bundledEntriesLoaded) return;
+
+            lock (_bundledLoadLock)
+            {
+                if (_bundledEntriesLoaded) return;
+
+                try
+                {
+                    _ensureBundledDictionary?.Invoke();
+                    if (string.IsNullOrWhiteSpace(_bundledDictionaryPath) ||
+                        !File.Exists(_bundledDictionaryPath))
+                    {
+                        return;
+                    }
+
+                    var serializer = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+                    var payload = serializer.Deserialize<BundledDictionaryPayload>(
+                        File.ReadAllText(_bundledDictionaryPath, Encoding.UTF8));
+
+                    var entries = new Dictionary<string, ExplanationEntry>(StringComparer.OrdinalIgnoreCase);
+                    if (payload?.Entries != null)
+                    {
+                        foreach (var source in payload.Entries)
+                        {
+                            if (source == null || string.IsNullOrWhiteSpace(source.Word) ||
+                                !HasExplanationContent(source))
+                            {
+                                continue;
+                            }
+
+                            string key = TextHelper.NormalizeWord(source.Word);
+                            if (string.IsNullOrWhiteSpace(key)) continue;
+
+                            entries[key] = new ExplanationEntry
+                            {
+                                Word = source.Word,
+                                Definition = source.Definition,
+                                SpellingRule = source.SpellingRule,
+                                GrammarNote = source.GrammarNote,
+                                Examples = source.Examples != null ? source.Examples.ToArray() : null
+                            };
+                        }
+                    }
+
+                    _bundledEntries = entries;
+                    Logger.Info($"Bundled dictionary metadata loaded lazily: {_bundledEntries.Count} entries");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Failed to load bundled dictionary metadata", ex);
+                }
+                finally
+                {
+                    // A failed optional fallback must not be retried for every
+                    // lookup; the local explanation store remains available.
+                    _bundledEntriesLoaded = true;
+                }
+            }
+        }
+
+        private static bool HasExplanationContent(ExplanationEntry entry)
+        {
+            return !string.IsNullOrWhiteSpace(entry.Definition) ||
+                   !string.IsNullOrWhiteSpace(entry.SpellingRule) ||
+                   !string.IsNullOrWhiteSpace(entry.GrammarNote) ||
+                   (entry.Examples != null && entry.Examples.Any(example =>
+                       !string.IsNullOrWhiteSpace(example)));
         }
 
         private static string EscapeJson(string s)

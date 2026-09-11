@@ -118,6 +118,7 @@ namespace UzbekOrfoAddIn.Services
             {
                 ReleaseComRanges(_errors);
                 _errors.Clear();
+                HasBeenChecked = false;
                 InvalidateSnapshot();
             }
             ErrorsChanged?.Invoke();
@@ -135,6 +136,7 @@ namespace UzbekOrfoAddIn.Services
         private static void ReleaseComRange(ErrorEntry err)
         {
             if (err?.Range == null) return;
+            DocumentHighlightService.ClearRange(err.Range);
             try { Marshal.ReleaseComObject(err.Range); } catch { }
             err.Range = null;
         }

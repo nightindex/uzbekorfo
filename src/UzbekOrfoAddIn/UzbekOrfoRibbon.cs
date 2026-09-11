@@ -409,7 +409,11 @@ namespace UzbekOrfoAddIn
 
                 int replaced = workflow.ApplyAll(doc, analysis.FixableErrors);
 
-                ToastNotification.Success("Тузатилди", $"{replaced} та сўз алмаштирилди.");
+                int skipped = analysis.FixableCount - replaced;
+                if (skipped > 0)
+                    SafeExecutor.ShowWarning($"{replaced} та сўз алмаштирилди. {skipped} та хато ўтказилди: ҳужжат ёки матн ўзгарган. Қайта текширинг.");
+                else
+                    ToastNotification.Success("Тузатилди", $"{replaced} та сўз алмаштирилди.");
             }, "Барчасини алмаштириш");
         }
 

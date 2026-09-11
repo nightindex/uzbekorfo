@@ -19,7 +19,7 @@ namespace UzbekOrfoAddIn.UI
     {
         public enum MessageType { Info, Success, Warning, Error }
 
-        private const int ACCENT_STRIP_HEIGHT = 4;
+        private int ACCENT_STRIP_HEIGHT => Px(4);
         private const int ICON_CIRCLE_SIZE = 56;
 
         private DialogResult _result = DialogResult.Cancel;
@@ -78,15 +78,15 @@ namespace UzbekOrfoAddIn.UI
                 var g = pe.Graphics;
                 g.SmoothingMode = SmoothingMode.AntiAlias;
 
-                int cx = pad;
-                int cy = (ContentPanel.Height - ICON_CIRCLE_SIZE) / 2;
+                int cx = Px(pad);
+                int cy = (ContentPanel.Height - Px(ICON_CIRCLE_SIZE)) / 2;
 
                 // Circle background (light tint of the icon color)
                 var iconColor = GetIconColor(type);
                 var circleColor = Color.FromArgb(35, iconColor);
                 using (var brush = new SolidBrush(circleColor))
                 {
-                    g.FillEllipse(brush, cx, cy, ICON_CIRCLE_SIZE, ICON_CIRCLE_SIZE);
+                    g.FillEllipse(brush, cx, cy, Px(ICON_CIRCLE_SIZE), Px(ICON_CIRCLE_SIZE));
                 }
 
                 // Icon symbol centered in circle
@@ -99,8 +99,8 @@ namespace UzbekOrfoAddIn.UI
                         Alignment = StringAlignment.Center,
                         LineAlignment = StringAlignment.Center
                     };
-                    g.DrawString(iconText, iconFont, brush,
-                        new RectangleF(cx, cy, ICON_CIRCLE_SIZE, ICON_CIRCLE_SIZE), sf);
+                    g.DrawString(iconText, UiFont(iconFont), brush,
+                        new RectangleF(cx, cy, Px(ICON_CIRCLE_SIZE), Px(ICON_CIRCLE_SIZE)), sf);
                 }
             };
 
@@ -120,12 +120,15 @@ namespace UzbekOrfoAddIn.UI
             // Position label to the right of icon, vertically centered on the icon
             ContentPanel.Layout += (s, e) =>
             {
-                int leftEdge = pad + iconAreaWidth;
-                int rightEdge = ContentPanel.Width - pad;
-                // Center text vertically on the icon circle
-                int iconCy = (ContentPanel.Height - ICON_CIRCLE_SIZE) / 2;
-                msgLabel.SetBounds(leftEdge, iconCy,
-                    rightEdge - leftEdge, ICON_CIRCLE_SIZE);
+                int leftEdge = Px(pad + iconAreaWidth);
+                int rightEdge = ContentPanel.ClientSize.Width - Px(pad);
+                int textWidth = Math.Max(1, rightEdge - leftEdge);
+                int textHeight = Math.Max(Px(ICON_CIRCLE_SIZE), msgLabel.GetPreferredSize(new Size(textWidth, 0)).Height);
+                msgLabel.SetBounds(leftEdge, Px(pad), textWidth, textHeight);
+                int neededHeight = textHeight + Px(pad) * 2;
+                bool overflow = neededHeight > ContentPanel.ClientSize.Height;
+                ContentPanel.AutoScroll = overflow;
+                ContentPanel.AutoScrollMinSize = overflow ? new Size(0, neededHeight) : Size.Empty;
             };
 
             // === Action bar buttons ===
@@ -174,10 +177,10 @@ namespace UzbekOrfoAddIn.UI
 
                 ActionBar.Resize += (s, e) =>
                 {
-                    int y = (ActionBar.Height - btnHeight) / 2;
-                    int right = ActionBar.Width - pad;
+                    int y = (ActionBar.Height - btnOk.Height) / 2;
+                    int right = ActionBar.Width - Px(pad);
                     btnOk.Location = new Point(right - btnOk.Width, y);
-                    btnCancel.Location = new Point(btnOk.Left - 12 - btnCancel.Width, y);
+                    btnCancel.Location = new Point(btnOk.Left - Px(12) - btnCancel.Width, y);
                 };
                 ActionBar.Controls.Add(btnOk);
                 ActionBar.Controls.Add(btnCancel);
@@ -186,8 +189,8 @@ namespace UzbekOrfoAddIn.UI
             {
                 ActionBar.Resize += (s, e) =>
                 {
-                    int y = (ActionBar.Height - btnHeight) / 2;
-                    int right = ActionBar.Width - pad;
+                    int y = (ActionBar.Height - btnOk.Height) / 2;
+                    int right = ActionBar.Width - Px(pad);
                     btnOk.Location = new Point(right - btnOk.Width, y);
                 };
                 ActionBar.Controls.Add(btnOk);
@@ -342,11 +345,11 @@ namespace UzbekOrfoAddIn.UI
 
                 dlg.ActionBar.Resize += (s, e) =>
                 {
-                    int y = (dlg.ActionBar.Height - btnHeight) / 2;
-                    int right = dlg.ActionBar.Width - pad;
+                    int y = (dlg.ActionBar.Height - btnCancel.Height) / 2;
+                    int right = dlg.ActionBar.Width - dlg.Px(pad);
                     btnCancel.Location = new Point(right - btnCancel.Width, y);
-                    btnNo.Location = new Point(btnCancel.Left - 12 - btnNo.Width, y);
-                    btnYes.Location = new Point(btnNo.Left - 12 - btnYes.Width, y);
+                    btnNo.Location = new Point(btnCancel.Left - dlg.Px(12) - btnNo.Width, y);
+                    btnYes.Location = new Point(btnNo.Left - dlg.Px(12) - btnYes.Width, y);
                 };
 
                 // Ensure dialog is wide enough

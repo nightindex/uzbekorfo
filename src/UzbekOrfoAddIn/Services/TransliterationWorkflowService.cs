@@ -50,7 +50,7 @@ namespace UzbekOrfoAddIn.Services
             }
             else
             {
-                if (!ModernMessageBox.Confirm("Бутун документни Лотиндан Кириллга алмаштирасизми?",
+                if (!ModernMessageBox.Confirm($"{DescribeScope(range)} Лотиндан Кириллга алмаштирасизми?",
                         "Лотиндан Кириллга"))
                 {
                     return TransliterationWorkflowResult.Cancelled();
@@ -61,7 +61,7 @@ namespace UzbekOrfoAddIn.Services
             DocumentHelper.BeginUndoRecord("Лотиндан Кириллга");
             try
             {
-                DocumentHelper.ReplaceRangeText(range, converted);
+                DocumentHelper.ReplaceRangeText(range, converted, preserveTrailingWhitespace: false);
             }
             finally
             {
@@ -99,7 +99,7 @@ namespace UzbekOrfoAddIn.Services
             }
             else
             {
-                if (!ModernMessageBox.Confirm("Бутун документни Кириллдан Лотинга алмаштирасизми?",
+                if (!ModernMessageBox.Confirm($"{DescribeScope(range)} Кириллдан Лотинга алмаштирасизми?",
                         "Кириллдан Лотинга"))
                 {
                     return TransliterationWorkflowResult.Cancelled();
@@ -111,7 +111,7 @@ namespace UzbekOrfoAddIn.Services
             DocumentHelper.BeginUndoRecord("Кириллдан Лотинга");
             try
             {
-                DocumentHelper.ReplaceRangeText(range, converted);
+                DocumentHelper.ReplaceRangeText(range, converted, preserveTrailingWhitespace: false);
             }
             finally
             {
@@ -180,7 +180,7 @@ namespace UzbekOrfoAddIn.Services
             DocumentHelper.BeginUndoRecord("Ёзувни алмаштириш");
             try
             {
-                DocumentHelper.ReplaceRangeText(range, converted);
+                DocumentHelper.ReplaceRangeText(range, converted, preserveTrailingWhitespace: false);
             }
             finally
             {
@@ -188,6 +188,11 @@ namespace UzbekOrfoAddIn.Services
             }
 
             return TransliterationWorkflowResult.Completed(direction, CountWords(converted));
+        }
+
+        private static string DescribeScope(Microsoft.Office.Interop.Word.Range range)
+        {
+            return range.IsEqual(range.Document.Content) ? "Бутун ҳужжатни" : "Танланган матнни";
         }
 
         private static int CountWords(string text)

@@ -11,6 +11,9 @@ namespace UzbekOrfoAddIn.UI.Controls
     /// </summary>
     public class ModernButton : Control
     {
+        private int Px(int value) => DpiLayout.Pixels(this, value);
+        private Font UiFont(Font value) => DpiLayout.Font(this, value);
+
         // --- Enums ---
         public enum ButtonStyle { Primary, Secondary, Danger, Ghost }
 
@@ -48,6 +51,8 @@ namespace UzbekOrfoAddIn.UI.Controls
             Size = new Size(140, 36);
             Font = ThemeManager.FontBase;
             Cursor = Cursors.Hand;
+            TabStop = true;
+            AccessibleRole = AccessibleRole.PushButton;
         }
 
         // =====================================================================
@@ -120,7 +125,7 @@ namespace UzbekOrfoAddIn.UI.Controls
             var rect = new Rectangle(1, 1, Width - 3, Height - 3);
 
             // Background
-            using (var path = CreateRoundedRect(rect, _cornerRadius))
+            using (var path = CreateRoundedRect(rect, Px(_cornerRadius)))
             using (var brush = new SolidBrush(GetBackColor()))
             {
                 g.FillPath(brush, path);
@@ -130,7 +135,7 @@ namespace UzbekOrfoAddIn.UI.Controls
             var borderColor = GetBorderColor();
             if (borderColor != Color.Transparent)
             {
-                using (var path = CreateRoundedRect(rect, _cornerRadius))
+                using (var path = CreateRoundedRect(rect, Px(_cornerRadius)))
                 using (var pen = new Pen(borderColor, 1))
                 {
                     g.DrawPath(pen, path);
@@ -148,14 +153,14 @@ namespace UzbekOrfoAddIn.UI.Controls
 
             if (Icon != null)
             {
-                int iconSize = 16;
-                int totalWidth = iconSize + 6 + (int)g.MeasureString(Text, Font).Width;
+                int iconSize = Px(16);
+                int totalWidth = iconSize + Px(6) + (int)g.MeasureString(Text, Font).Width;
                 int startX = (Width - totalWidth) / 2;
 
                 var iconRect = new Rectangle(startX, (Height - iconSize) / 2, iconSize, iconSize);
                 g.DrawImage(Icon, iconRect);
 
-                var textRect = new Rectangle(startX + iconSize + 6, 0, Width - startX - iconSize - 6, Height);
+                var textRect = new Rectangle(startX + iconSize + Px(6), 0, Width - startX - iconSize - Px(6), Height);
                 sf.Alignment = StringAlignment.Near;
                 using (var brush = new SolidBrush(foreColor))
                 {
@@ -169,7 +174,13 @@ namespace UzbekOrfoAddIn.UI.Controls
                     g.DrawString(Text, Font, brush, rect, sf);
                 }
             }
+            sf.Dispose();
+            if (Focused && ShowFocusCues)
+                ControlPaint.DrawFocusRectangle(g, Rectangle.Inflate(rect, -3, -3), foreColor, GetBackColor());
         }
+
+        protected override void OnGotFocus(EventArgs e) { base.OnGotFocus(e); Invalidate(); }
+        protected override void OnLostFocus(EventArgs e) { base.OnLostFocus(e); Invalidate(); }
 
         // =====================================================================
         //  MOUSE EVENTS
@@ -194,6 +205,7 @@ namespace UzbekOrfoAddIn.UI.Controls
         {
             if (e.Button == MouseButtons.Left)
             {
+                Focus();
                 _pressed = true;
                 Invalidate();
             }
@@ -235,7 +247,7 @@ namespace UzbekOrfoAddIn.UI.Controls
         private static GraphicsPath CreateRoundedRect(Rectangle rect, int radius)
         {
             var path = new GraphicsPath();
-            int d = radius * 2;
+            int d = Math.Max(1, Math.Min(radius * 2, Math.Min(rect.Width, rect.Height)));
             path.AddArc(rect.X, rect.Y, d, d, 180, 90);
             path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
             path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);

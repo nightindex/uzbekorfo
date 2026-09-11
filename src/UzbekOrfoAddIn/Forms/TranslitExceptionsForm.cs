@@ -306,13 +306,13 @@ namespace UzbekOrfoAddIn.Forms
             addCard.Layout += (s, eL) =>
             {
                 int cW = addCard.ClientSize.Width;
-                int addBtnW = 120;
+                int addBtnW = Px(120);
                 int gap = 10;
-                int descRight = cW - addBtnW - gap - 12; // 12 right padding
-                int descLeft = descX;
+                int descRight = cW - addBtnW - Px(gap) - Px(12); // 12 right padding
+                int descLeft = Px(descX);
                 if (descRight > descLeft)
                     _txtDescription.Width = descRight - descLeft;
-                btnAdd.Location = new Point(cW - addBtnW - 12, inputY);
+                btnAdd.Location = new Point(cW - addBtnW - Px(12), Px(inputY));
             };
 
             addSection.Controls.Add(addCard);
@@ -393,7 +393,7 @@ namespace UzbekOrfoAddIn.Forms
         {
             for (int i = 0; i < _pills.Count; i++)
             {
-                _pills[i].Font = i == _activePillIndex ? _fPill : _fPillR;
+                _pills[i].Font = UiFont(i == _activePillIndex ? _fPill : _fPillR);
                 _pills[i].Invalidate();
             }
         }
@@ -441,7 +441,7 @@ namespace UzbekOrfoAddIn.Forms
 
         private void BuildGrid()
         {
-            _grid = new DataGridView
+            _grid = new DpiDataGridView
             {
                 Dock = DockStyle.Fill,
                 AllowUserToAddRows = false,
@@ -680,23 +680,23 @@ namespace UzbekOrfoAddIn.Forms
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            var chipSize = TextRenderer.MeasureText(text, _fSM);
-            int chipW = chipSize.Width + 16;
-            int chipH = 22;
-            int chipX = e.CellBounds.X + 8;
+            var chipSize = TextRenderer.MeasureText(text, UiFont(_fSM));
+            int chipW = chipSize.Width + Px(16);
+            int chipH = Px(22);
+            int chipX = e.CellBounds.X + Px(8);
             int chipY = e.CellBounds.Y + (e.CellBounds.Height - chipH) / 2;
 
             var chipRect = new Rectangle(chipX, chipY, chipW, chipH);
 
             // Draw chip background (subtle tint)
             Color chipBg = Color.FromArgb(ThemeManager.IsDarkTheme ? 35 : 20, chipColor);
-            using (var path = RoundedRect(chipRect, 11))
+            using (var path = RoundedRect(chipRect, Px(11)))
             using (var br = new SolidBrush(chipBg))
                 g.FillPath(br, path);
 
             // Draw chip text
             Color chipFg = dimmed ? ThemeManager.TextDisabled : chipColor;
-            TextRenderer.DrawText(g, text, _fSM, chipRect, chipFg,
+            TextRenderer.DrawText(g, text, UiFont(_fSM), chipRect, chipFg,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
         }
 
@@ -765,7 +765,7 @@ namespace UzbekOrfoAddIn.Forms
                 for (int i = 0; i < list.Count; i++)
                 {
                     var exc = list[i];
-                    var row = new DataGridViewRow { Height = 44 };
+                    var row = new DataGridViewRow { Height = Px(44) };
                     row.CreateCells(_grid,
                         exc.Enabled,
                         exc.Original ?? "",

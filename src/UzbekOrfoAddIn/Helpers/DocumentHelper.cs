@@ -94,12 +94,7 @@ namespace UzbekOrfoAddIn.Helpers
         /// </summary>
         public static string GetSelectedOrAllText()
         {
-            var selected = GetSelectedText();
-            if (!string.IsNullOrEmpty(selected) && selected.Length > 1)
-                return selected;
-
-            var doc = ActiveDoc;
-            return doc?.Content?.Text ?? string.Empty;
+            return GetTargetRange()?.Text ?? string.Empty;
         }
 
         /// <summary>
@@ -108,32 +103,49 @@ namespace UzbekOrfoAddIn.Helpers
         /// </summary>
         public static Word.Range GetTargetRange()
         {
-            var sel = Selection;
-            if (sel != null && sel.Type == Word.WdSelectionType.wdSelectionNormal
-                && sel.Text != null && sel.Text.Trim().Length > 1)
+            return GetTargetRange(Selection, ActiveDoc);
+        }
+
+        /// <summary>Explicit host boundary for callers holding a particular Word window.</summary>
+        public static Word.Range GetTargetRange(Word.Selection sel, Word.Document doc)
+        {
+            if (sel != null && sel.Type != Word.WdSelectionType.wdSelectionIP
+                && sel.Type != Word.WdSelectionType.wdNoSelection
+                && sel.Range.Start != sel.Range.End)
             {
-                return sel.Range;
+                return sel.Range.Duplicate;
             }
 
-            var doc = ActiveDoc;
             return doc?.Content;
         }
 
         /// <summary>
-        /// Replaces the text in a range while preserving basic formatting.
-        /// Trims any trailing whitespace from the range first so the space between
-        /// words is not eaten.
+        /// Replaces text after restoring any temporary add-in marks.
+        /// Word replacements exclude trailing whitespace by default. Whole-range
+        /// transformations pass false because their output already contains that whitespace.
         /// </summary>
-        public static void ReplaceRangeText(Word.Range range, string newText)
+        public static void ReplaceRangeText(Word.Range range, string newText, bool preserveTrailingWhitespace = true)
         {
             if (range == null) return;
+            Services.DocumentHighlightService.ClearRange(range);
+
+            // Word cannot remove the main story's final paragraph mark. Assigning
+            // output that includes it inserts another paragraph before that mark.
+            // Preserve the existing final mark and replace only the preceding text.
+            if (!preserveTrailingWhitespace && newText != null && newText.EndsWith("\r", StringComparison.Ordinal) &&
+                range.StoryType == Word.WdStoryType.wdMainTextStory && range.End == range.Document.Content.End &&
+                (range.Text ?? string.Empty).EndsWith("\r", StringComparison.Ordinal))
+            {
+                range.End--;
+                newText = newText.Substring(0, newText.Length - 1);
+            }
 
             // Word's Words collection includes trailing space in the range.
             // Shrink the range to exclude trailing whitespace before replacing.
             try
             {
                 string current = range.Text;
-                if (current != null && current.Length > 0 && char.IsWhiteSpace(current[current.Length - 1]))
+                if (preserveTrailingWhitespace && current != null && current.Length > 0 && char.IsWhiteSpace(current[current.Length - 1]))
                 {
                     // Move End back to exclude trailing whitespace
                     int trimmedLen = current.TrimEnd().Length;
@@ -143,6 +155,49 @@ namespace UzbekOrfoAddIn.Helpers
             catch { }
 
             range.Text = newText;
+        }
+
+        /// <summary>Compare live COM identity, never file names (which can change on Save As).</summary>
+        public static bool IsSameDocument(Word.Document left, Word.Document right)
+        {
+            if (left == null || right == null) return false;
+            if (ReferenceEquals(left, right)) return true;
+            if (!System.Runtime.InteropServices.Marshal.IsComObject(left) ||
+                !System.Runtime.InteropServices.Marshal.IsComObject(right)) return false;
+            IntPtr leftId = IntPtr.Zero, rightId = IntPtr.Zero;
+            try
+            {
+                leftId = System.Runtime.InteropServices.Marshal.GetIUnknownForObject(left);
+                rightId = System.Runtime.InteropServices.Marshal.GetIUnknownForObject(right);
+                return leftId == rightId;
+            }
+            catch { return false; }
+            finally
+            {
+                if (leftId != IntPtr.Zero) System.Runtime.InteropServices.Marshal.Release(leftId);
+                if (rightId != IntPtr.Zero) System.Runtime.InteropServices.Marshal.Release(rightId);
+            }
+        }
+
+        public static bool TryReplaceError(Models.ErrorEntry error, Word.Document document, string replacement)
+        {
+            if (error == null || error.IsResolved || error.Range == null || replacement == null)
+                return false;
+            try
+            {
+                var range = error.Range;
+                if (!IsSameDocument(range.Document, document) ||
+                    !string.Equals(range.Text, error.OriginalText ?? error.Word, StringComparison.Ordinal))
+                    return false;
+                ReplaceRangeText(range, replacement, preserveTrailingWhitespace: false);
+                error.IsResolved = true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn("Correction skipped: " + ex.Message);
+                return false;
+            }
         }
 
         /// <summary>

@@ -364,6 +364,7 @@ namespace UzbekOrfoAddIn.Forms
 
             toggle = new ModernToggle
             {
+                AccessibleName = label,
                 IsOn = defaultOn,
                 ShowLabel = false,
                 Size = new Size(44, 22),

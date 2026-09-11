@@ -22,7 +22,7 @@ namespace UzbekOrfoAddIn.Helpers
 
         // Characters that are considered word characters in Uzbek
         private static readonly Regex WordPattern = new Regex(
-            @"[\p{L}ʻʼ'']+", RegexOptions.Compiled);
+            @"[\p{L}'\u02BB\u02BC\u2018\u2019]+", RegexOptions.Compiled);
 
         // Common Uzbek confusable pairs (for phonetic similarity)
         private static readonly Dictionary<char, char> PhoneticMap = new Dictionary<char, char>
@@ -41,13 +41,14 @@ namespace UzbekOrfoAddIn.Helpers
         // =====================================================================
 
         /// <summary>
-        /// Normalizes a word for dictionary lookup: lowercase, trim, remove punctuation edges.
+        /// Normalizes a word for dictionary lookup: lowercase, trim, remove
+        /// punctuation edges, and canonicalize Uzbek apostrophe variants.
         /// </summary>
         public static string NormalizeWord(string word)
         {
             if (string.IsNullOrWhiteSpace(word)) return string.Empty;
 
-            word = word.Trim().ToLowerInvariant();
+            word = NormalizeApostrophes(word.Trim().ToLowerInvariant());
 
             // Strip ALL leading non-letter / non-apostrophe characters
             int start = 0;
@@ -64,6 +65,40 @@ namespace UzbekOrfoAddIn.Helpers
             word = word.Substring(start, end - start + 1);
 
             return word;
+        }
+
+        /// <summary>
+        /// Converts the apostrophe characters commonly used in Uzbek text to the
+        /// ASCII apostrophe. This gives o'zbek, o‘zbek, o‘zbek, and oʼzbek the
+        /// same dictionary key.
+        /// </summary>
+        private static string NormalizeApostrophes(string value)
+        {
+            int firstVariant = -1;
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (IsApostropheVariant(value[i]))
+                {
+                    firstVariant = i;
+                    break;
+                }
+            }
+
+            if (firstVariant < 0) return value;
+
+            var characters = value.ToCharArray();
+            for (int i = firstVariant; i < characters.Length; i++)
+            {
+                if (IsApostropheVariant(characters[i]))
+                    characters[i] = '\'';
+            }
+
+            return new string(characters);
+        }
+
+        private static bool IsApostropheVariant(char c)
+        {
+            return c == 'ʻ' || c == 'ʼ' || c == '\u2018' || c == '\u2019';
         }
 
         /// <summary>

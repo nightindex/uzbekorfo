@@ -49,18 +49,15 @@ namespace UzbekOrfoAddIn.Services
             DocumentHelper.BeginUndoRecord("Барчасини алмаштириш");
             try
             {
-                // Replace from end -> start so earlier offsets stay valid.
+                // Use live ranges that belong to the checked document. Never reconstruct
+                // ranges from old offsets in whichever document happens to be active.
                 var sorted = fixableErrors.OrderByDescending(err => err.StartIndex).ToList();
                 foreach (var error in sorted)
                 {
                     try
                     {
-                        Word.Range freshRange = document.Range(error.StartIndex, error.EndIndex);
-                        if (freshRange == null) continue;
-
-                        DocumentHelper.ReplaceRangeText(freshRange, error.BestSuggestion);
-                        error.IsResolved = true;
-                        replaced++;
+                        if (DocumentHelper.TryReplaceError(error, document, error.BestSuggestion))
+                            replaced++;
                     }
                     catch { }
                 }

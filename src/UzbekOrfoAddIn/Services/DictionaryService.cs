@@ -18,10 +18,11 @@ namespace UzbekOrfoAddIn.Services
     /// Manages the main (built-in) Uzbek dictionary and the user's personal custom dictionary.
     /// Provides fast lookup via HashSet, supports import/export, and persists user changes.
     /// 
-    /// Architecture: The main dictionary is loaded as-is from the .dic file.
-    /// When a Latin word is added or imported, BOTH the original Latin form AND
-    /// its Cyrillic transliteration are stored, so each word is directly findable
-    /// in both scripts without on-the-fly transliteration.
+    /// Architecture: The main dictionary is loaded as-is from the generated .dic file.
+    /// The build derives that runtime artifact from Data/uzbek_dictionary.json.
+    /// When a word is added or imported, BOTH its Latin and Cyrillic forms are
+    /// stored whenever a transliteration is available, so each word is directly
+    /// findable in both scripts without on-the-fly transliteration.
     /// The Contains() method still falls back to transliteration for words that
     /// were stored before this dual-storage was introduced.
     /// </summary>
@@ -122,11 +123,12 @@ namespace UzbekOrfoAddIn.Services
 
                 foreach (var line in File.ReadLines(_mainDictPath))
                 {
-                    var word = line.Trim().ToLowerInvariant();
-                    if (!string.IsNullOrEmpty(word) && !word.StartsWith("#"))
-                    {
+                    var rawWord = line.Trim();
+                    if (rawWord.StartsWith("#")) continue;
+
+                    var word = TextHelper.NormalizeWord(rawWord);
+                    if (!string.IsNullOrEmpty(word))
                         _mainDictionary.Add(word);
-                    }
                 }
             }
             catch (Exception ex)
@@ -143,7 +145,7 @@ namespace UzbekOrfoAddIn.Services
 
                 foreach (var line in File.ReadLines(_userDictPath))
                 {
-                    var word = line.Trim().ToLowerInvariant();
+                    var word = TextHelper.NormalizeWord(line);
                     if (!string.IsNullOrEmpty(word))
                     {
                         _userDictionary.Add(word);
@@ -212,9 +214,9 @@ namespace UzbekOrfoAddIn.Services
 
         /// <inheritdoc/>
         /// <remarks>
-        /// Stores the word in its canonical Cyrillic form. If the input is Latin,
-        /// it is transliterated to Cyrillic before storing. This ensures one entry
-        /// covers both scripts.
+        /// Stores the word in its canonical Cyrillic form and also stores its Latin
+        /// equivalent when transliteration is available. This works for input in
+        /// either script.
         /// Checks both main and user dictionaries first to prevent duplicates.
         /// </remarks>
         public AddWordResult AddWord(string word)
@@ -244,13 +246,7 @@ namespace UzbekOrfoAddIn.Services
                 return AddWordResult.AlreadyInUserDictionary;
             }
 
-            _userDictionary.Add(canonical);
-
-            // Also store the original Latin form so both scripts are preserved
-            if (!string.Equals(normalized, canonical, StringComparison.OrdinalIgnoreCase))
-            {
-                _userDictionary.Add(normalized);
-            }
+            AddUserWordForms(canonical, normalized, otherScript);
 
             _userWordsCacheDirty = true;
             _allWordsCacheDirty = true;
@@ -509,7 +505,7 @@ namespace UzbekOrfoAddIn.Services
 
         /// <summary>
         /// Exports user dictionary words for migration.
-        /// Supported formats: json, xlsx, xls.
+        /// Supported formats: json, xlsx, xls, dic.
         /// If explanation entries are provided, matching definitions are exported too.
         /// </summary>
         public MigrationExportResult ExportForMigration(string filePath, IEnumerable<ExplanationEntry> explanationEntries)
@@ -538,6 +534,9 @@ namespace UzbekOrfoAddIn.Services
                     break;
                 case ".xls":
                     WriteMigrationXls(filePath, exportEntries);
+                    break;
+                case ".dic":
+                    WriteWordListDic(filePath, exportEntries);
                     break;
                 default:
                     throw new NotSupportedException("Экспорт формати қўллаб-қувватланмайди: " + extension);
@@ -635,6 +634,22 @@ namespace UzbekOrfoAddIn.Services
                 }
                 catch { }
             }
+        }
+
+        /// <summary>
+        /// Writes a plain spelling-word list. A .dic file deliberately cannot
+        /// preserve definitions, rules, or examples; use JSON for a full backup.
+        /// </summary>
+        private static void WriteWordListDic(string filePath, List<MigrationEntry> entries)
+        {
+            var words = (entries ?? new List<MigrationEntry>())
+                .Select(entry => entry?.Word)
+                .Where(word => !string.IsNullOrWhiteSpace(word))
+                .Select(word => word.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(word => word, StringComparer.OrdinalIgnoreCase);
+
+            File.WriteAllLines(filePath, words, new UTF8Encoding(false));
         }
 
         private string BuildMigrationSheetXml(List<MigrationEntry> entries)
@@ -982,8 +997,8 @@ namespace UzbekOrfoAddIn.Services
                 bool existsInMain = _mainDictionary.Contains(canonical) || _mainDictionary.Contains(normalized);
                 bool existsInUser = _userDictionary.Contains(canonical) || _userDictionary.Contains(normalized);
 
-                // Cross-script fallback: the main dictionary stores Latin words,
-                // so a Cyrillic import must also check the Latin equivalent.
+                // Check the equivalent form too, regardless of the script used
+                // in the import file.
                 if (!existsInMain && !string.IsNullOrEmpty(otherScript) && otherScript != normalized)
                 {
                     existsInMain = _mainDictionary.Contains(otherScript);
@@ -995,13 +1010,9 @@ namespace UzbekOrfoAddIn.Services
 
                 if (!existsInMain && !existsInUser)
                 {
-                    _userDictionary.Add(canonical);
-
-                    // Also store the original Latin form so both scripts are preserved
-                    if (!string.Equals(normalized, canonical, StringComparison.OrdinalIgnoreCase))
-                    {
-                        _userDictionary.Add(normalized);
-                    }
+                    // Preserve both forms for imports in either script. The import
+                    // result still counts this as one added source word.
+                    AddUserWordForms(canonical, normalized, otherScript);
 
                     result.AddedWordCount++;
                 }
@@ -1070,7 +1081,7 @@ namespace UzbekOrfoAddIn.Services
                 case ".txt":
                 case ".dic":
                 default:
-                    return ParseRowsFromText(File.ReadAllText(filePath));
+                    return ParseRowsFromText(ImportTextReader.ReadTextFile(filePath));
             }
         }
 
@@ -1154,19 +1165,8 @@ namespace UzbekOrfoAddIn.Services
 
         private List<ImportedRow> ParseRowsFromDelimitedFile(string filePath)
         {
-            var lines = File.ReadAllLines(filePath);
-            if (lines == null || lines.Length == 0) return new List<ImportedRow>();
-
-            char delimiter = DetectDelimiter(lines);
-            var table = new List<string[]>();
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string line = lines[i];
-                if (string.IsNullOrWhiteSpace(line)) continue;
-                table.Add(ParseDelimitedLine(line, delimiter));
-            }
-
-            return ParseRowsFromTable(table);
+            string text = ImportTextReader.ReadTextFile(filePath);
+            return ParseRowsFromTable(ImportTextReader.ParseDelimitedRecords(text));
         }
 
         private sealed class HeaderMap
@@ -1282,66 +1282,10 @@ namespace UzbekOrfoAddIn.Services
             return v.Count(char.IsWhiteSpace) <= 2;
         }
 
-        private static char DetectDelimiter(IEnumerable<string> lines)
-        {
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line)) continue;
-
-                int comma = line.Count(c => c == ',');
-                int semicolon = line.Count(c => c == ';');
-                int tab = line.Count(c => c == '\t');
-
-                if (tab >= semicolon && tab >= comma && tab > 0) return '\t';
-                if (semicolon >= comma && semicolon > 0) return ';';
-                if (comma > 0) return ',';
-            }
-            return ',';
-        }
-
-        private static string[] ParseDelimitedLine(string line, char delimiter)
-        {
-            var values = new List<string>();
-            if (line == null) return values.ToArray();
-
-            var sb = new StringBuilder();
-            bool inQuotes = false;
-
-            for (int i = 0; i < line.Length; i++)
-            {
-                char c = line[i];
-                if (c == '"')
-                {
-                    if (inQuotes && i + 1 < line.Length && line[i + 1] == '"')
-                    {
-                        sb.Append('"');
-                        i++;
-                    }
-                    else
-                    {
-                        inQuotes = !inQuotes;
-                    }
-                    continue;
-                }
-
-                if (c == delimiter && !inQuotes)
-                {
-                    values.Add(sb.ToString().Trim());
-                    sb.Clear();
-                    continue;
-                }
-
-                sb.Append(c);
-            }
-
-            values.Add(sb.ToString().Trim());
-            return values.ToArray();
-        }
-
         private List<ImportedRow> ParseRowsFromJson(string filePath)
         {
             var rows = new List<ImportedRow>();
-            string json = File.ReadAllText(filePath);
+            string json = ImportTextReader.ReadTextFile(filePath);
             if (string.IsNullOrWhiteSpace(json)) return rows;
 
             try
@@ -1393,7 +1337,9 @@ namespace UzbekOrfoAddIn.Services
                 TryGetJsonValue(dict, "entries", out nested) ||
                 TryGetJsonValue(dict, "items", out nested) ||
                 TryGetJsonValue(dict, "data", out nested) ||
-                TryGetJsonValue(dict, "rows", out nested))
+                TryGetJsonValue(dict, "rows", out nested) ||
+                TryGetJsonValue(dict, "dictionary", out nested) ||
+                TryGetJsonValue(dict, "lexicon", out nested))
             {
                 ExtractJsonRows(nested, rows);
             }
@@ -1404,7 +1350,7 @@ namespace UzbekOrfoAddIn.Services
             row = null;
             if (obj == null) return false;
 
-            string word = GetJsonString(obj, "word", "term", "text", "name");
+            string word = GetJsonString(obj, "word", "term", "text", "name", "latin", "cyrillic");
             if (string.IsNullOrWhiteSpace(word)) return false;
 
             row = new ImportedRow
@@ -2017,7 +1963,7 @@ namespace UzbekOrfoAddIn.Services
             var script = _transliterator.DetectScript(normalizedWord);
             if (script == ScriptType.Latin)
             {
-                var cyrillic = _transliterator.ToCyrillic(normalizedWord)?.ToLowerInvariant();
+                var cyrillic = TextHelper.NormalizeWord(_transliterator.ToCyrillic(normalizedWord));
                 return !string.IsNullOrEmpty(cyrillic) ? cyrillic : normalizedWord;
             }
             return normalizedWord;
@@ -2035,12 +1981,30 @@ namespace UzbekOrfoAddIn.Services
             switch (script)
             {
                 case ScriptType.Latin:
-                    return _transliterator.ToCyrillic(normalizedWord)?.ToLowerInvariant();
+                    return TextHelper.NormalizeWord(_transliterator.ToCyrillic(normalizedWord));
                 case ScriptType.Cyrillic:
-                    return _transliterator.ToLatin(normalizedWord)?.ToLowerInvariant();
+                    return TextHelper.NormalizeWord(_transliterator.ToLatin(normalizedWord));
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// Adds the canonical form, the imported form, and its transliterated
+        /// equivalent. HashSet makes repeated or identical forms harmless.
+        /// </summary>
+        private void AddUserWordForms(string canonical, string importedForm, string otherScript)
+        {
+            AddUserWordForm(canonical);
+            AddUserWordForm(importedForm);
+            AddUserWordForm(otherScript);
+        }
+
+        private void AddUserWordForm(string word)
+        {
+            string normalized = TextHelper.NormalizeWord(word);
+            if (!string.IsNullOrWhiteSpace(normalized))
+                _userDictionary.Add(normalized);
         }
 
         /// <summary>

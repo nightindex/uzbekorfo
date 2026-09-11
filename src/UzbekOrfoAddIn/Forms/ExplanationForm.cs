@@ -38,7 +38,7 @@ namespace UzbekOrfoAddIn.Forms
             ShowMinimizeButton = false;
 
             BuildUI();
-            PositionNearCursor();
+            Shown += (s, e) => PositionNearCursor();
         }
 
         private void BuildUI()
@@ -387,7 +387,7 @@ namespace UzbekOrfoAddIn.Forms
                     int left = 0, top = 0, width = 0, height = 0;
                     app.ActiveWindow.GetPoint(out left, out top, out width, out height, sel.Range);
 
-                    var screen = Screen.PrimaryScreen.WorkingArea;
+                var screen = Screen.FromPoint(new Point(left, top)).WorkingArea;
                     int x = left + width + 10;
                     int y = top;
 
@@ -398,7 +398,7 @@ namespace UzbekOrfoAddIn.Forms
                     if (y < screen.Top) y = screen.Top + 10;
 
                     StartPosition = FormStartPosition.Manual;
-                    Location = new Point(x, y);
+                    Bounds = ScreenGeometry.Fit(new Rectangle(x, y, Width, Height), screen);
                     return;
                 }
             }

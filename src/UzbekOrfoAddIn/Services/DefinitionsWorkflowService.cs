@@ -22,7 +22,7 @@ namespace UzbekOrfoAddIn.Services
             if (!DocumentHelper.IsDocumentOpen())
                 return DefinitionsWorkflowResult.NoOp();
 
-            if (_provider == null || _provider.EntryCount == 0)
+            if (_provider == null)
                 return DefinitionsWorkflowResult.ProviderUnavailable();
 
             string selectedText = DocumentHelper.GetSelectedWord();

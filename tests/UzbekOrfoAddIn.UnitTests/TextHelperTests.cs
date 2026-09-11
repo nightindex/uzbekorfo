@@ -14,6 +14,25 @@ public sealed class TextHelperTests
         Assert.Equal(expected, TextHelper.NormalizeWord(input));
     }
 
+    [Theory]
+    [InlineData("o'zbek")]
+    [InlineData("o\u02BBzbek")]
+    [InlineData("o\u02BCzbek")]
+    [InlineData("o\u2018zbek")]
+    [InlineData("o\u2019zbek")]
+    public void NormalizeWord_UsesOneKeyForUzbekApostropheVariants(string input)
+    {
+        Assert.Equal("o'zbek", TextHelper.NormalizeWord(input));
+    }
+
+    [Fact]
+    public void Tokenize_KeepsCurlyApostropheWordsIntact()
+    {
+        var tokens = TextHelper.Tokenize("O\u2018zbek va g\u02BCisht");
+
+        Assert.Equal(new[] { "o'zbek", "va", "g'isht" }, tokens.Select(token => token.Normalized));
+    }
+
     [Fact]
     public void EditDistance_RecognizesTransposition()
     {

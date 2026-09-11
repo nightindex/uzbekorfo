@@ -16,15 +16,18 @@ namespace UzbekOrfoAddIn.UI.Controls
     /// </summary>
     public class ModernScrollBar : Control
     {
+        private int Px(int value) => DpiLayout.Pixels(this, value);
+        private Font UiFont(Font value) => DpiLayout.Font(this, value);
+
         // =====================================================================
         //  CONSTANTS
         // =====================================================================
 
         private const int DEFAULT_BAR_WIDTH = 10;   // Total control width
         private const int DEFAULT_THUMB_WIDTH = 6;   // Visible thumb width (centered)
-        private const int THUMB_MIN_HEIGHT = 30;    // Minimum thumb size
-        private const int THUMB_RADIUS = 3;         // Rounded corners
-        private const int TRACK_PADDING = 2;        // Top/bottom padding
+        private int THUMB_MIN_HEIGHT => Px(30);    // Minimum thumb size
+        private int THUMB_RADIUS => Px(3);         // Rounded corners
+        private int TRACK_PADDING => Px(2);        // Top/bottom padding
 
         private int _barWidth = DEFAULT_BAR_WIDTH;
         private int _thumbWidth = DEFAULT_THUMB_WIDTH;
@@ -38,7 +41,7 @@ namespace UzbekOrfoAddIn.UI.Controls
                 _barWidth = Math.Max(4, value);
                 int maxThumb = Math.Max(2, _barWidth - 1);
                 if (_thumbWidth > maxThumb) _thumbWidth = maxThumb;
-                Width = _barWidth;
+                Width = Px(_barWidth);
                 UpdateThumb();
             }
         }
@@ -121,7 +124,7 @@ namespace UzbekOrfoAddIn.UI.Controls
                      ControlStyles.UserPaint |
                      ControlStyles.OptimizedDoubleBuffer, true);
 
-            Width = _barWidth;
+            Width = Px(_barWidth);
             Cursor = Cursors.Default;
             BackColor = ThemeManager.Background;
 
@@ -183,8 +186,8 @@ namespace UzbekOrfoAddIn.UI.Controls
             using (var trackBrush = new SolidBrush(Color.FromArgb(alpha / 3, ThemeManager.ScrollTrack)))
             {
                 using (var trackPath = CreateRoundedRect(
-                    new Rectangle((Width - _thumbWidth) / 2, TRACK_PADDING,
-                                  _thumbWidth, Height - TRACK_PADDING * 2),
+                    new Rectangle((Width - Px(_thumbWidth)) / 2, TRACK_PADDING,
+                                  Px(_thumbWidth), Math.Max(1, Height - TRACK_PADDING * 2)),
                     THUMB_RADIUS))
                 {
                     g.FillPath(trackBrush, trackPath);
@@ -216,16 +219,16 @@ namespace UzbekOrfoAddIn.UI.Controls
                 return;
             }
 
-            int trackHeight = Height - TRACK_PADDING * 2;
+            int trackHeight = Math.Max(1, Height - TRACK_PADDING * 2);
             float ratio = (float)_viewportSize / _maximum;
-            int thumbH = Math.Max(THUMB_MIN_HEIGHT, (int)(trackHeight * ratio));
+            int thumbH = Math.Min(trackHeight, Math.Max(THUMB_MIN_HEIGHT, (int)(trackHeight * ratio)));
 
             int scrollRange = _maximum - _viewportSize;
             float scrollRatio = scrollRange > 0 ? (float)_value / scrollRange : 0;
             int thumbY = TRACK_PADDING + (int)((trackHeight - thumbH) * scrollRatio);
 
-            int thumbX = (Width - _thumbWidth) / 2;
-            _thumbRect = new Rectangle(thumbX, thumbY, _thumbWidth, thumbH);
+            int thumbX = (Width - Px(_thumbWidth)) / 2;
+            _thumbRect = new Rectangle(thumbX, thumbY, Px(_thumbWidth), thumbH);
             Invalidate();
         }
 
@@ -318,7 +321,7 @@ namespace UzbekOrfoAddIn.UI.Controls
         private static GraphicsPath CreateRoundedRect(Rectangle rect, int radius)
         {
             var path = new GraphicsPath();
-            int d = radius * 2;
+            int d = Math.Max(1, Math.Min(radius * 2, Math.Min(rect.Width, rect.Height)));
             if (rect.Width <= 0 || rect.Height <= 0) { path.AddRectangle(rect); return path; }
 
             path.AddArc(rect.X, rect.Y, d, d, 180, 90);

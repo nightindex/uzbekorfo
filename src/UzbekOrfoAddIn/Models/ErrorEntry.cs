@@ -14,6 +14,9 @@ namespace UzbekOrfoAddIn.Models
         /// </summary>
         public string Word { get; set; }
 
+        /// <summary>Exact checked text, including punctuation and whitespace, for stale-result checks.</summary>
+        public string OriginalText { get; set; }
+
         /// <summary>
         /// Start character index within the paragraph.
         /// </summary>
