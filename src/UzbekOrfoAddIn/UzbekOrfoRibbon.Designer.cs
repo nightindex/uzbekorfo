@@ -1,4 +1,4 @@
-﻿namespace UzbekOrfoAddIn
+namespace UzbekOrfoAddIn
 {
     partial class UzbekOrfoRibbon : Microsoft.Office.Tools.Ribbon.RibbonBase
     {
@@ -127,7 +127,7 @@
             // 
             // btnErrorList
             // 
-            this.btnErrorList.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnErrorList.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnErrorList.Image = ((System.Drawing.Image)(resources.GetObject("btnErrorList.Image")));
             this.btnErrorList.Label = "Хатолар рўйхати";
             this.btnErrorList.Name = "btnErrorList";
@@ -149,7 +149,7 @@
             // 
             // btnSuggestions
             // 
-            this.btnSuggestions.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnSuggestions.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnSuggestions.Image = ((System.Drawing.Image)(resources.GetObject("btnSuggestions.Image")));
             this.btnSuggestions.Label = "Вариантлар";
             this.btnSuggestions.Name = "btnSuggestions";
@@ -162,7 +162,7 @@
             // 
             // btnReplaceAll
             // 
-            this.btnReplaceAll.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnReplaceAll.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnReplaceAll.Image = ((System.Drawing.Image)(resources.GetObject("btnReplaceAll.Image")));
             this.btnReplaceAll.Label = "Барчасини алмаштириш";
             this.btnReplaceAll.Name = "btnReplaceAll";
@@ -175,7 +175,7 @@
             // 
             // toggleAutoCorrect
             // 
-            this.toggleAutoCorrect.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.toggleAutoCorrect.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.toggleAutoCorrect.Label = "Авто тузатиш";
             this.toggleAutoCorrect.Name = "toggleAutoCorrect";
             this.toggleAutoCorrect.OfficeImageId = "AutoCorrect";
@@ -195,7 +195,7 @@
             // 
             // btnAddToDict
             // 
-            this.btnAddToDict.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnAddToDict.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnAddToDict.Image = ((System.Drawing.Image)(resources.GetObject("btnAddToDict.Image")));
             this.btnAddToDict.Label = "Луғатга қўшиш";
             this.btnAddToDict.Name = "btnAddToDict";
@@ -208,7 +208,7 @@
             // 
             // btnEditDictionary
             // 
-            this.btnEditDictionary.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnEditDictionary.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnEditDictionary.Image = ((System.Drawing.Image)(resources.GetObject("btnEditDictionary.Image")));
             this.btnEditDictionary.Label = "Луғатни таҳрирлаш";
             this.btnEditDictionary.Name = "btnEditDictionary";
@@ -221,7 +221,7 @@
             // 
             // btnAddNewWords
             // 
-            this.btnAddNewWords.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnAddNewWords.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnAddNewWords.Image = ((System.Drawing.Image)(resources.GetObject("btnAddNewWords.Image")));
             this.btnAddNewWords.Label = "Сўз қўшиш";
             this.btnAddNewWords.Name = "btnAddNewWords";
@@ -242,7 +242,7 @@
             // 
             // btnFromLatinToCyrillic
             // 
-            this.btnFromLatinToCyrillic.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnFromLatinToCyrillic.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnFromLatinToCyrillic.Image = ((System.Drawing.Image)(resources.GetObject("btnFromLatinToCyrillic.Image")));
             this.btnFromLatinToCyrillic.Label = "Лотиндан Кириллга";
             this.btnFromLatinToCyrillic.Name = "btnFromLatinToCyrillic";
@@ -255,7 +255,7 @@
             // 
             // btnFromCyrillicToLatin
             // 
-            this.btnFromCyrillicToLatin.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnFromCyrillicToLatin.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnFromCyrillicToLatin.Image = ((System.Drawing.Image)(resources.GetObject("btnFromCyrillicToLatin.Image")));
             this.btnFromCyrillicToLatin.Label = "Кириллдан Лотинга";
             this.btnFromCyrillicToLatin.Name = "btnFromCyrillicToLatin";
@@ -268,7 +268,7 @@
             // 
             // btnTransExceptions
             // 
-            this.btnTransExceptions.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnTransExceptions.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnTransExceptions.Image = ((System.Drawing.Image)(resources.GetObject("btnTransExceptions.Image")));
             this.btnTransExceptions.Label = "Истиснолар";
             this.btnTransExceptions.Name = "btnTransExceptions";
@@ -289,7 +289,7 @@
             // 
             // btnCleanupSpaces
             // 
-            this.btnCleanupSpaces.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnCleanupSpaces.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnCleanupSpaces.Label = "Бўшлиқларни тозалаш";
             this.btnCleanupSpaces.Name = "btnCleanupSpaces";
             this.btnCleanupSpaces.OfficeImageId = "ClearFormatting";
@@ -314,7 +314,7 @@
             // 
             // btnSetFontTNR
             // 
-            this.btnSetFontTNR.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnSetFontTNR.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnSetFontTNR.Label = "TNR ўрнатиш";
             this.btnSetFontTNR.Name = "btnSetFontTNR";
             this.btnSetFontTNR.OfficeImageId = "FontDialog";
@@ -333,7 +333,7 @@
             // 
             // btnDefinitions
             // 
-            this.btnDefinitions.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnDefinitions.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnDefinitions.Label = "Изоҳ";
             this.btnDefinitions.Name = "btnDefinitions";
             this.btnDefinitions.OfficeImageId = "Thesaurus";
@@ -345,7 +345,7 @@
             // 
             // btnExportErrors
             // 
-            this.btnExportErrors.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnExportErrors.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnExportErrors.Label = "Хатоларни экспорт қилиш";
             this.btnExportErrors.Name = "btnExportErrors";
             this.btnExportErrors.OfficeImageId = "ExportExcel";
@@ -366,7 +366,7 @@
             // 
             // btnSpecialChar1
             // 
-            this.btnSpecialChar1.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnSpecialChar1.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnSpecialChar1.Image = ((System.Drawing.Image)(resources.GetObject("btnSpecialChar1.Image")));
             this.btnSpecialChar1.Label = "Тутуқ белгиси";
             this.btnSpecialChar1.Name = "btnSpecialChar1";
@@ -378,7 +378,7 @@
             // 
             // btnSpecialChar2
             // 
-            this.btnSpecialChar2.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnSpecialChar2.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnSpecialChar2.Image = ((System.Drawing.Image)(resources.GetObject("btnSpecialChar2.Image")));
             this.btnSpecialChar2.Label = "Тутуқ белгиси";
             this.btnSpecialChar2.Name = "btnSpecialChar2";
@@ -390,7 +390,7 @@
             // 
             // btnSpecialCharAll
             // 
-            this.btnSpecialCharAll.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnSpecialCharAll.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnSpecialCharAll.Image = ((System.Drawing.Image)(resources.GetObject("btnSpecialCharAll.Image")));
             this.btnSpecialCharAll.Label = "Тўғри тутуқ белгиси қўйиш";
             this.btnSpecialCharAll.Name = "btnSpecialCharAll";
@@ -402,7 +402,7 @@
             // 
             // lblScriptIndicator
             // 
-            this.lblScriptIndicator.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.lblScriptIndicator.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.lblScriptIndicator.Label = "—";
             this.lblScriptIndicator.Name = "lblScriptIndicator";
             this.lblScriptIndicator.ScreenTip = "Ҳозирги ёзув тури";
@@ -417,7 +417,7 @@
             // 
             // btnAppInfo
             // 
-            this.btnAppInfo.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeRegular;
+            this.btnAppInfo.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnAppInfo.Label = "Маълумот";
             this.btnAppInfo.Name = "btnAppInfo";
             this.btnAppInfo.OfficeImageId = "Info";

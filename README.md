@@ -4,6 +4,10 @@
 
 Uzbek Orfo — Microsoft Word uchun oʻzbekcha imlo va grammatika tekshiruvi, lugʻat boshqaruvi hamda yozuvlar orasida oʻgirish imkoniyatini beruvchi VSTO qoʻshimchasidir.
 
+![Uzbek Orfo ribbon in Microsoft Word](docs/images/image_2026-09-11_16-47-47.png)
+
+*Uzbek Orfo ribbon inside Microsoft Word.*
+
 ## Imkoniyatlari
 
 - Xatolar roʻyxati bilan imlo va grammatika tekshiruvi
