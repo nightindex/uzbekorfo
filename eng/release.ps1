@@ -17,10 +17,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-function Invoke-Checked([string]$FilePath, [string[]]$Arguments) {
-    & $FilePath @Arguments
+function Assert-LastExitCode([string]$Description) {
     if ($LASTEXITCODE -ne 0) {
-        throw "Command failed with exit code ${LASTEXITCODE}: $FilePath $($Arguments -join ' ')"
+        throw "$Description failed with exit code $LASTEXITCODE."
     }
 }
 
@@ -102,13 +101,16 @@ $signing = Get-SigningConfiguration `
     -KeyFile $ManifestKeyFile `
     -Thumbprint $ManifestCertificateThumbprint `
     -AllowUntrustedCertificate $AllowUntrustedCertificate
-Invoke-Checked $preflight @()
+& $preflight
+Assert-LastExitCode 'Preflight checks'
 
 if (-not $SkipUiTests) {
-    Invoke-Checked $uiTest @('-Configuration', $Configuration)
+    & $uiTest -Configuration $Configuration
+    Assert-LastExitCode 'UI smoke tests'
 }
 if (-not $SkipUnitTests) {
-    Invoke-Checked $unitTest @('-Configuration', $Configuration)
+    & $unitTest -Configuration $Configuration
+    Assert-LastExitCode 'Unit tests'
 }
 
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
@@ -125,10 +127,12 @@ if ($Channel -eq 'Web') { $publishArgs += "/p:ClickOnceUpdateUrl=$UpdateUrl" }
 if ($PublishDirectory) { $publishArgs += "/p:PublishDir=$PublishDirectory" }
 
 if (-not $SkipPublish) {
-    Invoke-Checked $msbuild $publishArgs
+    & $msbuild @publishArgs
+    Assert-LastExitCode 'ClickOnce publish'
 }
 if (-not $SkipWordTests) {
-    Invoke-Checked $wordTest @('-Configuration', $Configuration)
+    & $wordTest -Configuration $Configuration
+    Assert-LastExitCode 'Word integration smoke test'
 }
 
 Write-Host "[PASS] Release verification completed: configuration=$Configuration; channel=$Channel"
