@@ -1,4 +1,4 @@
-# MatnAi Word completion MVP
+# MatnAI Word completion MVP
 
 Implemented on `feature/matnai-word-completion`. The pre-feature recovery tag is
 `checkpoint/pre-matnai-2026-09-15` (commit `0048ba9`). No separate application or
@@ -7,20 +7,21 @@ new dictionary/morphology runtime was introduced.
 ## Using it
 
 Build/run the add-in in Word through the existing Visual Studio/VSTO workflow.
-The existing **Uzbek Orfo** tab contains a single **MatnAi** group, after the correction
-group and before the dictionary group. It includes:
+The existing **Uzbek Orfo** tab contains a single **MatnAI** group, after the correction
+group and before the dictionary group. It contains three primary controls:
 
 - **Completion:** MatnAI offers suggestions automatically after the user types the
   configured minimum word prefix. The dedicated toggle enables or disables it.
   There is no manual suggestion button because clicking a Ribbon button removes
   focus from the Word editing surface.
-- **Settings:** minimum prefix length and result count; dictionary index refresh;
-  optional personal learning and confirmed reset.
+- **Settings:** minimum prefix length and result count; optional personal learning,
+  confirmed reset, and a manual index refresh for troubleshooting. Dictionary saves
+  refresh the index automatically.
 - **Help:** keyboard and scope instructions.
 
 The group is declared in `UzbekOrfoRibbon.Designer.cs`'s `InitializeComponent`,
-so MatnAi is available in the Visual Studio Ribbon Designer as well as at runtime.
-Open `UzbekOrfoRibbon.cs` with View Designer and find **MatnAi** on the **Uzbek Orfo** tab. Handler
+so MatnAI is available in the Visual Studio Ribbon Designer as well as at runtime.
+Open `UzbekOrfoRibbon.cs` with View Designer and find **MatnAI** on the **Uzbek Orfo** tab. Handler
 code remains in the nested code-only `UzbekOrfoRibbon.MatnAi.cs` file. The static
 `eng/test-ribbon-layout.ps1` guard runs as part of UI checks; it is not an IDE test.
 

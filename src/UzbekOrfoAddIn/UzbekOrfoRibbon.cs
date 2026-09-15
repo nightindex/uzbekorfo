@@ -30,7 +30,6 @@ namespace UzbekOrfoAddIn
         private void UzbekOrfoRibbon_Load(object sender, RibbonUIEventArgs e)
         {
             matnaiEnabled.Checked = ThisAddIn.Settings?.PredictionsEnabled ?? false;
-            matnaiLearning.Checked = ThisAddIn.Settings?.MatnAiLearningConsent ?? false;
             Logger.Info("UzbekOrfoRibbon loaded.");
 
             // Keep toggle UI aligned with persisted runtime state.

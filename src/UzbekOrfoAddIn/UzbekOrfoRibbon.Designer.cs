@@ -47,9 +47,6 @@ namespace UzbekOrfoAddIn
             this.groupMatnAi = this.Factory.CreateRibbonGroup();
             this.matnaiEnabled = this.Factory.CreateRibbonToggleButton();
             this.btnMatnAiSettings = this.Factory.CreateRibbonButton();
-            this.matnaiLearning = this.Factory.CreateRibbonToggleButton();
-            this.btnMatnAiReset = this.Factory.CreateRibbonButton();
-            this.btnMatnAiRebuild = this.Factory.CreateRibbonButton();
             this.btnMatnAiHelp = this.Factory.CreateRibbonButton();
             this.groupDictionary = this.Factory.CreateRibbonGroup();
             this.btnAddToDict = this.Factory.CreateRibbonButton();
@@ -198,9 +195,6 @@ namespace UzbekOrfoAddIn
             // 
             this.groupMatnAi.Items.Add(this.matnaiEnabled);
             this.groupMatnAi.Items.Add(this.btnMatnAiSettings);
-            this.groupMatnAi.Items.Add(this.matnaiLearning);
-            this.groupMatnAi.Items.Add(this.btnMatnAiReset);
-            this.groupMatnAi.Items.Add(this.btnMatnAiRebuild);
             this.groupMatnAi.Items.Add(this.btnMatnAiHelp);
             this.groupMatnAi.Label = "MatnAI";
             this.groupMatnAi.Name = "groupMatnAi";
@@ -227,45 +221,8 @@ namespace UzbekOrfoAddIn
             this.btnMatnAiSettings.ScreenTip = "MatnAI созламалари";
             this.btnMatnAiSettings.ShowImage = true;
             this.btnMatnAiSettings.ShowLabel = true;
-            this.btnMatnAiSettings.SuperTip = "Таклиф чиқиши учун энг кам ҳарфлар сони ва таклифлар сонини белгилайди.";
+            this.btnMatnAiSettings.SuperTip = "Таклифлар учун энг кам ҳарфлар ва уларнинг сонини, шахсий ўрганишни ва индексни янгилашни бошқаради.";
             this.btnMatnAiSettings.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnMatnAiSettings_Click);
-            // 
-            // matnaiLearning
-            // 
-            this.matnaiLearning.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.matnaiLearning.Label = "Шахсий ўрганиш";
-            this.matnaiLearning.Name = "matnaiLearning";
-            this.matnaiLearning.OfficeImageId = "ReviewTrackChanges";
-            this.matnaiLearning.ScreenTip = "Шахсий ўрганиш";
-            this.matnaiLearning.ShowImage = true;
-            this.matnaiLearning.ShowLabel = true;
-            this.matnaiLearning.SuperTip = "Қабул қилинган таклифлар сонини фақат шу компьютерда сақлайди. Ҳужжат матни йиғил" +
-    "майди ва юборилмайди.";
-            this.matnaiLearning.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.matnaiLearning_Click);
-            // 
-            // btnMatnAiReset
-            // 
-            this.btnMatnAiReset.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.btnMatnAiReset.Label = "Ўрганишни тозалаш";
-            this.btnMatnAiReset.Name = "btnMatnAiReset";
-            this.btnMatnAiReset.OfficeImageId = "ClearFormatting";
-            this.btnMatnAiReset.ScreenTip = "Шахсий ўрганишни тозалаш";
-            this.btnMatnAiReset.ShowImage = true;
-            this.btnMatnAiReset.ShowLabel = true;
-            this.btnMatnAiReset.SuperTip = "MatnAI сақлаган қабул қилиш ҳисобларини ўчиради. Луғатлар ўзгартирилмайди.";
-            this.btnMatnAiReset.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnMatnAiReset_Click);
-            // 
-            // btnMatnAiRebuild
-            // 
-            this.btnMatnAiRebuild.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.btnMatnAiRebuild.Label = "Луғатни янгилаш";
-            this.btnMatnAiRebuild.Name = "btnMatnAiRebuild";
-            this.btnMatnAiRebuild.OfficeImageId = "RefreshAll";
-            this.btnMatnAiRebuild.ScreenTip = "Таклифлар индексини янгилаш";
-            this.btnMatnAiRebuild.ShowImage = true;
-            this.btnMatnAiRebuild.ShowLabel = true;
-            this.btnMatnAiRebuild.SuperTip = "Луғат ўзгартирилгандан кейин MatnAI сўз таклифлари индексини янгилайди.";
-            this.btnMatnAiRebuild.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnMatnAiRebuild_Click);
             // 
             // btnMatnAiHelp
             // 
@@ -557,10 +514,7 @@ namespace UzbekOrfoAddIn
         private Microsoft.Office.Tools.Ribbon.RibbonTab tabUzbekOrfo;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup groupMatnAi;
         internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton matnaiEnabled;
-        internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton matnaiLearning;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMatnAiRebuild;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMatnAiSettings;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMatnAiReset;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMatnAiHelp;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup groupCheck;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup groupFix;

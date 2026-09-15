@@ -6,8 +6,13 @@ $handlers = Get-Content -LiteralPath (Join-Path $root 'src\UzbekOrfoAddIn\UzbekO
 if ($designer.Contains('InitializeMatnAi(') -or $handlers.Contains('CreateRibbon')) {
     throw 'MatnAi controls must be declared in InitializeComponent, not a runtime-only initializer.'
 }
-if ($designer.Contains('btnMatnAiShow')) {
-    throw 'The manual suggestion button must not be present because it takes focus away from the Word document.'
+if ($designer.Contains('btnMatnAiShow') -or $designer.Contains('matnaiLearning') -or
+    $designer.Contains('btnMatnAiReset') -or $designer.Contains('btnMatnAiRebuild')) {
+    throw 'Only the primary toggle, settings and help controls belong in the MatnAI ribbon group.'
+}
+if (-not $handlers.Contains('MatnAiLearningConsent') -or -not $handlers.Contains('ResetLearning()') -or
+    -not $handlers.Contains('Rebuild()')) {
+    throw 'MatnAI settings must retain personal learning, reset and manual index refresh actions.'
 }
 if ([regex]::Matches($designer, 'this\.Tabs\.Add\(').Count -ne 1 -or
     -not $designer.Contains('this.Tabs.Add(this.tabUzbekOrfo);') -or $designer.Contains('tabMatnAi')) {
@@ -19,7 +24,7 @@ if ([regex]::Matches($designer, [regex]::Escape('this.tabUzbekOrfo.Groups.Add(th
 if (-not $designer.Contains('this.groupMatnAi.Label = "MatnAI";')) {
     throw 'The feature group must use the MatnAI product name.'
 }
-foreach ($control in @('matnaiEnabled', 'matnaiLearning', 'btnMatnAiRebuild', 'btnMatnAiSettings', 'btnMatnAiReset', 'btnMatnAiHelp')) {
+foreach ($control in @('matnaiEnabled', 'btnMatnAiSettings', 'btnMatnAiHelp')) {
     if (-not $designer.Contains("this.$control = this.Factory.CreateRibbon") -or
         [regex]::Matches($designer, [regex]::Escape("this.groupMatnAi.Items.Add(this.$control);")).Count -ne 1 -or
         -not $designer.Contains("RibbonControlEventHandler(this.$($control)_Click)") -or
@@ -40,4 +45,4 @@ foreach ($control in @('matnaiEnabled', 'matnaiLearning', 'btnMatnAiRebuild', 'b
         throw "MatnAI control must have a Cyrillic Uzbek label, ScreenTip and SuperTip: $control"
     }
 }
-Write-Host 'PASS: MatnAI has six large, fully described Uzbek Cyrillic controls in the Uzbek Orfo tab.'
+Write-Host 'PASS: MatnAI has three large, fully described Uzbek Cyrillic controls in the Uzbek Orfo tab.'

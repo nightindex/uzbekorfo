@@ -1,4 +1,4 @@
-# MatnAi: Word-only completion implementation plan
+# MatnAI: Word-only completion implementation plan
 
 Status: offline MVP implemented; see [implementation and verification status](matnai-mvp.md)
 for completed work and outstanding gates. Baseline recovery commit: `0048ba9`.
@@ -11,21 +11,21 @@ cloud model, browser integration or sentence generation. No second dictionary or
 replacement spelling engine. Context means modest ranking of word completions,
 not a claim to predict fluent sentences. Personal learning is optional and local.
 
-Updated UI decision: use one **MatnAi** group on the existing **Ўзбек Орфо** tab,
+Updated UI decision: use one **MatnAI** group on the existing **Ўзбек Орфо** tab,
 after corrections and before the dictionary. The original separate-tab proposal was
 replaced at the user's request. Existing commands remain intact. The functional
 categories below share that single ribbon group.
 
-| Group | Controls |
+| Area | Controls |
 | --- | --- |
-| So'z takliflari | Ёқиш toggle; ready/loading/paused status |
-| Moslashtirish | Sozlamalar; Shaxsiy o'rganish toggle (off until explicit consent) |
-| Yordam | Qisqa qo'llanma; local diagnostics export |
+| Primary action | Таклифларни ёқиш toggle; ready/loading/paused status |
+| Settings | Созламалар: minimum prefix length, result count, personal-learning consent and reset, manual index refresh |
+| Help | Қисқа қўлланма |
 
-Settings: script Auto/Latin/Cyrillic, minimum prefix length (default two letters),
-result count (default three), configurable conflict-checked accept shortcut,
-personal-learning consent and reset. Reset removes only prediction-learning data
-after confirmation, never the main or custom dictionary. Labels are provisional.
+Settings: minimum prefix length (default two letters), result count (default three),
+personal-learning consent and reset, plus an optional manual index refresh. Reset removes
+only prediction-learning data after confirmation, never the main or custom dictionary.
+Dictionary saves refresh the completion index automatically.
 
 ## Module boundaries within the current project
 
@@ -119,7 +119,7 @@ and test it rather than assuming ordinary insertions have the desired undo behav
    baseline and rapid scripted prefix changes, not just repeated known words.
 3. **Bounded morphology:** add prefix-aware suffix candidates and regression cases
    for valid/invalid ordering, allomorphs, flags and standalone imported endings.
-4. **MatnAi UI integration:** add tab/groups/settings; wire runtime ownership,
+4. **MatnAI UI integration:** add tab/groups/settings; wire runtime ownership,
    focus/document lifecycle, AutoCorrect coordination and safe enable/disable cleanup.
 5. **Optional personal ranking:** explicit consent, acceptance-only word/count learning,
    capped local storage, clear/reset and corruption recovery. No automatic document
