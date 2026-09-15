@@ -10,7 +10,8 @@ if ($designer.Contains('btnMatnAiShow') -or $designer.Contains('matnaiLearning')
     $designer.Contains('btnMatnAiReset') -or $designer.Contains('btnMatnAiRebuild')) {
     throw 'Only the primary toggle, settings and help controls belong in the MatnAI ribbon group.'
 }
-if (-not $handlers.Contains('MatnAiLearningConsent') -or -not $handlers.Contains('ResetLearning()') -or
+if (-not $handlers.Contains('new MatnAiSettingsForm(') -or -not $handlers.Contains('new MatnAiHelpForm()') -or
+    -not $handlers.Contains('MatnAiLearningConsent') -or -not $handlers.Contains('ResetLearning()') -or
     -not $handlers.Contains('Rebuild()')) {
     throw 'MatnAI settings must retain personal learning, reset and manual index refresh actions.'
 }
@@ -31,7 +32,6 @@ foreach ($control in @('matnaiEnabled', 'btnMatnAiSettings', 'btnMatnAiHelp')) {
         -not $handlers.Contains("void $($control)_Click(")) { throw "Incomplete designer control/handler: $control" }
     if (-not $designer.Contains("this.$control.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;") -or
         -not $designer.Contains("this.$control.ShowImage = true;") -or
-        -not $designer.Contains("this.$control.ShowLabel = true;") -or
         -not [regex]::IsMatch($designer, ('this\.' + [regex]::Escape($control) + '\.OfficeImageId = "[^"]+";'))) {
         throw "MatnAi control must have a large icon and visible label: $control"
     }

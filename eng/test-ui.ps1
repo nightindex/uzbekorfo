@@ -17,6 +17,7 @@ $sources = @(
     'UI\Controls\ToastNotification.cs', 'UI\ModernMessageBox.cs',
     'Helpers\AnimationHelper.cs', 'Forms\AddNewWordsForm.cs',
     'Forms\AppInfoForm.cs', 'Forms\ImportResultForm.cs', 'Forms\ImportProgressForm.cs',
+    'Forms\MatnAiSettingsForm.cs', 'Forms\MatnAiHelpForm.cs',
     'Forms\TranslitExceptionsForm.cs', 'Forms\ViewErrorsForm.cs',
     'Models\TranslitException.cs', 'Models\Enums.cs', 'Models\ErrorEntry.cs', 'Models\Suggestion.cs',
     'Core\ITransliterator.cs', 'Services\TransliterationService.cs',

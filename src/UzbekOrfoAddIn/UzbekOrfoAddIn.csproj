@@ -361,6 +361,12 @@
     <Compile Include="Forms\AppInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\MatnAiSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MatnAiHelpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <!-- UI -->
     <Compile Include="UI\ThemeManager.cs" />
     <Compile Include="UI\ScreenGeometry.cs" />

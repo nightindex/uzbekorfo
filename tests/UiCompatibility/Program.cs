@@ -142,6 +142,8 @@ internal static class Program
                 var factories = new Func<ModernForm>[]
                 {
                     () => new AddNewWordsForm(), () => new AppInfoForm(), () => new ImportProgressForm(),
+                    () => new MatnAiSettingsForm(2, 3, false, (minimum, count, learning) => { }, () => { }, () => { }),
+                    () => new MatnAiHelpForm(),
                     () => new TranslitExceptionsForm(
                         () => Enumerable.Range(1, 39).Select(i => new TranslitException("Example " + i, "Мисол " + i)).ToList(),
                         item => { throw new InvalidOperationException("Unexpected add"); },
@@ -182,6 +184,15 @@ internal static class Program
                         form.Size = new Size(ScreenGeometry.Scale(preferred.Width, dpi), ScreenGeometry.Scale(preferred.Height, dpi));
                         form.PerformLayout();
                         var bodyHost = (ScrollableControl)form.ContentPanel.Parent;
+                        if (dpi == 96 && (form is MatnAiSettingsForm || form is MatnAiHelpForm))
+                        {
+                            using (var screenshot = new Bitmap(form.Width, form.Height))
+                            {
+                                form.DrawToBitmap(screenshot, form.ClientRectangle);
+                                screenshot.Save(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                                    form.GetType().Name + "-Preferred.png"));
+                            }
+                        }
                         if (dpi == 120 && form is TranslitExceptionsForm)
                         {
                             using (var screenshot = new Bitmap(form.Width, form.Height))
@@ -227,6 +238,9 @@ internal static class Program
                         form.Size = new Size(800, 560);
                         form.PerformLayout();
                         ResetScroll(form);
+                        if (form is MatnAiSettingsForm || form is MatnAiHelpForm)
+                            Require(((ScrollableControl)form.ContentPanel.Parent).VerticalScroll.Visible,
+                                "Compact MatnAI dialogs expose vertical scrolling: " + form.GetType().Name);
                         foreach (var button in Descendants(form).OfType<ModernButton>())
                             Require(button.Width >= ScreenGeometry.Scale(40, dpi),
                                 "Button is not collapsed: " + form.GetType().Name + " / " + button.Text);
