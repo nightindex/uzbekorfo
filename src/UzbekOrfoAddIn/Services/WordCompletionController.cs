@@ -40,7 +40,7 @@ namespace UzbekOrfoAddIn.Services
             _app = app; _settings = settings; _dictionary = dictionary; _autoCorrect = autoCorrect; _morphology = morphology;
             _preferences = new CompletionPreferences(settings.MatnAiPreferencesPath);
             if (settings.MatnAiLearningConsent)
-                try { _preferences.Load(); } catch { Logger.Warn("MatnAi preferences unavailable; using default ranking."); }
+                try { _preferences.Load(); } catch { Logger.Warn("MatnAI шахсий созламалари очилмади; стандарт тартиблаш қўлланади."); }
             _timer.Tick += Tick;
             _popup.Accepted += Accept;
             _popup.Dismissed += Dismiss;
@@ -63,7 +63,7 @@ namespace UzbekOrfoAddIn.Services
         {
             _settings.MatnAiLearningConsent = enabled;
             if (enabled)
-                try { _preferences.Load(); } catch { Logger.Warn("MatnAi preferences could not be loaded."); }
+                try { _preferences.Load(); } catch { Logger.Warn("MatnAI шахсий созламаларини юклаб бўлмади."); }
             _settings.Save();
             Dismiss();
         }
@@ -143,7 +143,7 @@ namespace UzbekOrfoAddIn.Services
                 {
                     var completed = _build; _build = null;
                     if (completed.Status == TaskStatus.RanToCompletion) _engine = completed.Result;
-                    else { Logger.Warn("MatnAi index unavailable."); _timer.Stop(); return; }
+                    else { Logger.Warn("MatnAI индекси тайёр эмас."); _timer.Stop(); return; }
                 }
                 if (!WordCompletionContext.HasEditingFocus(_app)) { Clear(); return; }
                 using (var latest = WordCompletionContext.Capture(_app))
@@ -174,7 +174,7 @@ namespace UzbekOrfoAddIn.Services
                             _settings.MaxPredictions);
                         if (_shown.Length > 0) PositionPopup(_shown);
                     }
-                    else if (finished.IsFaulted) Logger.Warn("MatnAi completion request failed.");
+                    else if (finished.IsFaulted) Logger.Warn("MatnAI таклифи тайёрланмади.");
                     return;
                 }
                 if (_engine == null || _current == null || _current.Prefix.Length < _settings.MinPredictionLength ||
@@ -195,7 +195,7 @@ namespace UzbekOrfoAddIn.Services
             catch (Exception ex)
             {
                 Clear();
-                Logger.Warn("MatnAi paused after host error: " + ex.GetType().Name);
+                Logger.Warn("MatnAI хост хатосидан кейин тўхтатилди: " + ex.GetType().Name);
                 _timer.Stop(); // Avoid a repeated COM failure/log loop.
             }
         }
@@ -220,10 +220,10 @@ namespace UzbekOrfoAddIn.Services
                 {
                     _preferences.Record(word);
                     // Persist on explicit acceptance only, never on ordinary keystrokes.
-                    try { _preferences.Save(); } catch { Logger.Warn("MatnAi preference save failed."); }
+                    try { _preferences.Save(); } catch { Logger.Warn("MatnAI шахсий созламаларини сақлаб бўлмади."); }
                 }
             }
-            catch (Exception ex) { Logger.Warn("MatnAi insertion rejected: " + ex.GetType().Name); }
+            catch (Exception ex) { Logger.Warn("MatnAI таклифини қўшиб бўлмади: " + ex.GetType().Name); }
             finally { _autoCorrect.IsEnabled = autoCorrect; Dismiss(); }
         }
         public void Dispose()

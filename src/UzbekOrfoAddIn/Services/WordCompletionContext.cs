@@ -106,7 +106,7 @@ namespace UzbekOrfoAddIn.Services
                 if (!SameAs(current)) return false;
                 // One explicit edit, preserving typed apostrophes/case and adjacent formatting.
                 var undo = app.UndoRecord;
-                undo.StartCustomRecord("MatnAi completion");
+                undo.StartCustomRecord("MatnAI таклифи");
                 try
                 {
                     _range.SetRange(End, End);

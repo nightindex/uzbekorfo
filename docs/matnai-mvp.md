@@ -7,13 +7,20 @@ new dictionary/morphology runtime was introduced.
 ## Using it
 
 Build/run the add-in in Word through the existing Visual Studio/VSTO workflow.
-The existing Uzbek Orfo ribbon remains; a new **MatnAi** tab contains:
+The existing **Uzbek Orfo** tab contains a single **MatnAi** group, after the correction
+group and before the dictionary group. It includes:
 
-- **So'z takliflari:** Yoqish enables automatic completion; Takliflarni ko'rsatish
+- **Completion:** Yoqish enables automatic completion; Takliflarni ko'rsatish
   requests a suggestion session without turning automatic completion on.
-- **Moslashtirish:** minimum prefix length and result count; dictionary index refresh;
+- **Settings:** minimum prefix length and result count; dictionary index refresh;
   optional personal learning and confirmed reset.
-- **Yordam:** keyboard and scope instructions.
+- **Help:** keyboard and scope instructions.
+
+The group is declared in `UzbekOrfoRibbon.Designer.cs`'s `InitializeComponent`,
+so MatnAi is available in the Visual Studio Ribbon Designer as well as at runtime.
+Open `UzbekOrfoRibbon.cs` with View Designer and find **MatnAi** on the **Uzbek Orfo** tab. Handler
+code remains in the nested code-only `UzbekOrfoRibbon.MatnAi.cs` file. The static
+`eng/test-ribbon-layout.ps1` guard runs as part of UI checks; it is not an IDE test.
 
 Type at least two letters in ordinary document body text. Click a suggestion to
 accept it, or use Ctrl+Alt+Up/Down to choose and Ctrl+Alt+Right to accept.

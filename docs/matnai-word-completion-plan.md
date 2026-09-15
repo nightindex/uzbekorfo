@@ -11,8 +11,10 @@ cloud model, browser integration or sentence generation. No second dictionary or
 replacement spelling engine. Context means modest ranking of word completions,
 not a claim to predict fluent sentences. Personal learning is optional and local.
 
-Proposed UI: add a dedicated **MatnAi** tab; leave the existing **Ўзбек Орфо** tab
-and commands intact. This is the planning default for the requested new ribbon.
+Updated UI decision: use one **MatnAi** group on the existing **Ўзбек Орфо** tab,
+after corrections and before the dictionary. The original separate-tab proposal was
+replaced at the user's request. Existing commands remain intact. The functional
+categories below share that single ribbon group.
 
 | Group | Controls |
 | --- | --- |

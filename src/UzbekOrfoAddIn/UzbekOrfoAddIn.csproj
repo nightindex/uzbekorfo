@@ -221,7 +221,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UzbekOrfoRibbon.MatnAi.cs" />
     <Compile Include="Services\WordCompletionEngine.cs" />
     <Compile Include="Services\CompletionPreferences.cs" />
     <Compile Include="Services\WordCompletionContext.cs" />
@@ -232,6 +231,11 @@
     </Compile>
     <Compile Include="UzbekOrfoRibbon.Designer.cs">
       <DependentUpon>UzbekOrfoRibbon.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UzbekOrfoRibbon.MatnAi.cs">
+      <DependentUpon>UzbekOrfoRibbon.cs</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

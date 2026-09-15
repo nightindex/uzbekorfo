@@ -26,7 +26,7 @@ namespace UzbekOrfoAddIn.Forms
             BackColor = Color.White;
             Font = new Font("Segoe UI", 10);
             DoubleBuffered = true;
-            AccessibleName = "MatnAi word suggestions";
+            AccessibleName = "MatnAI сўз таклифлари";
         }
         public void Present(string[] items, Rectangle caret, IWin32Window owner)
         {
@@ -69,7 +69,7 @@ namespace UzbekOrfoAddIn.Forms
                     new Rectangle(8, i * RowHeight + 4, Width - 16, RowHeight), Color.Black,
                     TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
             }
-            TextRenderer.DrawText(e.Graphics, "Ctrl+Alt+Right: accept     Esc: close", Font,
+            TextRenderer.DrawText(e.Graphics, "Ctrl+Alt+Right: қабул қилиш     Esc: ёпиш", Font,
                 new Rectangle(8, _items.Length * RowHeight + 4, Width - 16, RowHeight), Color.DimGray,
                 TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
         }
@@ -99,7 +99,7 @@ namespace UzbekOrfoAddIn.Forms
             private readonly string _word;
             public ItemAccessibility(CompletionPopup popup, int index, string word) { _popup = popup; _index = index; _word = word; }
             public override string Name { get => _word; set { } }
-            public override string DefaultAction => "Accept completion";
+            public override string DefaultAction => "Таклифни қабул қилиш";
             public override AccessibleRole Role => AccessibleRole.ListItem;
             public override AccessibleObject Parent => _popup.AccessibilityObject;
             public override Rectangle Bounds => _popup.RectangleToScreen(new Rectangle(1, _index * _popup.RowHeight, _popup.Width - 2, _popup.RowHeight));

@@ -1,6 +1,7 @@
 param([string]$Configuration = "Release")
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
+& (Join-Path $PSScriptRoot 'test-ribbon-layout.ps1')
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
 $vsPath = & $vswhere -latest -products * -property installationPath
 if (-not $vsPath) { throw 'Visual Studio with the C# compiler is required.' }

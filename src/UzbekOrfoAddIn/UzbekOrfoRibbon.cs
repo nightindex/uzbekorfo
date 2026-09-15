@@ -1049,13 +1049,13 @@ namespace UzbekOrfoAddIn
                 HotkeyManager.Register(new[]
                 {
                     new HotkeyManager.HotkeyDef(CA, Keys.Right, () => ThisAddIn.Completion?.AcceptSelected(),
-                        "MatnAi accept", () => ThisAddIn.Completion?.CanHandleKeys == true),
+                        "MatnAI қабул қилиш", () => ThisAddIn.Completion?.CanHandleKeys == true),
                     new HotkeyManager.HotkeyDef(CA, Keys.Down, () => ThisAddIn.Completion?.MoveSelection(1),
-                        "MatnAi next", () => ThisAddIn.Completion?.CanHandleKeys == true),
+                        "MatnAI кейинги таклиф", () => ThisAddIn.Completion?.CanHandleKeys == true),
                     new HotkeyManager.HotkeyDef(CA, Keys.Up, () => ThisAddIn.Completion?.MoveSelection(-1),
-                        "MatnAi previous", () => ThisAddIn.Completion?.CanHandleKeys == true),
+                        "MatnAI олдинги таклиф", () => ThisAddIn.Completion?.CanHandleKeys == true),
                     new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Escape,
-                        () => ThisAddIn.Completion?.Dismiss(), "MatnAi dismiss", () => ThisAddIn.Completion?.CanHandleKeys == true),
+                        () => ThisAddIn.Completion?.Dismiss(), "MatnAI ёпиш", () => ThisAddIn.Completion?.CanHandleKeys == true),
                     // ── Текшириш ────────────────────────────────────────
                     new HotkeyManager.HotkeyDef(CA,        Keys.Q,      TriggerCheckSpelling,    "Ctrl+Alt+Q"),
                     new HotkeyManager.HotkeyDef(CA,        Keys.E,      TriggerViewErrors,       "Ctrl+Alt+E"),
