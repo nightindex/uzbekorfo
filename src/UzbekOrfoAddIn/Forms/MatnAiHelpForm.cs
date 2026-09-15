@@ -73,19 +73,19 @@ namespace UzbekOrfoAddIn.Forms
         {
             var card = NewCard("БОШЛАШ");
             AddStep(card, "1", "Таклифларни ёқиш",
-                "Тасмадаги «Таклифларни ёқиш» тугмасини фаоллаштиринг.", 50);
+                "Тасмадаги «Таклифларни ёқиш» тугмасини фаоллаштиринг.", 46);
             AddStep(card, "2", "Сўз ёзиш",
-                "Оддий ҳужжат матнида камида икки ҳарф ёзинг. Таклиф курсор яқинида пайдо бўлади.", 89);
+                "Оддий ҳужжат матнида камида икки ҳарф ёзинг. Таклиф курсор яқинида пайдо бўлади.", 93);
             return card;
         }
 
         private static ModernCard BuildShortcutCard()
         {
             var card = NewCard("ТЕЗКОР ТУГМАЛАР");
-            AddShortcut(card, "Ctrl + Alt + ↓ / ↑", "Таклифлар орасида ҳаракатланиш", 52);
-            AddShortcut(card, "Ctrl + Alt + →", "Танланган таклифни қабул қилиш", 92);
-            AddShortcut(card, "Esc", "Таклифлар ойнасини ёпиш", 132);
-            AddShortcut(card, "Ctrl + Z", "Қабул қилинган таклифни бекор қилиш", 172);
+            AddShortcut(card, "Ctrl + Alt + ↓ / ↑", "Таклифлар орасида ҳаракатланиш", 47);
+            AddShortcut(card, "Ctrl + Alt + →", "Танланган таклифни қабул қилиш", 85);
+            AddShortcut(card, "Esc", "Таклифлар ойнасини ёпиш", 123);
+            AddShortcut(card, "Ctrl + Z", "Қабул қилинган таклифни бекор қилиш", 161);
             return card;
         }
 
@@ -115,7 +115,8 @@ namespace UzbekOrfoAddIn.Forms
             };
             card.Controls.Add(badge);
             card.Controls.Add(text);
-            card.Resize += (s, e) => text.Width = Math.Max(260, card.ClientSize.Width - 90);
+            card.Resize += (s, e) => text.Width = Math.Max(DpiLayout.Pixels(card, 260),
+                card.ClientSize.Width - DpiLayout.Pixels(card, 90));
             return card;
         }
 
@@ -156,7 +157,7 @@ namespace UzbekOrfoAddIn.Forms
                 Text = title,
                 AutoSize = false,
                 Location = new Point(64, y - 2),
-                Size = new Size(570, 23),
+                Size = new Size(570, 22),
                 Font = ThemeManager.FontLGBold,
                 ForeColor = ThemeManager.TextPrimary,
                 BackColor = Color.Transparent
@@ -165,8 +166,8 @@ namespace UzbekOrfoAddIn.Forms
             {
                 Text = body,
                 AutoSize = false,
-                Location = new Point(64, y + 20),
-                Size = new Size(570, 34),
+                Location = new Point(64, y + 22),
+                Size = new Size(570, 22),
                 Font = ThemeManager.FontBase,
                 ForeColor = ThemeManager.TextSecondary,
                 BackColor = Color.Transparent
@@ -176,8 +177,10 @@ namespace UzbekOrfoAddIn.Forms
             card.Controls.Add(bodyLabel);
             card.Resize += (s, e) =>
             {
-                titleLabel.Width = Math.Max(240, card.ClientSize.Width - 84);
-                bodyLabel.Width = Math.Max(240, card.ClientSize.Width - 84);
+                titleLabel.Width = Math.Max(DpiLayout.Pixels(card, 240),
+                    card.ClientSize.Width - DpiLayout.Pixels(card, 84));
+                bodyLabel.Width = Math.Max(DpiLayout.Pixels(card, 240),
+                    card.ClientSize.Width - DpiLayout.Pixels(card, 84));
             };
         }
 
@@ -187,7 +190,7 @@ namespace UzbekOrfoAddIn.Forms
             {
                 Text = shortcut,
                 AutoSize = false,
-                Size = new Size(180, 34),
+                Size = new Size(180, 32),
                 Location = new Point(20, y),
                 Font = ThemeManager.FontMono,
                 ForeColor = ThemeManager.Primary,
@@ -200,7 +203,7 @@ namespace UzbekOrfoAddIn.Forms
                 Text = action,
                 AutoSize = false,
                 Location = new Point(220, y),
-                Size = new Size(410, 34),
+                Size = new Size(410, 32),
                 Font = ThemeManager.FontLG,
                 ForeColor = ThemeManager.TextPrimary,
                 BackColor = Color.Transparent,
@@ -208,7 +211,8 @@ namespace UzbekOrfoAddIn.Forms
             };
             card.Controls.Add(key);
             card.Controls.Add(description);
-            card.Resize += (s, e) => description.Width = Math.Max(220, card.ClientSize.Width - 240);
+            card.Resize += (s, e) => description.Width = Math.Max(DpiLayout.Pixels(card, 220),
+                card.ClientSize.Width - DpiLayout.Pixels(card, 240));
         }
 
         private static ModernCard NewCard(string header)

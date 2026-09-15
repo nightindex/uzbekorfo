@@ -133,6 +133,7 @@ internal static class Program
             CheckMatnAiPopup();
             CheckKeyboardAccessibility();
             CheckShortcutsDoNotReserveGlobalKeys();
+            CheckMatnAiDarkTheme();
             CheckExceptionFonts();
             CheckInitialGridWindow();
             CheckDeferredErrorSuggestions();
@@ -184,6 +185,8 @@ internal static class Program
                         form.Size = new Size(ScreenGeometry.Scale(preferred.Width, dpi), ScreenGeometry.Scale(preferred.Height, dpi));
                         form.PerformLayout();
                         var bodyHost = (ScrollableControl)form.ContentPanel.Parent;
+                        if (form is MatnAiSettingsForm || form is MatnAiHelpForm)
+                            CheckMatnAiCardLayout(form, dpi);
                         if (dpi == 96 && (form is MatnAiSettingsForm || form is MatnAiHelpForm))
                         {
                             using (var screenshot = new Bitmap(form.Width, form.Height))
@@ -451,6 +454,66 @@ internal static class Program
     {
         if (root is ScrollableControl viewport) viewport.AutoScrollPosition = Point.Empty;
         foreach (Control child in root.Controls) ResetScroll(child);
+    }
+
+    private static void CheckMatnAiDarkTheme()
+    {
+        var darkTheme = typeof(ThemeManager).GetField("_isDarkTheme",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        object previous = darkTheme.GetValue(null);
+        darkTheme.SetValue(null, true);
+        try
+        {
+            var factories = new Func<ModernForm>[]
+            {
+                () => new MatnAiSettingsForm(2, 3, true,
+                    (minimum, count, learning) => { }, () => { }, () => { }),
+                () => new MatnAiHelpForm()
+            };
+            foreach (var factory in factories)
+            using (var form = factory())
+            {
+                form.Opacity = 0;
+                form.ShowInTaskbar = false;
+                form.Show();
+                Application.DoEvents();
+                form.PerformLayout();
+                CheckMatnAiCardLayout(form, form.LayoutDpi);
+                using (var screenshot = new Bitmap(form.Width, form.Height))
+                {
+                    form.DrawToBitmap(screenshot, form.ClientRectangle);
+                    screenshot.Save(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                        form.GetType().Name + "-Dark.png"));
+                }
+            }
+        }
+        finally { darkTheme.SetValue(null, previous); }
+        Console.WriteLine("PASS: MatnAI dark-theme card, control and action layouts");
+    }
+
+    private static void CheckMatnAiCardLayout(ModernForm form, int dpi)
+    {
+        foreach (var card in Descendants(form).OfType<ModernCard>())
+        {
+            Require(card.Region != null && !card.Region.IsVisible(0, 0) &&
+                    card.Region.IsVisible(card.Width / 2, card.Height / 2),
+                "Card surface is clipped to rounded corners: " + form.GetType().Name);
+            var bounds = new Rectangle(Point.Empty, card.ClientSize);
+            var children = card.Controls.Cast<Control>().Where(child => child.Visible).ToArray();
+            foreach (var child in children)
+                Require(bounds.Contains(child.Bounds),
+                    "Card child is clipped: " + form.GetType().Name + " / " + child.Text + " at " + dpi + " DPI");
+            for (int first = 0; first < children.Length; first++)
+                for (int second = first + 1; second < children.Length; second++)
+                    Require(!children[first].Bounds.IntersectsWith(children[second].Bounds),
+                        "Card children overlap: " + form.GetType().Name + " / " +
+                        children[first].Text + " / " + children[second].Text + " at " + dpi + " DPI");
+        }
+
+        var actionBounds = new Rectangle(Point.Empty, form.ActionBar.ClientSize);
+        foreach (Control action in form.ActionBar.Controls)
+            Require(actionBounds.Contains(action.Bounds),
+                "Action button is clipped: " + form.GetType().Name + " / " + action.Text + " at " + dpi + " DPI");
     }
 
     private static System.Collections.Generic.IEnumerable<Control> Descendants(Control root)

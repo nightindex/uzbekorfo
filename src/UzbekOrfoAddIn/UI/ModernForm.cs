@@ -278,19 +278,14 @@ namespace UzbekOrfoAddIn.UI
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
-            // Border
-            using (var pen = new Pen(ThemeManager.Border, 1))
-            using (var path = CreateRoundedRectPath(new Rectangle(0, 0, Width - 1, Height - 1), Px(ThemeManager.RadiusLG)))
-            {
-                g.DrawPath(pen, path);
-            }
-
             // Paint bottom resize grip area to blend with ActionBar
             if (AllowResize)
             {
                 using (var brush = new SolidBrush(ThemeManager.Surface))
                 {
-                    g.FillRectangle(brush, 0, Height - RESIZE_BORDER, Width, RESIZE_BORDER);
+                    // Keep the fill away from the rounded outer corners.
+                    g.FillRectangle(brush, RESIZE_BORDER, Height - RESIZE_BORDER,
+                        Math.Max(0, Width - RESIZE_BORDER * 2), RESIZE_BORDER);
                 }
             }
 
@@ -344,6 +339,15 @@ namespace UzbekOrfoAddIn.UI
                 DrawTitleButton(g, _minBtnRect, "─", _minHovered,
                     _minHovered ? ThemeManager.SurfaceHover : Color.Transparent,
                     ThemeManager.TextSecondary);
+            }
+
+            // Draw the outer border last so title/footer background fills cannot
+            // cover the anti-aliased rounded edge.
+            using (var pen = new Pen(ThemeManager.Border, 1))
+            using (var path = CreateRoundedRectPath(
+                new Rectangle(0, 0, Width - 1, Height - 1), Px(ThemeManager.RadiusLG)))
+            {
+                g.DrawPath(pen, path);
             }
         }
 

@@ -32,7 +32,7 @@ namespace UzbekOrfoAddIn.UI.Controls
         public int CornerRadius
         {
             get => _cornerRadius;
-            set { _cornerRadius = value; Invalidate(); }
+            set { _cornerRadius = value; UpdateRoundedRegion(); Invalidate(); }
         }
 
         public ModernCard()
@@ -44,6 +44,24 @@ namespace UzbekOrfoAddIn.UI.Controls
 
             BackColor = ThemeManager.Surface;
             UpdatePadding();
+            UpdateRoundedRegion();
+        }
+
+        protected override void OnResize(EventArgs eventargs)
+        {
+            base.OnResize(eventargs);
+            UpdateRoundedRegion();
+        }
+
+        private void UpdateRoundedRegion()
+        {
+            if (Width <= 0 || Height <= 0) return;
+            using (var path = CreateRoundedRect(new Rectangle(0, 0, Width, Height), Px(_cornerRadius)))
+            {
+                var previous = Region;
+                Region = new Region(path);
+                previous?.Dispose();
+            }
         }
 
         private void UpdatePadding()
