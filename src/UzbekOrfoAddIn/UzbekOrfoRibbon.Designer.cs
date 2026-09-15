@@ -208,13 +208,13 @@ namespace UzbekOrfoAddIn
             // matnaiEnabled
             // 
             this.matnaiEnabled.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.matnaiEnabled.Label = "Ёқиш";
+            this.matnaiEnabled.Label = "Таклифларни ёқиш";
             this.matnaiEnabled.Name = "matnaiEnabled";
             this.matnaiEnabled.OfficeImageId = "AutoCorrect";
-            this.matnaiEnabled.ScreenTip = "MatnAI ни ёқиш ёки ўчириш";
+            this.matnaiEnabled.ScreenTip = "MatnAI таклифларини ёқиш ёки ўчириш";
             this.matnaiEnabled.ShowImage = true;
             this.matnaiEnabled.ShowLabel = true;
-            this.matnaiEnabled.SuperTip = "Офлайн сўз таклифларини ёқади ёки ўчиради. Таклифни қабул қилмагунча матнга ҳеч н" +
+            this.matnaiEnabled.SuperTip = "MatnAI офлайн сўз таклифларини ёқади ёки ўчиради. Таклифни қабул қилмагунча матнга ҳеч н" +
     "арса қўшилмайди.";
             this.matnaiEnabled.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.matnaiEnabled_Click);
             // 
