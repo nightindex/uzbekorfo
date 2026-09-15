@@ -18,7 +18,7 @@ categories below share that single ribbon group.
 
 | Group | Controls |
 | --- | --- |
-| So'z takliflari | Yoqish toggle; Takliflarni ko'rsatish button; ready/loading/paused status |
+| So'z takliflari | Ёқиш toggle; ready/loading/paused status |
 | Moslashtirish | Sozlamalar; Shaxsiy o'rganish toggle (off until explicit consent) |
 | Yordam | Qisqa qo'llanma; local diagnostics export |
 

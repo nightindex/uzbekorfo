@@ -27,7 +27,6 @@ namespace UzbekOrfoAddIn.Services
         private CancellationTokenSource _cancel;
         private CancellationTokenSource _buildCancel;
         private bool _disposed;
-        private bool _manualPending;
         private string[] _shown = new string[0];
         public bool PopupVisible => !_disposed && _popup.Visible;
         public bool CanHandleKeys => PopupVisible && _current != null && WordCompletionContext.HasEditingFocus(_current.WindowHandle);
@@ -52,7 +51,6 @@ namespace UzbekOrfoAddIn.Services
         public void SetEnabled(bool enabled)
         {
             _settings.PredictionsEnabled = enabled;
-            _manualPending = false;
             _settings.Save();
             Clear();
             if (enabled) { Rebuild(); _timer.Start(); }
@@ -109,17 +107,8 @@ namespace UzbekOrfoAddIn.Services
             catch (InvalidOperationException) { /* Word is closing. */ }
         }
 
-        public void ShowSuggestions()
-        {
-            Clear();
-            _manualPending = true;
-            if (_engine == null && _build == null) Rebuild();
-            _timer.Start(); // Ribbon may still own focus; wait for return to editing.
-        }
-
         public void Dismiss()
         {
-            _manualPending = false;
             _popup.Hide();
             _cancel?.Cancel();
             // Keep current identity, suppress redisplay until the user edits/moves.
@@ -138,7 +127,7 @@ namespace UzbekOrfoAddIn.Services
             if (_disposed) return;
             try
             {
-                if (!IsEnabled && !_manualPending && _query == null && !_popup.Visible) { _timer.Stop(); return; }
+                if (!IsEnabled && _query == null && !_popup.Visible) { _timer.Stop(); return; }
                 if (_build != null && _build.IsCompleted)
                 {
                     var completed = _build; _build = null;
@@ -179,11 +168,10 @@ namespace UzbekOrfoAddIn.Services
                 }
                 if (_engine == null || _current == null || _current.Prefix.Length < _settings.MinPredictionLength ||
                     _requested == _current) return;
-                if (!IsEnabled && !_manualPending) { _timer.Stop(); return; }
+                if (!IsEnabled) { _timer.Stop(); return; }
                 _requested = _current;
                 _queryContext = WordCompletionContext.Capture(_app);
                 if (_queryContext == null) return;
-                _manualPending = false;
                 string prefix = _queryContext.Prefix;
                 var engine = _engine;
                 var preferences = _settings.MatnAiLearningConsent ? _preferences.Snapshot() : null;

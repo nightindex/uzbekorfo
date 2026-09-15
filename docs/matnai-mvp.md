@@ -10,8 +10,10 @@ Build/run the add-in in Word through the existing Visual Studio/VSTO workflow.
 The existing **Uzbek Orfo** tab contains a single **MatnAi** group, after the correction
 group and before the dictionary group. It includes:
 
-- **Completion:** Yoqish enables automatic completion; Takliflarni ko'rsatish
-  requests a suggestion session without turning automatic completion on.
+- **Completion:** MatnAI offers suggestions automatically after the user types the
+  configured minimum word prefix. The dedicated toggle enables or disables it.
+  There is no manual suggestion button because clicking a Ribbon button removes
+  focus from the Word editing surface.
 - **Settings:** minimum prefix length and result count; dictionary index refresh;
   optional personal learning and confirmed reset.
 - **Help:** keyboard and scope instructions.

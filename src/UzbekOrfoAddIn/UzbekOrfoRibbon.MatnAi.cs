@@ -10,11 +10,6 @@ namespace UzbekOrfoAddIn
             ThisAddIn.Completion?.SetEnabled(matnaiEnabled.Checked);
         }
 
-        private void btnMatnAiShow_Click(object sender, RibbonControlEventArgs e)
-        {
-            ThisAddIn.Completion?.ShowSuggestions();
-        }
-
         private void btnMatnAiRebuild_Click(object sender, RibbonControlEventArgs e)
         {
             ThisAddIn.Completion?.Rebuild();
