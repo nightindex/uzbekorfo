@@ -82,15 +82,29 @@ public class WordCompletionEngineTests
     {
         string directory = Path.Combine(Path.GetTempPath(), "MatnAiTests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
-        File.WriteAllText(Path.Combine(directory, "settings.cfg"), "AutoLearn=True\nMaxPredictions=4");
+        File.WriteAllText(Path.Combine(directory, "settings.cfg"),
+            "AutoLearn=True\nMaxPredictions=4\nMinPredictionLength=2");
         var settings = new SettingsManager(directory);
         Assert.True(settings.AutoLearn);
         Assert.False(settings.MatnAiLearningConsent);
         Assert.False(settings.PredictionsEnabled);
+        Assert.Equal(3, settings.MinPredictionLength);
         settings.MatnAiLearningConsent = true;
         settings.Save();
         var restored = new SettingsManager(directory);
         Assert.True(restored.MatnAiLearningConsent);
         Assert.Equal(4, restored.MaxPredictions);
+    }
+
+    [Theory]
+    [InlineData("kit", "kitob", "ob")]
+    [InlineData("КИТ", "КИТОБ", "ОБ")]
+    [InlineData("ki", "kitob", null)]
+    [InlineData("so'", "so'fi", null)]
+    [InlineData("kit", "kita", null)]
+    [InlineData("kit", "other", null)]
+    public void GhostTailRequiresUsefulExactContinuation(string prefix, string candidate, string? expected)
+    {
+        Assert.Equal(expected, WordCompletionEngine.GetGhostTail(prefix, candidate));
     }
 }

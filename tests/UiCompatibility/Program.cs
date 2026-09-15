@@ -62,6 +62,11 @@ internal static class Program
             popup.Present(new[] { "kitob", "kitoblar", "kitobcha" }, new Rectangle(100, 100, 2, 20), owner);
             Application.DoEvents();
             Require(GetForegroundWindow() == foreground, "MatnAi popup does not activate or steal focus");
+            Require(popup.Height == ScreenGeometry.Scale(38, popup.PresentationDpi) * 3 + 2,
+                "MatnAi alternatives use a compact row-only layout");
+            Require(popup.Width >= ScreenGeometry.Scale(236, popup.PresentationDpi) &&
+                    popup.Width <= ScreenGeometry.Scale(360, popup.PresentationDpi),
+                "MatnAi alternatives use a bounded compact width");
             Require(popup.AccessibilityObject.Role == AccessibleRole.List && popup.AccessibilityObject.GetChildCount() == 3,
                 "MatnAi exposes an accessible suggestion list");
             popup.MoveSelection(1);
@@ -85,6 +90,66 @@ internal static class Program
             popup.Hide();
         }
         Console.WriteLine("PASS: MatnAi popup focus, selection, accessibility and stale-action safety");
+    }
+
+    private static void CheckCompletionOverlayGeometry()
+    {
+        var leftMonitor = new Rectangle(-1920, 0, 1920, 1040);
+        var bottomAnchor = new OverlayAnchor(new Rectangle(-110, 1010, 2, 24), leftMonitor,
+            IntPtr.Zero, 192, "Segoe UI", 11f, FontStyle.Regular, false);
+        Rectangle popup = OverlayPositioner.PlacePopup(bottomAnchor, new Size(500, 230));
+        Require(leftMonitor.Contains(popup), "Alternatives stay on a negative-coordinate monitor");
+        Require(popup.Bottom <= bottomAnchor.CaretBounds.Top,
+            "Alternatives move above the caret when there is no room below");
+
+        var rightMonitor = new Rectangle(1920, -200, 2560, 1400);
+        var inlineAnchor = new OverlayAnchor(new Rectangle(2400, 300, 2, 30), rightMonitor,
+            IntPtr.Zero, 144, "Segoe UI", 11f, FontStyle.Regular, true);
+        Rectangle ghost = OverlayPositioner.PlaceGhost(inlineAnchor, new Size(180, 32));
+        Require(!ghost.IsEmpty && rightMonitor.Contains(ghost),
+            "Ghost text stays inline on a differently scaled monitor");
+        Require(ghost.Left == inlineAnchor.CaretBounds.Right + ScreenGeometry.Scale(1, inlineAnchor.Dpi),
+            "Ghost text starts immediately after the physical caret");
+
+        var edgeAnchor = new OverlayAnchor(new Rectangle(rightMonitor.Right - 12, 300, 2, 30), rightMonitor,
+            IntPtr.Zero, 144, "Segoe UI", 11f, FontStyle.Regular, false);
+        Require(OverlayPositioner.PlaceGhost(edgeAnchor, new Size(180, 32)).IsEmpty,
+            "Ghost text is suppressed instead of jumping away from a right-edge caret");
+        Console.WriteLine("PASS: mixed-DPI completion overlay placement");
+    }
+
+    private static void CheckGhostSuggestionWindow()
+    {
+        using (var owner = new Form
+        {
+            Opacity = 0,
+            ShowInTaskbar = false,
+            StartPosition = FormStartPosition.Manual,
+            Location = new Point(120, 120),
+            Size = new Size(320, 200)
+        })
+        using (var ghost = new GhostSuggestionWindow())
+        {
+            owner.Show();
+            Application.DoEvents();
+            Rectangle workArea = Screen.FromHandle(owner.Handle).WorkingArea;
+            int dpi = DpiLayout.WindowDpi(owner);
+            var caret = new Rectangle(workArea.Left + 160, workArea.Top + 160,
+                Math.Max(1, ScreenGeometry.Scale(2, dpi)), ScreenGeometry.Scale(22, dpi));
+            var anchor = new OverlayAnchor(caret, workArea, owner.Handle, dpi,
+                "Segoe UI", 11f, FontStyle.Regular, false);
+            IntPtr foreground = GetForegroundWindow();
+            Require(ghost.Present("oblar", anchor, owner), "Ghost suggestion can render as a layered window");
+            Application.DoEvents();
+            Require(ghost.Visible && ghost.SuggestionTail == "oblar",
+                "Ghost suggestion exposes only the untyped continuation");
+            Require(ghost.AccessibilityObject.Name.Contains("oblar"),
+                "Ghost suggestion exposes its continuation to assistive technology");
+            Require(workArea.Contains(ghost.PresentationBounds), "Ghost suggestion stays in the current work area");
+            Require(GetForegroundWindow() == foreground, "Ghost suggestion does not activate or steal focus");
+            ghost.Hide();
+        }
+        Console.WriteLine("PASS: non-activating ghost suggestion window");
     }
 
     private static void CheckShortcutsDoNotReserveGlobalKeys()
@@ -130,6 +195,8 @@ internal static class Program
         try
         {
             Application.EnableVisualStyles();
+            CheckCompletionOverlayGeometry();
+            CheckGhostSuggestionWindow();
             CheckMatnAiPopup();
             CheckKeyboardAccessibility();
             CheckShortcutsDoNotReserveGlobalKeys();
@@ -143,7 +210,7 @@ internal static class Program
                 var factories = new Func<ModernForm>[]
                 {
                     () => new AddNewWordsForm(), () => new AppInfoForm(), () => new ImportProgressForm(),
-                    () => new MatnAiSettingsForm(2, 3, false, (minimum, count, learning) => { }, () => { }, () => { }),
+                    () => new MatnAiSettingsForm(3, 3, false, (minimum, count, learning) => { }, () => { }, () => { }),
                     () => new MatnAiHelpForm(),
                     () => new TranslitExceptionsForm(
                         () => Enumerable.Range(1, 39).Select(i => new TranslitException("Example " + i, "Мисол " + i)).ToList(),
@@ -466,7 +533,7 @@ internal static class Program
         {
             var factories = new Func<ModernForm>[]
             {
-                () => new MatnAiSettingsForm(2, 3, true,
+                () => new MatnAiSettingsForm(3, 3, true,
                     (minimum, count, learning) => { }, () => { }, () => { }),
                 () => new MatnAiHelpForm()
             };

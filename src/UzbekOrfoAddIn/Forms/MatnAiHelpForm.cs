@@ -75,17 +75,17 @@ namespace UzbekOrfoAddIn.Forms
             AddStep(card, "1", "Таклифларни ёқиш",
                 "Тасмадаги «Таклифларни ёқиш» тугмасини фаоллаштиринг.", 46);
             AddStep(card, "2", "Сўз ёзиш",
-                "Оддий ҳужжат матнида камида икки ҳарф ёзинг. Таклиф курсор яқинида пайдо бўлади.", 93);
+                "Камида учта ҳарф ёзинг. Энг яхши давоми курсор ёнида кулранг матн бўлиб кўринади.", 93);
             return card;
         }
 
         private static ModernCard BuildShortcutCard()
         {
             var card = NewCard("ТЕЗКОР ТУГМАЛАР");
-            AddShortcut(card, "Ctrl + Alt + ↓ / ↑", "Таклифлар орасида ҳаракатланиш", 47);
-            AddShortcut(card, "Ctrl + Alt + →", "Танланган таклифни қабул қилиш", 85);
-            AddShortcut(card, "Esc", "Таклифлар ойнасини ёпиш", 123);
-            AddShortcut(card, "Ctrl + Z", "Қабул қилинган таклифни бекор қилиш", 161);
+            AddShortcut(card, "Tab", "Кулранг таклифни қабул қилиш", 47);
+            AddShortcut(card, "↓; сўнг ↑ / ↓", "Таклифлар рўйхатини очиш ва танлаш", 85);
+            AddShortcut(card, "Esc", "Таклифни ёпиш", 123);
+            AddShortcut(card, "Ctrl + Alt + →", "Таклифни қабул қилишнинг муқобил тугмаси", 161);
             return card;
         }
 

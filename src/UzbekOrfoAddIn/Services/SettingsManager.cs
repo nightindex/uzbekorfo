@@ -13,7 +13,7 @@ namespace UzbekOrfoAddIn.Services
     {
         private const int MinPredictionsAllowed = 1;
         private const int MaxPredictionsAllowed = 10;
-        private const int MinPredictionLengthAllowed = 1;
+        private const int MinPredictionLengthAllowed = 3;
         private const int MaxPredictionLengthAllowed = 15;
         private const int MinSpellingSuggestionsAllowed = 1;
         private const int MaxSpellingSuggestionsAllowed = 20;
@@ -86,7 +86,7 @@ namespace UzbekOrfoAddIn.Services
         public int MaxPredictions { get; set; } = 3;
 
         /// <summary>Minimum word length to trigger predictions.</summary>
-        public int MinPredictionLength { get; set; } = 2;
+        public int MinPredictionLength { get; set; } = 3;
 
         /// <summary>Whether to auto-learn from typed text.</summary>
         public bool AutoLearn { get; set; } = true;

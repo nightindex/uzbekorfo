@@ -119,6 +119,22 @@ namespace UzbekOrfoAddIn.Services
             return prefix + (uppercase ? tail.ToUpperInvariant() : tail);
         }
 
+        /// <summary>
+        /// Returns a useful inline continuation or null when showing prominent
+        /// ghost text would create more visual noise than typing benefit.
+        /// </summary>
+        public static string GetGhostTail(string prefix, string candidate)
+        {
+            if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(candidate) ||
+                candidate.Length <= prefix.Length ||
+                !candidate.StartsWith(prefix, StringComparison.Ordinal)) return null;
+            string tail = candidate.Substring(prefix.Length);
+            // Three typed letters avoids noisy early guesses; a one-letter tail
+            // saves too little to justify an inline interruption.
+            if (prefix.Count(char.IsLetter) < 3 || tail.Count(char.IsLetter) < 2) return null;
+            return tail;
+        }
+
         public static string[] ValidateCandidates(IEnumerable<string> proposals, Func<string, bool> isValid, int count)
         {
             var accepted = new List<string>();

@@ -22,7 +22,7 @@ categories below share that single ribbon group.
 | Settings | Созламалар: minimum prefix length, result count, personal-learning consent and reset, manual index refresh |
 | Help | Қисқа қўлланма |
 
-Settings: minimum prefix length (default two letters), result count (default three),
+Settings: minimum prefix length (default three letters), result count (default three),
 personal-learning consent and reset, plus an optional manual index refresh. Reset removes
 only prediction-learning data after confirmation, never the main or custom dictionary.
 Dictionary saves refresh the completion index automatically.
@@ -37,7 +37,7 @@ Dictionary saves refresh the completion index automatically.
 | Suffix candidates | Bounded MorphologyCompletionProvider consuming the existing rule set and validating via the existing analyzer |
 | Word lifecycle and scheduling | WordCompletionController owned/disposed by AddInRuntime |
 | Read/insert safety | WordCompletionContextReader and CompletionInsertionService |
-| UI | Non-activating CompletionPopup plus existing ribbon partial/designer integration |
+| UI | Click-through GhostSuggestionWindow, compact non-activating CompletionPopup, and existing ribbon integration |
 | Optional learning | LocalCompletionPreferences with versioned, atomic storage and explicit consent |
 
 Inspect all consumers before adapting the existing IPredictionEngine interface: it
@@ -60,7 +60,7 @@ defaulting off for both new and upgraded installations. Preserve unrelated setti
    full-dictionary fuzzy search, or full suffix enumeration.
 4. Rank a bounded candidate set, return top three, then recheck identity/caret/text
    on the UI thread. Discard stale results even if cancellation arrived too late.
-5. Position the popup near the caret without taking typing focus. Hide it when
+5. Position the inline ghost tail or alternatives popup near the caret without taking typing focus. Hide it when
    focus, document, selection or visibility changes; suppress same-request redisplay
    after Escape until the prefix changes or the user explicitly requests suggestions.
 
@@ -91,10 +91,13 @@ Suppress predictions in protected/read-only content, fields, unsupported content
 controls, non-body stories, selected text, dialogs and active input composition.
 Tables, tracked changes and mid-token editing stay disabled until tested explicitly.
 
-Use click or a configurable shortcut to accept; prototype a conflict-checked shortcut
-such as Ctrl+Space before deciding the default. Do not hijack Tab, Enter or Space.
-Escape dismisses. Native shortcuts keep working when the popup is hidden or stale.
-Keyboard navigation and screen-reader behavior are prototype acceptance criteria.
+Show only the untyped continuation as click-through gray ghost text after at least
+three typed letters. Tab accepts only while that visible suggestion is still valid;
+Down opens the compact alternatives list, and Up/Down then changes its selection.
+Escape dismisses. Ctrl+Alt+Right remains an alternative acceptance shortcut. Tab,
+arrows and all native shortcuts pass through unchanged when the UI is hidden, stale,
+unsupported or Word's editing surface lacks focus. Enter and Space are never captured.
+Keyboard navigation and screen-reader behavior are acceptance criteria.
 
 Before insertion, verify the same active document/window/story, collapsed selection,
 expected caret position and exact original token text. Insert only the missing tail
@@ -104,14 +107,14 @@ Coordinate with AutoCorrectService to avoid reentrant double edits. Each accepta
 must undo as one operation and leave surrounding text/formatting unchanged.
 
 Prototype positioning with Word's [Window.GetPoint](https://learn.microsoft.com/en-us/office/vba/api/word.window.getpoint);
-Microsoft documents an error for a non-visible target. Fail closed: hide the popup,
+Microsoft documents an error for a non-visible target. Fail closed: hide the overlay,
 do not scroll the document to force a location. Prototype custom undo grouping with
 [UndoRecord](https://learn.microsoft.com/en-us/office/vba/word/concepts/working-with-word/working-with-the-undorecord-object),
 and test it rather than assuming ordinary insertions have the desired undo behavior.
 
 ## Milestones and acceptance gates
 
-1. **Interaction spike:** hard-coded suggestions only; test typing detection, popup,
+1. **Interaction spike:** hard-coded suggestions only; test typing detection, ghost text/popup,
    focus, shortcut conflicts, stale rejection and undo in real Word. No learning.
    Stop for a design decision if safe positioning/input capture cannot be demonstrated.
 2. **Core completion:** implement prefix index, Latin/Cyrillic normalization, custom-word
@@ -153,7 +156,7 @@ Baseline checkpoint already exists locally; it is a recovery snapshot, not a cer
 release. Ignored build outputs, personal settings, certificates and TestResults are
 not in Git. No remote backup has been made.
 
-Implement later on `feature/matnai-word-completion` with separate commits per milestone
+Implementation is maintained on `feature/matnai-word-completion` with separate commits per milestone
 and feature disabled by default. Preserve the checkpoint tag. Prefer reverting feature
 commits for rollback. To inspect the baseline without overwriting current work, create
 a separate worktree from the tag; do not use destructive reset commands.

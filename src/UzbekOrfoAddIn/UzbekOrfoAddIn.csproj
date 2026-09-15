@@ -226,6 +226,7 @@
     <Compile Include="Services\WordCompletionContext.cs" />
     <Compile Include="Services\WordCompletionController.cs" />
     <Compile Include="Forms\CompletionPopup.cs" />
+    <Compile Include="Forms\GhostSuggestionWindow.cs" />
     <Compile Include="UzbekOrfoRibbon.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -371,6 +372,7 @@
     <Compile Include="UI\ThemeManager.cs" />
     <Compile Include="UI\ScreenGeometry.cs" />
     <Compile Include="UI\DpiLayout.cs" />
+    <Compile Include="UI\OverlayPositioner.cs" />
     <Compile Include="UI\DpiForm.cs" />
     <Compile Include="UI\ModernForm.cs">
       <SubType>Form</SubType>

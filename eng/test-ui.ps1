@@ -9,7 +9,7 @@ $compiler = Join-Path $vsPath 'MSBuild\Current\Bin\Roslyn\csc.exe'
 $outputDir = Join-Path $repoRoot "tests\UiCompatibility\bin\$Configuration"
 New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 $sources = @(
-    'UI\ScreenGeometry.cs', 'UI\DpiLayout.cs', 'UI\DpiForm.cs',
+    'UI\ScreenGeometry.cs', 'UI\DpiLayout.cs', 'UI\OverlayPositioner.cs', 'UI\DpiForm.cs',
     'UI\ThemeManager.cs', 'UI\ModernForm.cs',
     'UI\Controls\ModernButton.cs', 'UI\Controls\ModernCard.cs',
     'UI\Controls\EmojiLabel.cs', 'UI\Controls\DpiDataGridView.cs', 'UI\Controls\ModernScrollBar.cs',
@@ -22,7 +22,7 @@ $sources = @(
     'Models\TranslitException.cs', 'Models\Enums.cs', 'Models\ErrorEntry.cs', 'Models\Suggestion.cs',
     'Core\ITransliterator.cs', 'Services\TransliterationService.cs',
     'Helpers\TextHelper.cs', 'Helpers\Logger.cs', 'Helpers\HotkeyManager.cs'
-    'Forms\CompletionPopup.cs'
+    'Forms\CompletionPopup.cs', 'Forms\GhostSuggestionWindow.cs'
 ) | ForEach-Object { Join-Path $repoRoot "src\UzbekOrfoAddIn\$_" }
 $sources += Join-Path $repoRoot 'tests\UiCompatibility\Program.cs'
 $sources += Join-Path $repoRoot 'tests\UiCompatibility\HostGuards.cs'

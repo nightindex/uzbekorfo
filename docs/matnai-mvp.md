@@ -25,11 +25,13 @@ Open `UzbekOrfoRibbon.cs` with View Designer and find **MatnAI** on the **Uzbek 
 code remains in the nested code-only `UzbekOrfoRibbon.MatnAi.cs` file. The static
 `eng/test-ribbon-layout.ps1` guard runs as part of UI checks; it is not an IDE test.
 
-Type at least two letters in ordinary document body text. Click a suggestion to
-accept it, or use Ctrl+Alt+Up/Down to choose and Ctrl+Alt+Right to accept.
-Escape dismisses. These shortcuts apply only while a suggestion popup is visible
-and Word's document editing surface has focus. Tab, Enter and plain arrow keys are
-unchanged. Ctrl+Z reverses an accepted completion in one step.
+Type at least three letters in ordinary document body text. MatnAI shows only the
+untyped continuation as gray inline text. Press Tab to accept it, Down to open the
+compact alternatives list, and then Up/Down to select. Escape dismisses. The existing
+Ctrl+Alt+Up/Down and Ctrl+Alt+Right shortcuts remain available. These keys are captured
+only while a current suggestion is visible and Word's document editing surface has
+focus; otherwise Word receives them normally. Enter and Space are never captured.
+Ctrl+Z reverses an accepted completion in one step.
 
 Automatic completion defaults off. Personal learning requires a separate explicit
 opt-in, even if the historical AutoLearn setting was true. The opt-in store contains
@@ -52,9 +54,11 @@ copy, as disclosed in the confirmation.
   it does not guarantee completion of every valid inflection or mutated stem.
 - Optional acceptance counts influence ranking. Without them, ranking is deterministic
   and favors shorter completions. There is no trained contextual or sentence model.
-- A non-activating popup follows the caret, exposes accessible list items and rejects
-  stale accessibility actions. Document identity, window, token span and exact typed
-  prefix are rechecked immediately before insertion. Only the missing tail is inserted.
+- A click-through layered ghost window follows the caret without modifying the document.
+  Down opens a compact, non-activating alternatives popup with accessible list items and
+  stale-action rejection. Both overlays use the Word window's DPI context and the caret's
+  monitor work area. Document identity, window, token span and exact typed prefix are
+  rechecked immediately before insertion. Only the missing tail is inserted.
 - Word COM access remains on the UI thread. Background queries receive plain strings
   and snapshots. Completion temporarily suspends the existing autocorrect service
   during insertion to prevent reentrant corrections.
@@ -70,24 +74,24 @@ and `eng/test-ui.ps1 -Configuration Debug` after a Debug build.
 
 Current measured evidence:
 
-- 59 unit tests passed, including cancellation, optional preference ranking, settings
+- 65 unit tests passed, including ghost-tail eligibility, cancellation, optional preference ranking, settings
   consent migration, script/apostrophe preservation and deferred validation.
 - Real-Word smoke passed: accepted tail insertion, single Undo, stale prefix rejection,
   other-document rejection, selected-text/tracked-change suppression, suffix validation,
   repeated index rebuild and idempotent disposal. Tests use isolated settings directories.
-- The popup-specific UI test passed focus preservation, accessible list/selection,
-  explicit accessible acceptance and stale accessibility item rejection. The wider UI
-  suite passed on standalone reruns. An earlier run failed the existing exceptions-grid
-  row-count assertion at 300%; the cause is unconfirmed and was not silently repaired.
-- One local run built the full lexical index in 169 ms. Across 1,200 warmed queries,
-  lexical engine p95 was 0.023 ms. These are **not** keystroke-to-popup measurements
+- The completion UI tests passed layered ghost rendering, focus preservation, accessible
+  continuation/list behavior, compact popup sizing, stale-action rejection, and placement
+  on negative-coordinate and differently scaled monitor geometries. The full UI suite
+  passed from 100% through 400% scaling.
+- The latest local Word smoke run built the full lexical index in 189 ms. Across 1,200
+  warmed queries, lexical engine p95 was 0.029 ms. These are **not** keystroke-to-suggestion measurements
   and do not include suffix validation, Word polling, UI rendering or cold startup.
 
 ## Remaining work before a production claim
 
-Measure actual typing-to-popup p95/p99 on varied large documents; test the integrated
-ribbon and popup with actual typing, zoom, IME, multi-monitor DPI and Narrator. The
-automated popup test is not a full assistive-technology certification. Validate keyboard
+Measure actual typing-to-suggestion p95/p99 on varied large documents; test the integrated
+ribbon and overlays with actual typing, zoom, IME, mixed-DPI monitors and Narrator. The
+automated overlay test is not a full assistive-technology certification. Validate keyboard
 shortcut conflicts on target machines. The 100 ms end-to-end target remains unproven.
 
 Contextual ranking, configurable acceptance shortcuts, script override, aggregate

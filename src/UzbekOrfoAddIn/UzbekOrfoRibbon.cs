@@ -1047,12 +1047,21 @@ namespace UzbekOrfoAddIn
 
                 HotkeyManager.Register(new[]
                 {
+                    new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Tab,
+                        () => ThisAddIn.Completion?.AcceptSelected(), "MatnAI кулранг таклифини қабул қилиш",
+                        () => ThisAddIn.Completion?.CanAcceptSuggestion == true),
+                    new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Down,
+                        () => ThisAddIn.Completion?.MoveSelection(1), "MatnAI таклифларини очиш",
+                        () => ThisAddIn.Completion?.CanOpenAlternatives == true),
+                    new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Up,
+                        () => ThisAddIn.Completion?.MoveSelection(-1), "MatnAI олдинги таклифи",
+                        () => ThisAddIn.Completion?.CanNavigateAlternatives == true),
                     new HotkeyManager.HotkeyDef(CA, Keys.Right, () => ThisAddIn.Completion?.AcceptSelected(),
-                        "MatnAI қабул қилиш", () => ThisAddIn.Completion?.CanHandleKeys == true),
+                        "MatnAI қабул қилиш", () => ThisAddIn.Completion?.CanAcceptSuggestion == true),
                     new HotkeyManager.HotkeyDef(CA, Keys.Down, () => ThisAddIn.Completion?.MoveSelection(1),
-                        "MatnAI кейинги таклиф", () => ThisAddIn.Completion?.CanHandleKeys == true),
+                        "MatnAI кейинги таклиф", () => ThisAddIn.Completion?.CanOpenAlternatives == true),
                     new HotkeyManager.HotkeyDef(CA, Keys.Up, () => ThisAddIn.Completion?.MoveSelection(-1),
-                        "MatnAI олдинги таклиф", () => ThisAddIn.Completion?.CanHandleKeys == true),
+                        "MatnAI олдинги таклиф", () => ThisAddIn.Completion?.CanOpenAlternatives == true),
                     new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Escape,
                         () => ThisAddIn.Completion?.Dismiss(), "MatnAI ёпиш", () => ThisAddIn.Completion?.CanHandleKeys == true),
                     // ── Текшириш ────────────────────────────────────────

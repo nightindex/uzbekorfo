@@ -38,7 +38,7 @@ namespace UzbekOrfoAddIn.Forms
             AllowResize = true;
             ShowMinimizeButton = false;
 
-            _minimum = CreateNumber(_initialMinimum, 2, 15, "Энг кам ҳарфлар сони");
+            _minimum = CreateNumber(Math.Max(3, _initialMinimum), 3, 15, "Энг кам ҳарфлар сони");
             _count = CreateNumber(_initialCount, 1, 10, "Таклифлар сони");
             _learning = new ModernToggle
             {

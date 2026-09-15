@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using UzbekOrfoAddIn.Helpers;
+using UzbekOrfoAddIn.UI;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace UzbekOrfoAddIn.Services
@@ -121,15 +122,45 @@ namespace UzbekOrfoAddIn.Services
 
         public Rectangle GetCaretBounds(Word.Application app)
         {
+            return GetCaretAnchor(app).CaretBounds;
+        }
+
+        internal OverlayAnchor GetCaretAnchor(Word.Application app)
+        {
             Word.Range caret = _range.Duplicate;
+            Word.Font wordFont = null;
             try
             {
                 caret.SetRange(End, End);
                 int x, y, width, height;
-                app.ActiveWindow.GetPoint(out x, out y, out width, out height, caret);
-                return new Rectangle(x, y, width, height);
+                string fontName = "Segoe UI";
+                float fontSize = 11f;
+                FontStyle fontStyle = FontStyle.Regular;
+                IntPtr owner = new IntPtr(WindowHandle);
+                using (new DpiLayout.Context(DpiLayout.WindowContext(owner)))
+                {
+                    app.ActiveWindow.GetPoint(out x, out y, out width, out height, caret);
+                    try
+                    {
+                        wordFont = caret.Font;
+                        if (!string.IsNullOrWhiteSpace(wordFont.Name)) fontName = wordFont.Name;
+                        if (wordFont.Size >= 6f && wordFont.Size <= 96f) fontSize = wordFont.Size;
+                        if (wordFont.Bold == -1) fontStyle |= FontStyle.Bold;
+                        if (wordFont.Italic == -1) fontStyle |= FontStyle.Italic;
+                    }
+                    catch (COMException) { /* Use safe visual defaults. */ }
+                    // Keep all screen-coordinate APIs in Word's DPI context. Otherwise
+                    // monitor work areas can be virtualized differently from GetPoint.
+                    return OverlayPositioner.CreateAnchor(
+                        new Rectangle(x, y, Math.Max(1, width), Math.Max(1, height)),
+                        owner, fontName, fontSize, fontStyle);
+                }
             }
-            finally { Marshal.ReleaseComObject(caret); }
+            finally
+            {
+                if (wordFont != null) Marshal.ReleaseComObject(wordFont);
+                Marshal.ReleaseComObject(caret);
+            }
         }
         public void Dispose()
         {
