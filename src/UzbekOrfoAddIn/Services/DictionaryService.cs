@@ -28,6 +28,7 @@ namespace UzbekOrfoAddIn.Services
     /// </summary>
     public class DictionaryService : IDictionaryService, ILexemeMetadataProvider
     {
+        public event Action VocabularySaved;
         private readonly HashSet<string> _mainDictionary = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _userDictionary = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, LexemeMetadata> _lexemeMetadata =
@@ -241,6 +242,7 @@ namespace UzbekOrfoAddIn.Services
             {
                 EnsureUserWordsCache();
                 File.WriteAllLines(_userDictPath, _userWordsSortedCache);
+                VocabularySaved?.Invoke();
                 Logger.Info($"Р РЃР В°РЎвЂ¦РЎРѓР С‘Р в„– Р В»РЎС“РўвЂњР В°РЎвЂљ РЎРѓР В°РўвЂєР В»Р В°Р Р…Р Т‘Р С‘: {_userWordsSortedCache.Count} РЎРѓРЎС›Р В·");
             }
             catch (Exception ex)
@@ -382,6 +384,12 @@ namespace UzbekOrfoAddIn.Services
         }
 
         /// <inheritdoc/>
+        /// <summary>Unsorted snapshot for background completion indexing; call on the owning UI thread.</summary>
+        public string[] GetCompletionSnapshot()
+        {
+            return _mainDictionary.Concat(_userDictionary).ToArray();
+        }
+
         public List<string> GetUserWords()
         {
             EnsureUserWordsCache();

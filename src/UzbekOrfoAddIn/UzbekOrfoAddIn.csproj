@@ -221,6 +221,12 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UzbekOrfoRibbon.MatnAi.cs" />
+    <Compile Include="Services\WordCompletionEngine.cs" />
+    <Compile Include="Services\CompletionPreferences.cs" />
+    <Compile Include="Services\WordCompletionContext.cs" />
+    <Compile Include="Services\WordCompletionController.cs" />
+    <Compile Include="Forms\CompletionPopup.cs" />
     <Compile Include="UzbekOrfoRibbon.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -20,6 +20,7 @@ $sources = @(
     'Models\TranslitException.cs', 'Models\Enums.cs', 'Models\ErrorEntry.cs', 'Models\Suggestion.cs',
     'Core\ITransliterator.cs', 'Services\TransliterationService.cs',
     'Helpers\TextHelper.cs', 'Helpers\Logger.cs', 'Helpers\HotkeyManager.cs'
+    'Forms\CompletionPopup.cs'
 ) | ForEach-Object { Join-Path $repoRoot "src\UzbekOrfoAddIn\$_" }
 $sources += Join-Path $repoRoot 'tests\UiCompatibility\Program.cs'
 $sources += Join-Path $repoRoot 'tests\UiCompatibility\HostGuards.cs'

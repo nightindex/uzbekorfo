@@ -45,6 +45,7 @@ namespace UzbekOrfoAddIn
 
         /// <summary>Grammar checking engine.</summary>
         public static GrammarEngine GrammarEngine { get; private set; }
+        public static WordCompletionController Completion { get; private set; }
 
         // Future services (will be initialized as implemented):
         // public static PredictionEngine PredictionEngine { get; private set; }
@@ -191,6 +192,7 @@ namespace UzbekOrfoAddIn
             ExplanationProvider = _runtime.ExplanationProvider;
             MorphAnalyzer = _runtime.MorphAnalyzer;
             GrammarEngine = _runtime.GrammarEngine;
+            Completion = _runtime.Completion;
         }
 
         private static void RegisterGlobalExceptionHandlers()

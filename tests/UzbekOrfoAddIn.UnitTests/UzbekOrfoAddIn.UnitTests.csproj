@@ -15,6 +15,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\TextHelper.cs" Link="Helpers\TextHelper.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\WordCompletionEngine.cs" Link="Services\WordCompletionEngine.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\CompletionPreferences.cs" Link="Services\CompletionPreferences.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\SettingsManager.cs" Link="Services\SettingsManager.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\UzbekStringComparer.cs" Link="Helpers\UzbekStringComparer.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\AtomicFile.cs" Link="Helpers\AtomicFile.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\ImportTextReader.cs" Link="Helpers\ImportTextReader.cs" />

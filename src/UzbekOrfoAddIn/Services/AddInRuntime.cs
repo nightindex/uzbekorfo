@@ -20,6 +20,7 @@ namespace UzbekOrfoAddIn.Services
         public UzbekMorphAnalyzer MorphAnalyzer { get; private set; }
         public GrammarEngine GrammarEngine { get; private set; }
         public UnknownWordReportService UnknownWordReport { get; private set; }
+        public WordCompletionController Completion { get; private set; }
 
         private AddInRuntime() { }
 
@@ -74,6 +75,8 @@ namespace UzbekOrfoAddIn.Services
             runtime.AutoCorrectService = new AutoCorrectService(runtime.SpellingEngine, runtime.DictionaryService);
             runtime.AutoCorrectService.Initialize(application);
             runtime.AutoCorrectService.IsEnabled = runtime.Settings.AutoCorrectEnabled;
+            runtime.Completion = new WordCompletionController(application, runtime.Settings,
+                runtime.DictionaryService, runtime.AutoCorrectService, runtime.MorphAnalyzer);
 
             runtime.GrammarEngine = new GrammarEngine(
                 runtime.DictionaryService,
@@ -101,6 +104,8 @@ namespace UzbekOrfoAddIn.Services
 
         public void Shutdown()
         {
+            try { Completion?.Dispose(); }
+            catch (Exception ex) { Logger.Warn("Completion dispose error: " + ex.Message); }
             try { AutoCorrectService?.Dispose(); }
             catch (Exception ex) { Logger.Warn($"AutoCorrect dispose error: {ex.Message}"); }
 

@@ -17,7 +17,7 @@ foreach ($dataFile in @('uzbek_main.dic', 'uzbek_dictionary_metadata.json', 'uzb
     Copy-Item -LiteralPath (Join-Path $repoRoot "src\UzbekOrfoAddIn\Data\$dataFile") -Destination $dataOutput -Force
 }
 $outputExe = Join-Path $outputDir 'WordSmoke.exe'
-& $compiler /nologo /langversion:7.3 /target:exe /r:System.Web.Extensions.dll "/link:$interop" "/r:$product\UzbekOrfoAddIn.dll" "/out:$outputExe" (Join-Path $repoRoot 'tests\WordSmoke\Program.cs')
+& $compiler /nologo /langversion:7.3 /target:exe /r:System.Web.Extensions.dll /r:System.Windows.Forms.dll "/link:$interop" "/r:$product\UzbekOrfoAddIn.dll" "/out:$outputExe" (Join-Path $repoRoot 'tests\WordSmoke\Program.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Word smoke harness compilation failed.' }
 # Creates a separate hidden Word instance and blank documents, closed without saving.
 & $outputExe

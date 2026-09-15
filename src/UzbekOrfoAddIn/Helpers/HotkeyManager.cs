@@ -22,9 +22,10 @@ namespace UzbekOrfoAddIn.Helpers
             public Keys Key { get; }
             public Action Action { get; }
             public string Label { get; }
-            public HotkeyDef(Modifiers mod, Keys key, Action action, string label = "")
+            public Func<bool> CanExecute { get; }
+            public HotkeyDef(Modifiers mod, Keys key, Action action, string label = "", Func<bool> canExecute = null)
             {
-                Mod = mod; Key = key; Action = action; Label = label;
+                Mod = mod; Key = key; Action = action; Label = label; CanExecute = canExecute;
             }
         }
 
@@ -126,14 +127,16 @@ namespace UzbekOrfoAddIn.Helpers
                     // key-up reached this thread. A new press starts a fresh cycle.
                     if (!repeat) ConsumedKeys.Remove(key);
                     if (!repeat && !_executing && IsForegroundWordWindow() &&
-                        Hotkeys.TryGetValue(key | Control.ModifierKeys, out var hotkey))
+                        Hotkeys.TryGetValue(key | Control.ModifierKeys, out var hotkey) &&
+                        (hotkey.CanExecute == null || hotkey.CanExecute()))
                     {
                         IntPtr target = GetForegroundWindow();
                         var dispatcher = _dispatcher;
                         dispatcher.BeginInvoke((Action)(() =>
                         {
                             if (dispatcher != _dispatcher || _executing ||
-                                GetForegroundWindow() != target || !IsForegroundWordWindow()) return;
+                                GetForegroundWindow() != target || !IsForegroundWordWindow() ||
+                                (hotkey.CanExecute != null && !hotkey.CanExecute())) return;
                             _executing = true;
                             try { hotkey.Action(); }
                             catch (Exception ex) { Logger.Error("Shortcut failed: " + hotkey.Label, ex); }

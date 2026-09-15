@@ -46,6 +46,46 @@ internal static class Program
     private static extern bool RegisterHotKey(IntPtr window, int id, uint modifiers, uint key);
     [DllImport("user32.dll")]
     private static extern bool UnregisterHotKey(IntPtr window, int id);
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+
+    private static void CheckMatnAiPopup()
+    {
+        using (var owner = new Form { Opacity = 0, ShowInTaskbar = false })
+        using (var popup = new CompletionPopup { Opacity = 0 })
+        {
+            owner.Show();
+            Application.DoEvents();
+            IntPtr foreground = GetForegroundWindow();
+            string accepted = null;
+            popup.Accepted += word => accepted = word;
+            popup.Present(new[] { "kitob", "kitoblar", "kitobcha" }, new Rectangle(100, 100, 2, 20), owner);
+            Application.DoEvents();
+            Require(GetForegroundWindow() == foreground, "MatnAi popup does not activate or steal focus");
+            Require(popup.AccessibilityObject.Role == AccessibleRole.List && popup.AccessibilityObject.GetChildCount() == 3,
+                "MatnAi exposes an accessible suggestion list");
+            popup.MoveSelection(1);
+            Require(popup.Selected == "kitoblar", "MatnAi keyboard selection moves to next suggestion");
+            var item = popup.AccessibilityObject.GetChild(1);
+            Require(item.Name == "kitoblar" && (item.State & AccessibleStates.Selected) != 0,
+                "MatnAi exposes the selected word to assistive technology");
+            item.DoDefaultAction();
+            Application.DoEvents();
+            Require(accepted == "kitoblar", "MatnAi accessible acceptance is explicit");
+            using (var bitmap = new Bitmap(popup.Width, popup.Height))
+            {
+                popup.DrawToBitmap(bitmap, popup.ClientRectangle);
+                bitmap.Save(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MatnAi-Popup.png"));
+            }
+            accepted = null;
+            popup.Present(new[] { "salom" }, new Rectangle(100, 100, 2, 20), owner);
+            item.DoDefaultAction();
+            Application.DoEvents();
+            Require(accepted == null, "Stale accessibility item cannot accept a replaced suggestion");
+            popup.Hide();
+        }
+        Console.WriteLine("PASS: MatnAi popup focus, selection, accessibility and stale-action safety");
+    }
 
     private static void CheckShortcutsDoNotReserveGlobalKeys()
     {
@@ -90,6 +130,7 @@ internal static class Program
         try
         {
             Application.EnableVisualStyles();
+            CheckMatnAiPopup();
             CheckKeyboardAccessibility();
             CheckShortcutsDoNotReserveGlobalKeys();
             CheckExceptionFonts();

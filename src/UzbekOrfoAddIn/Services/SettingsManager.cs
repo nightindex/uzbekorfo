@@ -22,9 +22,7 @@ namespace UzbekOrfoAddIn.Services
         //  PATHS
         // =====================================================================
 
-        private static readonly string AppDataDir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "UzbekOrfo");
+        private readonly string AppDataDir;
 
         /// <summary>Root data directory for all Uzbek Orfo files.</summary>
         public string DataDirectory => AppDataDir;
@@ -43,6 +41,7 @@ namespace UzbekOrfoAddIn.Services
 
         /// <summary>Path to the prediction model JSON file.</summary>
         public string PredictionModelPath => Path.Combine(AppDataDir, "prediction_model.json");
+        public string MatnAiPreferencesPath => Path.Combine(AppDataDir, "matnai_acceptances.tsv");
 
         /// <summary>Path to the frequency seed JSON file used by suggestion ranking.</summary>
         public string FrequencySeedPath => Path.Combine(AppDataDir, "uzbek_freq_seed.json");
@@ -80,6 +79,8 @@ namespace UzbekOrfoAddIn.Services
 
         /// <summary>Whether predictive typing is enabled.</summary>
         public bool PredictionsEnabled { get; set; } = false;
+        // Deliberately independent of legacy AutoLearn (which historically defaulted true).
+        public bool MatnAiLearningConsent { get; set; } = false;
 
         /// <summary>Maximum number of prediction suggestions to show.</summary>
         public int MaxPredictions { get; set; } = 3;
@@ -106,8 +107,14 @@ namespace UzbekOrfoAddIn.Services
         //  INITIALIZATION
         // =====================================================================
 
-        public SettingsManager()
+        public SettingsManager() : this(Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UzbekOrfo")) { }
+
+        /// <summary>Explicit data root for isolated tests and portable host configuration.</summary>
+        public SettingsManager(string dataDirectory)
         {
+            if (string.IsNullOrWhiteSpace(dataDirectory)) throw new ArgumentException("A data directory is required.", nameof(dataDirectory));
+            AppDataDir = Path.GetFullPath(dataDirectory);
             EnsureDirectoryExists();
             Load();
             ValidateAndNormalize();
@@ -191,6 +198,9 @@ namespace UzbekOrfoAddIn.Services
                         case "AutoLearn":
                             AutoLearn = ParseBool(value, AutoLearn);
                             break;
+                        case "MatnAiLearningConsent":
+                            MatnAiLearningConsent = ParseBool(value, false);
+                            break;
                         case "LanguageModelEnabled":
                             LanguageModelEnabled = ParseBool(value, LanguageModelEnabled);
                             break;
@@ -233,6 +243,7 @@ namespace UzbekOrfoAddIn.Services
                     $"MaxPredictions={MaxPredictions}",
                     $"MinPredictionLength={MinPredictionLength}",
                     $"AutoLearn={AutoLearn}",
+                    $"MatnAiLearningConsent={MatnAiLearningConsent}",
                     $"LanguageModelEnabled={LanguageModelEnabled}",
                     $"PreferredScript={PreferredScript}",
                     $"PredictionSensitivity={PredictionSensitivity.ToString(System.Globalization.CultureInfo.InvariantCulture)}",

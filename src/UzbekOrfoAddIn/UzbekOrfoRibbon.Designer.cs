@@ -11,6 +11,7 @@ namespace UzbekOrfoAddIn
             : base(Globals.Factory.GetRibbonFactory())
         {
             InitializeComponent();
+            InitializeMatnAi();
         }
 
         /// <summary> 

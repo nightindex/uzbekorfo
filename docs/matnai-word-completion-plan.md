@@ -1,6 +1,7 @@
 # MatnAi: Word-only completion implementation plan
 
-Status: planned, not implemented. Baseline recovery commit: `0048ba9`.
+Status: offline MVP implemented; see [implementation and verification status](matnai-mvp.md)
+for completed work and outstanding gates. Baseline recovery commit: `0048ba9`.
 Recovery tag: `checkpoint/pre-matnai-2026-09-15` (local only).
 
 ## Scope and ribbon
@@ -155,4 +156,5 @@ and feature disabled by default. Preserve the checkpoint tag. Prefer reverting f
 commits for rollback. To inspect the baseline without overwriting current work, create
 a separate worktree from the tag; do not use destructive reset commands.
 
-This plan changes no application behavior. Desktop expansion is explicitly out of scope.
+This document records the original plan; actual implemented scope is tracked in the MVP
+status document. Desktop expansion is explicitly out of scope.
