@@ -123,15 +123,14 @@ namespace UzbekOrfoAddIn.Services
         /// Returns a useful inline continuation or null when showing prominent
         /// ghost text would create more visual noise than typing benefit.
         /// </summary>
-        public static string GetGhostTail(string prefix, string candidate)
+        public static string GetGhostTail(string prefix, string candidate, int minimumTypedLetters = 2)
         {
             if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(candidate) ||
                 candidate.Length <= prefix.Length ||
                 !candidate.StartsWith(prefix, StringComparison.Ordinal)) return null;
             string tail = candidate.Substring(prefix.Length);
-            // Three typed letters avoids noisy early guesses; a one-letter tail
-            // saves too little to justify an inline interruption.
-            if (prefix.Count(char.IsLetter) < 3 || tail.Count(char.IsLetter) < 2) return null;
+            minimumTypedLetters = Math.Max(2, minimumTypedLetters);
+            if (prefix.Count(char.IsLetter) < minimumTypedLetters || tail.Count(char.IsLetter) < 1) return null;
             return tail;
         }
 

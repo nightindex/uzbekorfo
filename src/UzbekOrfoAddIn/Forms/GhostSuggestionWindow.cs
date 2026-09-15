@@ -145,8 +145,8 @@ namespace UzbekOrfoAddIn.Forms
                 }
 
                 Color color = anchor.DarkBackground
-                    ? Color.FromArgb(188, 203, 213, 225)
-                    : Color.FromArgb(168, 100, 116, 139);
+                    ? Color.FromArgb(220, 166, 180, 196)
+                    : Color.FromArgb(220, 112, 128, 144);
                 if (!RenderLayer(tail, font, format, color, bounds))
                 {
                     Hide();

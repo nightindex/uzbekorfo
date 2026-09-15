@@ -26,7 +26,7 @@ namespace UzbekOrfoAddIn.UI
             OwnerHandle = ownerHandle;
             Dpi = Math.Max(96, dpi);
             FontName = string.IsNullOrWhiteSpace(fontName) ? "Segoe UI" : fontName;
-            FontSizePoints = fontSizePoints >= 6f && fontSizePoints <= 96f ? fontSizePoints : 11f;
+            FontSizePoints = fontSizePoints >= 1f && fontSizePoints <= 600f ? fontSizePoints : 11f;
             FontStyle = fontStyle;
             DarkBackground = darkBackground;
         }

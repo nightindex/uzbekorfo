@@ -147,6 +147,13 @@ internal static class Program
                 "Ghost suggestion exposes its continuation to assistive technology");
             Require(workArea.Contains(ghost.PresentationBounds), "Ghost suggestion stays in the current work area");
             Require(GetForegroundWindow() == foreground, "Ghost suggestion does not activate or steal focus");
+            int normalWidth = ghost.PresentationBounds.Width;
+            var zoomedAnchor = new OverlayAnchor(
+                new Rectangle(caret.X, caret.Y, caret.Width, ScreenGeometry.Scale(33, dpi)),
+                workArea, owner.Handle, dpi, "Segoe UI", 16.5f, FontStyle.Regular, false);
+            Require(ghost.Present("oblar", zoomedAnchor, owner) &&
+                    ghost.PresentationBounds.Width > normalWidth,
+                "Ghost suggestion follows Word's effective 150% zoomed font size");
             ghost.Hide();
         }
         Console.WriteLine("PASS: non-activating ghost suggestion window");
@@ -210,7 +217,7 @@ internal static class Program
                 var factories = new Func<ModernForm>[]
                 {
                     () => new AddNewWordsForm(), () => new AppInfoForm(), () => new ImportProgressForm(),
-                    () => new MatnAiSettingsForm(3, 3, false, (minimum, count, learning) => { }, () => { }, () => { }),
+                    () => new MatnAiSettingsForm(2, 3, false, (minimum, count, learning) => { }, () => { }, () => { }),
                     () => new MatnAiHelpForm(),
                     () => new TranslitExceptionsForm(
                         () => Enumerable.Range(1, 39).Select(i => new TranslitException("Example " + i, "Мисол " + i)).ToList(),
@@ -533,7 +540,7 @@ internal static class Program
         {
             var factories = new Func<ModernForm>[]
             {
-                () => new MatnAiSettingsForm(3, 3, true,
+                () => new MatnAiSettingsForm(2, 3, true,
                     (minimum, count, learning) => { }, () => { }, () => { }),
                 () => new MatnAiHelpForm()
             };

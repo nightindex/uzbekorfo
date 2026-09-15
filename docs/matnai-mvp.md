@@ -25,7 +25,7 @@ Open `UzbekOrfoRibbon.cs` with View Designer and find **MatnAI** on the **Uzbek 
 code remains in the nested code-only `UzbekOrfoRibbon.MatnAi.cs` file. The static
 `eng/test-ribbon-layout.ps1` guard runs as part of UI checks; it is not an IDE test.
 
-Type at least three letters in ordinary document body text. MatnAI shows only the
+Type at least two letters in ordinary document body text. MatnAI shows only the
 untyped continuation as gray inline text. Press Tab to accept it, Down to open the
 compact alternatives list, and then Up/Down to select. Escape dismisses. The existing
 Ctrl+Alt+Up/Down and Ctrl+Alt+Right shortcuts remain available. These keys are captured
@@ -74,7 +74,7 @@ and `eng/test-ui.ps1 -Configuration Debug` after a Debug build.
 
 Current measured evidence:
 
-- 65 unit tests passed, including ghost-tail eligibility, cancellation, optional preference ranking, settings
+- 66 unit tests passed, including configurable ghost-tail eligibility, cancellation, optional preference ranking, settings
   consent migration, script/apostrophe preservation and deferred validation.
 - Real-Word smoke passed: accepted tail insertion, single Undo, stale prefix rejection,
   other-document rejection, selected-text/tracked-change suppression, suffix validation,

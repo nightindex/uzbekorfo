@@ -129,17 +129,22 @@ namespace UzbekOrfoAddIn.Services
         {
             Word.Range caret = _range.Duplicate;
             Word.Font wordFont = null;
+            Word.Window window = null;
+            Word.View view = null;
+            Word.Zoom zoom = null;
             try
             {
                 caret.SetRange(End, End);
                 int x, y, width, height;
                 string fontName = "Segoe UI";
                 float fontSize = 11f;
+                int zoomPercentage = 100;
                 FontStyle fontStyle = FontStyle.Regular;
                 IntPtr owner = new IntPtr(WindowHandle);
                 using (new DpiLayout.Context(DpiLayout.WindowContext(owner)))
                 {
-                    app.ActiveWindow.GetPoint(out x, out y, out width, out height, caret);
+                    window = app.ActiveWindow;
+                    window.GetPoint(out x, out y, out width, out height, caret);
                     try
                     {
                         wordFont = caret.Font;
@@ -148,7 +153,19 @@ namespace UzbekOrfoAddIn.Services
                         if (wordFont.Bold == -1) fontStyle |= FontStyle.Bold;
                         if (wordFont.Italic == -1) fontStyle |= FontStyle.Italic;
                     }
-                    catch (COMException) { /* Use safe visual defaults. */ }
+                    catch (COMException) { /* Use safe font defaults. */ }
+                    try
+                    {
+                        view = window.View;
+                        zoom = view.Zoom;
+                        int percentage = zoom.Percentage;
+                        if (percentage >= 10 && percentage <= 500)
+                            zoomPercentage = percentage;
+                    }
+                    catch (COMException) { /* Use 100% when Word cannot report zoom. */ }
+                    // Word reports the document font size, not its zoomed screen size.
+                    // Scale it so the ghost continuation visually joins the typed text.
+                    fontSize *= zoomPercentage / 100f;
                     // Keep all screen-coordinate APIs in Word's DPI context. Otherwise
                     // monitor work areas can be virtualized differently from GetPoint.
                     return OverlayPositioner.CreateAnchor(
@@ -158,7 +175,10 @@ namespace UzbekOrfoAddIn.Services
             }
             finally
             {
+                if (zoom != null) Marshal.ReleaseComObject(zoom);
+                if (view != null) Marshal.ReleaseComObject(view);
                 if (wordFont != null) Marshal.ReleaseComObject(wordFont);
+                if (window != null) Marshal.ReleaseComObject(window);
                 Marshal.ReleaseComObject(caret);
             }
         }

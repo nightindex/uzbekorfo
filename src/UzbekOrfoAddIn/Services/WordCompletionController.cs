@@ -178,7 +178,8 @@ namespace UzbekOrfoAddIn.Services
                     else if (finished.IsFaulted) Logger.Warn("MatnAI таклифи тайёрланмади.");
                     return;
                 }
-                if (_engine == null || _current == null || _current.Prefix.Length < _settings.MinPredictionLength ||
+                if (_engine == null || _current == null ||
+                    _current.Prefix.Count(char.IsLetter) < _settings.MinPredictionLength ||
                     _requested == _current) return;
                 if (!IsEnabled) { _timer.Stop(); return; }
                 _requested = _current;
@@ -210,7 +211,8 @@ namespace UzbekOrfoAddIn.Services
         {
             _popup.Hide();
             string tail = _shown.Length == 0 || _current == null
-                ? null : WordCompletionEngine.GetGhostTail(_current.Prefix, _shown[0]);
+                ? null : WordCompletionEngine.GetGhostTail(
+                    _current.Prefix, _shown[0], _settings.MinPredictionLength);
             if (tail == null)
             {
                 _ghost.Hide();
@@ -234,7 +236,8 @@ namespace UzbekOrfoAddIn.Services
                 else if (_ghost.Visible)
                 {
                     string tail = _shown.Length == 0 ? null :
-                        WordCompletionEngine.GetGhostTail(_current.Prefix, _shown[0]);
+                        WordCompletionEngine.GetGhostTail(
+                            _current.Prefix, _shown[0], _settings.MinPredictionLength);
                     if (tail == null || !_ghost.Present(tail, anchor, owner)) _ghost.Hide();
                 }
             }

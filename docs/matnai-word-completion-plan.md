@@ -22,7 +22,7 @@ categories below share that single ribbon group.
 | Settings | Созламалар: minimum prefix length, result count, personal-learning consent and reset, manual index refresh |
 | Help | Қисқа қўлланма |
 
-Settings: minimum prefix length (default three letters), result count (default three),
+Settings: minimum prefix length (default two letters), result count (default three),
 personal-learning consent and reset, plus an optional manual index refresh. Reset removes
 only prediction-learning data after confirmation, never the main or custom dictionary.
 Dictionary saves refresh the completion index automatically.
@@ -91,8 +91,8 @@ Suppress predictions in protected/read-only content, fields, unsupported content
 controls, non-body stories, selected text, dialogs and active input composition.
 Tables, tracked changes and mid-token editing stay disabled until tested explicitly.
 
-Show only the untyped continuation as click-through gray ghost text after at least
-three typed letters. Tab accepts only while that visible suggestion is still valid;
+Show only the untyped continuation as click-through gray ghost text after the configured
+minimum (two letters by default). Tab accepts only while that visible suggestion is still valid;
 Down opens the compact alternatives list, and Up/Down then changes its selection.
 Escape dismisses. Ctrl+Alt+Right remains an alternative acceptance shortcut. Tab,
 arrows and all native shortcuts pass through unchanged when the UI is hidden, stale,

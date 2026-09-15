@@ -88,7 +88,7 @@ public class WordCompletionEngineTests
         Assert.True(settings.AutoLearn);
         Assert.False(settings.MatnAiLearningConsent);
         Assert.False(settings.PredictionsEnabled);
-        Assert.Equal(3, settings.MinPredictionLength);
+        Assert.Equal(2, settings.MinPredictionLength);
         settings.MatnAiLearningConsent = true;
         settings.Save();
         var restored = new SettingsManager(directory);
@@ -97,14 +97,21 @@ public class WordCompletionEngineTests
     }
 
     [Theory]
-    [InlineData("kit", "kitob", "ob")]
-    [InlineData("КИТ", "КИТОБ", "ОБ")]
-    [InlineData("ki", "kitob", null)]
-    [InlineData("so'", "so'fi", null)]
-    [InlineData("kit", "kita", null)]
+    [InlineData("ki", "kitob", "tob")]
+    [InlineData("КИ", "КИТОБ", "ТОБ")]
+    [InlineData("k", "kitob", null)]
+    [InlineData("so'", "so'fi", "fi")]
+    [InlineData("kit", "kita", "a")]
     [InlineData("kit", "other", null)]
     public void GhostTailRequiresUsefulExactContinuation(string prefix, string candidate, string? expected)
     {
         Assert.Equal(expected, WordCompletionEngine.GetGhostTail(prefix, candidate));
+    }
+
+    [Fact]
+    public void GhostTailHonorsConfiguredMinimum()
+    {
+        Assert.Null(WordCompletionEngine.GetGhostTail("ki", "kitob", 3));
+        Assert.Equal("ob", WordCompletionEngine.GetGhostTail("kit", "kitob", 3));
     }
 }
