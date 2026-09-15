@@ -76,6 +76,7 @@ $preflight = Join-Path $repoRoot 'eng\preflight.ps1'
 $uiTest = Join-Path $repoRoot 'eng\test-ui.ps1'
 $wordTest = Join-Path $repoRoot 'eng\test-word.ps1'
 $unitTest = Join-Path $repoRoot 'eng\test-unit.ps1'
+$linguistReview = Join-Path $repoRoot 'eng\validate-linguist-review.ps1'
 
 if ($Configuration -ne 'Release') {
     throw 'A production release must use the Release configuration.'
@@ -103,6 +104,8 @@ $signing = Get-SigningConfiguration `
     -AllowUntrustedCertificate $AllowUntrustedCertificate
 & $preflight
 Assert-LastExitCode 'Preflight checks'
+& $linguistReview -RequireApproved
+Assert-LastExitCode 'Uzbek linguist review gate'
 
 if (-not $SkipUiTests) {
     & $uiTest -Configuration $Configuration

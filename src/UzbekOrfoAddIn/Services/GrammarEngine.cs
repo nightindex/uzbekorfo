@@ -103,7 +103,7 @@ namespace UzbekOrfoAddIn.Services
 
                 if (data == null || !data.ContainsKey("rules")) return;
 
-                var ruleList = data["rules"] as object[];
+                var ruleList = data["rules"] as System.Collections.IEnumerable;
                 if (ruleList == null) return;
 
                 foreach (var item in ruleList)
@@ -155,7 +155,7 @@ namespace UzbekOrfoAddIn.Services
 
                 if (data == null || !data.ContainsKey("nouns")) return;
 
-                var nouns = data["nouns"] as object[];
+                var nouns = data["nouns"] as System.Collections.IEnumerable;
                 if (nouns == null) return;
 
                 foreach (var noun in nouns)

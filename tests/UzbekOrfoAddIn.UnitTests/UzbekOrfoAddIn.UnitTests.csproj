@@ -25,9 +25,26 @@
     <Compile Include="..\..\src\UzbekOrfoAddIn\Services\TransliterationService.cs" Link="Services\TransliterationService.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Core\IErrorStore.cs" Link="Core\IErrorStore.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Core\ITransliterator.cs" Link="Core\ITransliterator.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Core\IDictionaryService.cs" Link="Core\IDictionaryService.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Core\ILexemeMetadataProvider.cs" Link="Core\ILexemeMetadataProvider.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Models\ErrorEntry.cs" Link="Models\ErrorEntry.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Models\Suggestion.cs" Link="Models\Suggestion.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Models\TranslitException.cs" Link="Models\TranslitException.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Models\Enums.cs" Link="Models\Enums.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\MorphAnalysis.cs" Link="Models\MorphAnalysis.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\LexemeMetadata.cs" Link="Models\LexemeMetadata.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\MorphologyRuleSet.cs" Link="Models\MorphologyRuleSet.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\UnknownWordStat.cs" Link="Models\UnknownWordStat.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Models\SuffixEntry.cs" Link="Models\SuffixEntry.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\UzbekSuffixParser.cs" Link="Services\UzbekSuffixParser.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\UnknownWordReportService.cs" Link="Services\UnknownWordReportService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Corpora\uzbek_morphology_corpus.json" Link="Corpora\uzbek_morphology_corpus.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\src\UzbekOrfoAddIn\Data\uzbek_suffixes.json" Link="Data\uzbek_suffixes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

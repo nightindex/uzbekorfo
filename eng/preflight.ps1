@@ -92,6 +92,16 @@ if (Test-Path -LiteralPath $dictionaryValidator) {
         $failures.Add("Generated DIC is stale or invalid: $($_.Exception.Message)")
     }
 }
+$linguistValidator = Join-Path $PSScriptRoot "validate-linguist-review.ps1"
+if (Test-Path -LiteralPath $linguistValidator) {
+    try {
+        & $linguistValidator
+        if ($LASTEXITCODE -ne 0) { throw "Linguist review validator returned exit code $LASTEXITCODE." }
+    }
+    catch {
+        $failures.Add("Morphology review metadata is invalid: $($_.Exception.Message)")
+    }
+}
 foreach ($root in $vsToolsSearchRoots) {
     $match = Get-ChildItem -Path $root -Recurse -Filter "Microsoft.VisualStudio.Tools.Office.targets" -ErrorAction SilentlyContinue |
         Select-Object -First 1 -ExpandProperty FullName

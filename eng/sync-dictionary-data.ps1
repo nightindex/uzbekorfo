@@ -18,7 +18,12 @@ $ErrorActionPreference = "Stop"
 $jsonPath = Join-Path $DataDirectory "uzbek_dictionary.json"
 $dicPath = Join-Path $DataDirectory "uzbek_main.dic"
 $metadataPath = Join-Path $DataDirectory "uzbek_dictionary_metadata.json"
-$expectedSchema = "uzbekorfo-dictionary-v1"
+$expectedSchema = "uzbekorfo-dictionary-v2"
+$allowedPartsOfSpeech = @(
+    "noun", "verb", "adjective", "adverb", "pronoun", "numeral",
+    "conjunction", "postposition", "particle", "interjection",
+    "proper_noun", "abbreviation", "unknown"
+)
 
 if (-not (Test-Path -LiteralPath $jsonPath)) {
     throw "Missing canonical dictionary JSON: $jsonPath"
@@ -45,8 +50,10 @@ if (-not $payload.ContainsKey("Schema") -or $payload.Schema -ne $expectedSchema)
 
 $words = New-Object System.Collections.Generic.List[string]
 $metadataEntries = New-Object System.Collections.Generic.List[object]
+$lemmaReferences = New-Object System.Collections.Generic.List[string]
 $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
 $entryIndex = 0
+$definitionCount = 0
 
 foreach ($entry in @($payload.Entries)) {
     $entryIndex++
@@ -73,15 +80,44 @@ foreach ($entry in @($payload.Entries)) {
 
     $words.Add($word)
 
-    $hasMetadata =
+    $hasLemma = $entry.ContainsKey("Lemma") -and -not [string]::IsNullOrWhiteSpace([string]$entry.Lemma)
+    $hasPartOfSpeech = $entry.ContainsKey("PartOfSpeech") -and -not [string]::IsNullOrWhiteSpace([string]$entry.PartOfSpeech)
+    $hasHunspellFlags = $entry.ContainsKey("HunspellFlags") -and -not [string]::IsNullOrWhiteSpace([string]$entry.HunspellFlags)
+    if ($hasLemma -ne $hasPartOfSpeech) {
+        throw "Dictionary entry #$entryIndex ('$word') must declare Lemma and PartOfSpeech together."
+    }
+
+    $lemma = $null
+    $partOfSpeech = $null
+    if ($hasLemma) {
+        $lemma = ([string]$entry.Lemma).Trim()
+        $partOfSpeech = ([string]$entry.PartOfSpeech).Trim().ToLowerInvariant()
+        if ($allowedPartsOfSpeech -notcontains $partOfSpeech) {
+            throw "Dictionary entry #$entryIndex ('$word') has unsupported PartOfSpeech '$partOfSpeech'."
+        }
+        $lemmaReferences.Add($lemma)
+    }
+    $hunspellFlags = $null
+    if ($hasHunspellFlags) {
+        $hunspellFlags = ([string]$entry.HunspellFlags).Trim()
+        if ($hunspellFlags -notmatch "^[\p{L}\p{N}-]+$") {
+            throw "Dictionary entry #$entryIndex ('$word') has invalid HunspellFlags '$hunspellFlags'."
+        }
+    }
+
+    $hasDefinitionMetadata =
         ($entry.ContainsKey("Definition") -and -not [string]::IsNullOrWhiteSpace([string]$entry.Definition)) -or
         ($entry.ContainsKey("SpellingRule") -and -not [string]::IsNullOrWhiteSpace([string]$entry.SpellingRule)) -or
         ($entry.ContainsKey("GrammarNote") -and -not [string]::IsNullOrWhiteSpace([string]$entry.GrammarNote)) -or
         ($entry.ContainsKey("Examples") -and $null -ne $entry.Examples -and @($entry.Examples).Count -gt 0)
+    if ($hasDefinitionMetadata) { $definitionCount++ }
 
-    if ($hasMetadata) {
+    if ($hasDefinitionMetadata -or $hasLemma -or $hasHunspellFlags) {
         $metadataEntries.Add([ordered]@{
             Word = $word
+            Lemma = $lemma
+            PartOfSpeech = $partOfSpeech
+            HunspellFlags = $hunspellFlags
             Definition = if ($entry.ContainsKey("Definition")) { $entry.Definition } else { $null }
             SpellingRule = if ($entry.ContainsKey("SpellingRule")) { $entry.SpellingRule } else { $null }
             GrammarNote = if ($entry.ContainsKey("GrammarNote")) { $entry.GrammarNote } else { $null }
@@ -93,11 +129,16 @@ foreach ($entry in @($payload.Entries)) {
 if ($words.Count -eq 0) {
     throw "Canonical dictionary contains no words."
 }
+foreach ($lemma in $lemmaReferences) {
+    if (-not $seen.Contains($lemma)) {
+        throw "Dictionary lemma '$lemma' does not reference another bundled dictionary entry."
+    }
+}
 if ($payload.ContainsKey("WordCount") -and [int]$payload.WordCount -ne $words.Count) {
     throw "Canonical WordCount is $($payload.WordCount), but Entries contains $($words.Count) words."
 }
-if ($payload.ContainsKey("DefinitionCount") -and [int]$payload.DefinitionCount -ne $metadataEntries.Count) {
-    throw "Canonical DefinitionCount is $($payload.DefinitionCount), but Entries contains $($metadataEntries.Count) metadata entries."
+if ($payload.ContainsKey("DefinitionCount") -and [int]$payload.DefinitionCount -ne $definitionCount) {
+    throw "Canonical DefinitionCount is $($payload.DefinitionCount), but Entries contains $definitionCount definition entries."
 }
 
 # The generated DIC uses Windows line endings because this VSTO add-in is
@@ -105,7 +146,7 @@ if ($payload.ContainsKey("DefinitionCount") -and [int]$payload.DefinitionCount -
 $dicBytes = $utf8Strict.GetBytes(
     [string]::Join([Environment]::NewLine, $words) + [Environment]::NewLine)
 $metadataPayload = [ordered]@{
-    Schema = "uzbekorfo-dictionary-metadata-v1"
+    Schema = "uzbekorfo-dictionary-metadata-v2"
     DataVersion = if ($payload.ContainsKey("DataVersion")) { $payload.DataVersion } else { $null }
     SourceWordCount = $words.Count
     EntryCount = $metadataEntries.Count

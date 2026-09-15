@@ -1,0 +1,12 @@
+{
+  "schema": "uzbekorfo-linguist-approval-v1",
+  "status": "pending",
+  "reviewer": null,
+  "independentReviewer": false,
+  "reviewedAtUtc": null,
+  "evidence": null,
+  "rulesSha256": null,
+  "dictionarySha256": null,
+  "parserCorpusSha256": null,
+  "evaluationCorpusSha256": null
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "uzbekorfo-office-installation-matrix-v1",
+  "status": "pending",
+  "candidateVersion": null,
+  "candidateCommit": null,
+  "signedPackageSha256": null,
+  "previousReleaseVersion": null,
+  "requiredChecks": [
+    "clean-profile-install", "publisher-and-signature", "first-launch-and-ribbon",
+    "latin-and-cyrillic-check", "restart-and-reload", "upgrade-from-previous-release",
+    "custom-dictionary-and-settings-preserved", "suffix-migration-and-backup",
+    "uninstall-and-reinstall"
+  ],
+  "targets": [
+    { "word": "Microsoft 365", "officeArchitecture": "x86", "status": "pending", "evidence": null },
+    { "word": "Microsoft 365", "officeArchitecture": "x64", "status": "pending", "evidence": null },
+    { "word": "Word 2021", "officeArchitecture": "x86", "status": "pending", "evidence": null },
+    { "word": "Word 2021", "officeArchitecture": "x64", "status": "pending", "evidence": null },
+    { "word": "Word 2024", "officeArchitecture": "x86", "status": "pending", "evidence": null },
+    { "word": "Word 2024", "officeArchitecture": "x64", "status": "pending", "evidence": null }
+  ]
+}

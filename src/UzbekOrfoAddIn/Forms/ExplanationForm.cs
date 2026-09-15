@@ -25,12 +25,17 @@ namespace UzbekOrfoAddIn.Forms
 
         private readonly ExplanationEntry _entry;
         private readonly string _queryWord;
+        private readonly string _wordFormDetails;
         private ModernScrollBar _contentScrollBar;
 
-        public ExplanationForm(string queryWord, ExplanationEntry entry)
+        public ExplanationForm(
+            string queryWord,
+            ExplanationEntry entry,
+            string wordFormDetails = null)
         {
             _queryWord = queryWord ?? "";
             _entry = entry;
+            _wordFormDetails = wordFormDetails;
 
             Title = "Изоҳ — " + (_entry?.Word ?? _queryWord);
             Size = new Size(700, 720);
@@ -66,6 +71,17 @@ namespace UzbekOrfoAddIn.Forms
                 SectionHeaderLargeFont,
                 ref y);
             container.Controls.Add(wordPanel);
+
+            if (!string.IsNullOrWhiteSpace(_wordFormDetails))
+            {
+                var formPanel = CreateSection(
+                    "Сўз таркиби",
+                    _wordFormDetails,
+                    ThemeManager.Accent,
+                    SectionHeaderFont,
+                    ref y);
+                container.Controls.Add(formPanel);
+            }
 
             // === Definition ===
             if (!string.IsNullOrEmpty(_entry.Definition))
@@ -157,7 +173,9 @@ namespace UzbekOrfoAddIn.Forms
             // Message
             var lblMsg = new Label
             {
-                Text = $"«{_queryWord}» сўзи учун изоҳ топилмади.",
+                Text = !string.IsNullOrWhiteSpace(_wordFormDetails)
+                    ? $"«{_queryWord}» — тўғри сўз шакли."
+                    : $"«{_queryWord}» сўзи учун изоҳ топилмади.",
                 Font = SectionHeaderLargeFont,
                 ForeColor = ThemeManager.TextSecondary,
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -168,12 +186,14 @@ namespace UzbekOrfoAddIn.Forms
             // Hint
             var lblHint = new Label
             {
-                Text = "Бу сўз изоҳлар базасига киритилмаган.\nКейинчалик қўшилиши мумкин.",
+                Text = !string.IsNullOrWhiteSpace(_wordFormDetails)
+                    ? _wordFormDetails + "\n\nАсос сўз учун изоҳ топилмади."
+                    : "Бу сўз изоҳлар базасига киритилмаган.\nКейинчалик қўшилиши мумкин.",
                 Font = EmptyHintFont,
                 ForeColor = ThemeManager.TextSecondary,
                 TextAlign = ContentAlignment.TopCenter,
                 Dock = DockStyle.Top,
-                Height = 84
+                Height = !string.IsNullOrWhiteSpace(_wordFormDetails) ? 120 : 84
             };
 
             container.Controls.Add(lblHint);

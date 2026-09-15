@@ -62,6 +62,9 @@ namespace UzbekOrfoAddIn.Services
         /// <summary>Path to the proper nouns list.</summary>
         public string ProperNounsPath => Path.Combine(AppDataDir, "proper_nouns.json");
 
+        /// <summary>Private local frequency report for rejected words.</summary>
+        public string UnknownWordsReportPath => Path.Combine(AppDataDir, "unknown_words.tsv");
+
         /// <summary>Path to the settings file.</summary>
         public string SettingsFilePath => Path.Combine(AppDataDir, "settings.cfg");
 

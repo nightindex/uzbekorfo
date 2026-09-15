@@ -2,10 +2,11 @@
 
 Bu fayllar qoʻshimcha bilan tarqatiladigan, versiyalangan boshlangʻich maʼlumotlardir.
 
-- `uzbek_dictionary.json` — asosiy manba (`uzbekorfo-dictionary-v1`). `Entries` va metadataʼni shu yerda tahrirlang; bu build paytidagi manba boʻlib, yakuniy foydalanuvchiga yuborilmaydi.
+- `uzbek_dictionary.json` — asosiy manba (`uzbekorfo-dictionary-v2`). Tekshirilgan yozuvlarda `Lemma` va `PartOfSpeech` juftligini shu yerda saqlang; nomaʼlum turkumni taxmin qilmang.
 - `uzbek_main.dic` — UTF-8 kodlashdagi, har satrda bitta soʻzdan iborat hosil qilinadigan imlo lugʻati. Uni qoʻlda tahrirlamang.
-- `uzbek_dictionary_metadata.json` — faqat taʼrif, qoida, grammatik izoh yoki misolga ega yozuvlardan tuzilgan ixcham, hosil qilinadigan runtime indeks. Uni qoʻlda tahrirlamang.
-- `grammar_rules.json`, `uzbek_suffixes.json` va `proper_nouns.json` grammatika tahlilini qoʻllab-quvvatlaydi.
+- `uzbek_dictionary_metadata.json` — taʼriflar hamda tekshirilgan lemma/turkum maʼlumotlaridan tuzilgan ixcham runtime indeks. Uni qoʻlda tahrirlamang.
+- `uzbek_suffixes.json` (`uzbekorfo-suffixes-v2`) qoʻshimcha tartibi, mosligi, allomorflari va oʻzak oʻzgarishlarini maʼlumot sifatida saqlaydi.
+- `grammar_rules.json` va `proper_nouns.json` grammatika tahlilini qoʻllab-quvvatlaydi.
 - `translit_exceptions.json` va `explanations.json` foydalanuvchi kompyuteridagi tegishli saqlagichlar uchun boshlangʻich maʼlumot beradi.
 - `uzbek_freq_seed.json` — til modeli ustida ishlash uchun boshlangʻich manba.
 

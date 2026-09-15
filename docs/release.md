@@ -46,6 +46,11 @@ The command runs repository preflight, UI compatibility tests, the complete unit
 
 ## Manual release record
 
+Complete the six-target clean installation and upgrade matrix in
+[production validation](production-validation.md). A Word smoke pass is not proof of
+installation or upgrade compatibility. Independent linguistic approval must match the
+exact dictionary, suffix rules and corpus hashes.
+
 Before shipping, record the version, commit SHA, certificate publisher, channel URL (if any), Windows version, and pass/fail result for each supported Word version. On physical target devices, verify the DPI/accessibility checks in [display compatibility](display-compatibility.md), including keyboard navigation and Narrator labels at the intended display scales.
 
 The release script cannot replace these physical-device checks or obtain a certificate; they are external release approvals.

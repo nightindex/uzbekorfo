@@ -17,6 +17,9 @@ jobs:
       - name: Validate generated dictionary artifact
         shell: powershell
         run: ./eng/validate-dictionary-sync.ps1
+      - name: Test linguistic approval content binding
+        shell: powershell
+        run: ./eng/test-review-gate.ps1
       - name: Check Windows UI scaling and scrolling
         shell: pwsh
         run: ./eng/test-ui.ps1

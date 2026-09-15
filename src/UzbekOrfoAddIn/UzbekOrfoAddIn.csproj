@@ -250,6 +250,7 @@
     <!-- Core Interfaces -->
     <Compile Include="Core\ISpellingEngine.cs" />
     <Compile Include="Core\IDictionaryService.cs" />
+    <Compile Include="Core\ILexemeMetadataProvider.cs" />
     <Compile Include="Core\ITransliterator.cs" />
     <Compile Include="Core\IErrorStore.cs" />
     <Compile Include="Core\IExplanationProvider.cs" />
@@ -267,6 +268,9 @@
     <Compile Include="Models\ExplanationEntry.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\MorphAnalysis.cs" />
+    <Compile Include="Models\LexemeMetadata.cs" />
+    <Compile Include="Models\MorphologyRuleSet.cs" />
+    <Compile Include="Models\UnknownWordStat.cs" />
     <Compile Include="Models\GrammarRule.cs" />
     <Compile Include="Models\SuffixEntry.cs" />
     <!-- Helpers -->
@@ -307,6 +311,9 @@
     <Compile Include="Services\UzbekApostropheService.cs" />
     <Compile Include="Services\ExplanationProvider.cs" />
     <Compile Include="Services\ExportService.cs" />
+    <Compile Include="Services\UzbekSuffixParser.cs" />
+    <Compile Include="Services\MorphologyRuleSetLoader.cs" />
+    <Compile Include="Services\UnknownWordReportService.cs" />
     <Compile Include="Services\UzbekMorphAnalyzer.cs" />
     <Compile Include="Services\GrammarEngine.cs" />
     <!-- Helpers (Phase 1) -->

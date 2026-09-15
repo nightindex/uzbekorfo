@@ -1,0 +1,43 @@
+{
+  "schema": "uzbekorfo-morphology-corpus-v1",
+  "corpusVersion": "2026.09.14.1",
+  "description": "A manually inspected engineering seed corpus for productive Uzbek inflection. It is not a substitute for independent linguistic review.",
+  "ruleVersion": "uzbekorfo-suffixes-v2",
+  "sources": [
+    "https://api-portal.gov.uz/uploads/9/2026/04/16/96732824-a6f3-f6a1-d46e-2101eecc1f48_media_.pdf",
+    "https://imlo.uz/collections/ozbek-tilining-asosiy-imlo-qoidalari"
+  ],
+  "review": {
+    "engineeringStatus": "reviewed",
+    "linguistStatus": "pending",
+    "linguistName": null,
+    "reviewedAtUtc": null
+  },
+  "lexemes": [
+    { "word": "китоб", "lemma": "китоб", "partOfSpeech": "noun" },
+    { "word": "юрак", "lemma": "юрак", "partOfSpeech": "noun" },
+    { "word": "ота", "lemma": "ота", "partOfSpeech": "noun" },
+    { "word": "бормоқ", "lemma": "бормоқ", "partOfSpeech": "verb" }
+  ],
+  "cases": [
+    { "id": "noun-plural", "word": "китоблар", "expectedCorrect": true, "lemma": "китоб", "partOfSpeech": "noun", "suffixIds": ["PL"] },
+    { "id": "noun-possessive", "word": "китобим", "expectedCorrect": true, "lemma": "китоб", "partOfSpeech": "noun", "suffixIds": ["POSS_1S"] },
+    { "id": "noun-chain", "word": "китобларимиздан", "expectedCorrect": true, "lemma": "китоб", "partOfSpeech": "noun", "suffixIds": ["PL", "POSS_1P", "ABL_DAN"] },
+    { "id": "noun-dative", "word": "китобга", "expectedCorrect": true, "lemma": "китоб", "partOfSpeech": "noun", "suffixIds": ["DAT_GA"] },
+    { "id": "dative-k", "word": "юракка", "expectedCorrect": true, "lemma": "юрак", "partOfSpeech": "noun", "suffixIds": ["DAT_KA"] },
+    { "id": "possessive-mutation", "word": "юрагим", "expectedCorrect": true, "lemma": "юрак", "partOfSpeech": "noun", "suffixIds": ["POSS_1S"] },
+    { "id": "vowel-possessive", "word": "отаси", "expectedCorrect": true, "lemma": "ота", "partOfSpeech": "noun", "suffixIds": ["POSS_3S_SI"] },
+    { "id": "verb-present-agreement", "word": "бораман", "expectedCorrect": true, "lemma": "бормоқ", "partOfSpeech": "verb", "suffixIds": ["V_PRES", "AGR_MAN"] },
+
+    { "id": "bad-noun-order", "word": "китобимизлардан", "expectedCorrect": false, "reason": "plural cannot follow possessive" },
+    { "id": "unknown-root", "word": "зотларимиздан", "expectedCorrect": false, "reason": "root is absent from the test lexicon" },
+    { "id": "noun-with-verb-chain", "word": "китобаман", "expectedCorrect": false, "reason": "noun POS is incompatible with a verb suffix family" },
+    { "id": "verb-with-noun-chain", "word": "бормоқлар", "expectedCorrect": false, "reason": "verb POS is incompatible with a noun suffix family" },
+    { "id": "bad-dative-allomorph", "word": "юракга", "expectedCorrect": false, "reason": "final к requires -ка" },
+    { "id": "missing-root-mutation", "word": "юраким", "expectedCorrect": false, "reason": "possessive form requires к→г" },
+    { "id": "bad-vowel-possessive", "word": "отаи", "expectedCorrect": false, "reason": "vowel-final stem requires -си" },
+    { "id": "duplicate-plural", "word": "китобларлар", "expectedCorrect": false, "reason": "plural category may occur once" },
+    { "id": "multiple-case", "word": "китобданга", "expectedCorrect": false, "reason": "case category group may occur once" },
+    { "id": "agreement-without-core", "word": "борман", "expectedCorrect": false, "reason": "agreement requires a tense, gerund, or imperative core" }
+  ]
+}

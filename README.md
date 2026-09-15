@@ -60,6 +60,8 @@ Repozitoriy ildizida quyidagi tekshiruvlarni ishga tushiring:
 .\eng\preflight.ps1
 .\eng\test-ui.ps1
 .\eng\test-unit.ps1
+.\eng\test-word.ps1
+.\eng\validate-linguist-review.ps1
 ```
 
 Test loyihasi helper mantiqini, sozlamalarni atomik yozishni hamda xatoni tuzatish va belgilash xavfsizligini xotiradagi Word double orqali tekshiradi. U Wordʼni talab qilmaydi va COM integratsiyasi testlarining oʻrnini bosmaydi. VSTO buildʼini tekshirish uchun Office development workload oʻrnatilgan Windows kompyuteri talab qilinadi.

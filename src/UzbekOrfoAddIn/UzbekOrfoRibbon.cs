@@ -477,7 +477,9 @@ namespace UzbekOrfoAddIn
             {
                 var workflow = new EditDictionaryWorkflowService(
                     ThisAddIn.DictionaryService,
-                    ThisAddIn.ExplanationProvider);
+                    ThisAddIn.ExplanationProvider,
+                    ThisAddIn.MorphAnalyzer,
+                    ThisAddIn.Transliterator);
 
                 var result = workflow.Execute(btnEditDictionary.Image);
                 if (result.Status == EditDictionaryWorkflowStatus.ServiceUnavailable)
@@ -795,7 +797,10 @@ namespace UzbekOrfoAddIn
         {
             SafeExecutor.Execute(() =>
             {
-                var workflow = new DefinitionsWorkflowService(ThisAddIn.ExplanationProvider);
+                var workflow = new DefinitionsWorkflowService(
+                    ThisAddIn.ExplanationProvider,
+                    ThisAddIn.MorphAnalyzer,
+                    ThisAddIn.Transliterator);
                 var result = workflow.Execute(ResolveDefinitionsTitleIcon());
                 if (result.Status == DefinitionsWorkflowStatus.ProviderUnavailable)
                 {

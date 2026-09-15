@@ -98,7 +98,11 @@ namespace UzbekOrfoAddIn
                     preWarmTimer.Dispose();
                     try
                     {
-                        EditDictionaryWorkflowService.PreWarmForm(DictionaryService, ExplanationProvider);
+                        EditDictionaryWorkflowService.PreWarmForm(
+                            DictionaryService,
+                            ExplanationProvider,
+                            MorphAnalyzer,
+                            Transliterator);
                     }
                     catch (Exception ex)
                     {

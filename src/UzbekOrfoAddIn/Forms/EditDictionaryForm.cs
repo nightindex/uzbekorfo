@@ -29,6 +29,7 @@ namespace UzbekOrfoAddIn.Forms
         private readonly Func<string, bool> _isMainWord;
         private readonly Action<DictionaryService.EditorWordCache> _onCacheBuilt;
         private readonly IExplanationProvider _explanationProvider;
+        private readonly Func<string, List<string>> _resolveInflectedRoots;
 
         private ListView _wordList;
         private ModernTextBox _searchBox;
@@ -101,6 +102,7 @@ namespace UzbekOrfoAddIn.Forms
             Func<string, bool> isMainWord = null,
             Action<DictionaryService.EditorWordCache> onCacheBuilt = null,
             IExplanationProvider explanationProvider = null,
+            Func<string, List<string>> resolveInflectedRoots = null,
             DictionaryService.EditorWordCache cachedData = null)
         {
             _getWords = getWords;
@@ -109,6 +111,7 @@ namespace UzbekOrfoAddIn.Forms
             _isMainWord = isMainWord;
             _onCacheBuilt = onCacheBuilt;
             _explanationProvider = explanationProvider;
+            _resolveInflectedRoots = resolveInflectedRoots;
 
             Title = "\u041b\u0443\u0493\u0430\u0442";
             Size = new Size(1220, 860);
@@ -1331,6 +1334,20 @@ namespace UzbekOrfoAddIn.Forms
                     .Where(w => !string.IsNullOrEmpty(w) &&
                                 w.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
                     .ToList();
+
+                // If no literal entry matches, resolve a validated inflected
+                // form and show its stored dictionary root instead.
+                if (_filteredWords.Count == 0 && _resolveInflectedRoots != null)
+                {
+                    List<string> roots = _resolveInflectedRoots(query);
+                    if (roots != null && roots.Count > 0)
+                    {
+                        _filteredWords = source
+                            .Where(w => !string.IsNullOrEmpty(w) && roots.Any(root =>
+                                string.Equals(w, root, StringComparison.OrdinalIgnoreCase)))
+                            .ToList();
+                    }
+                }
             }
 
             BindAllAtOnce();

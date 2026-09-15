@@ -15,10 +15,17 @@ namespace UzbekOrfoAddIn.Services
     public class SpellingEngine : ISpellingEngine
     {
         private readonly DictionaryService _dictionary;
+        private readonly UzbekMorphAnalyzer _morphAnalyzer;
+        private readonly UnknownWordReportService _unknownWords;
 
-        public SpellingEngine(DictionaryService dictionary)
+        public SpellingEngine(
+            DictionaryService dictionary,
+            UzbekMorphAnalyzer morphAnalyzer = null,
+            UnknownWordReportService unknownWords = null)
         {
             _dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
+            _morphAnalyzer = morphAnalyzer;
+            _unknownWords = unknownWords;
         }
 
         // =====================================================================
@@ -31,9 +38,16 @@ namespace UzbekOrfoAddIn.Services
             if (string.IsNullOrWhiteSpace(word)) return true;
 
             var normalized = TextHelper.NormalizeWord(word);
+            if (_dictionary.ContainsUserWord(word)) return true;
             if (TextHelper.ShouldSkipWord(normalized)) return true;
 
-            return _dictionary.Contains(normalized);
+            return IsCorrectNormalized(normalized);
+        }
+
+        private bool IsCorrectNormalized(string normalized)
+        {
+            if (_dictionary.Contains(normalized)) return true;
+            return _morphAnalyzer != null && _morphAnalyzer.IsValidInflectedForm(normalized);
         }
 
         // =====================================================================
@@ -47,6 +61,7 @@ namespace UzbekOrfoAddIn.Services
         /// </remarks>
         public List<Suggestion> GetSuggestions(string word, int maxResults = 5)
         {
+            if (maxResults <= 0) return new List<Suggestion>();
             var normalized = TextHelper.NormalizeWord(word);
             if (string.IsNullOrEmpty(normalized))
                 return new List<Suggestion>();
@@ -330,8 +345,8 @@ namespace UzbekOrfoAddIn.Services
                     var tokens = TextHelper.Tokenize(fullText);
 
                     // ── 4. Batch dictionary check with deduplication ────────
-                    var knownCorrect = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                    var knownMisspelled = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var knownCorrect = new HashSet<string>(StringComparer.Ordinal);
+                    var knownMisspelled = new HashSet<string>(StringComparer.Ordinal);
                     var errorTokens = new List<WordToken>();
 
                     foreach (var token in tokens)
@@ -340,23 +355,23 @@ namespace UzbekOrfoAddIn.Services
                         if (TextHelper.ShouldSkipWord(token.Normalized)) continue;
 
                         // Already confirmed correct → skip instantly
-                        if (knownCorrect.Contains(token.Normalized)) continue;
+                        if (knownCorrect.Contains(token.Original)) continue;
 
                         // Already confirmed misspelled → record another occurrence
-                        if (knownMisspelled.Contains(token.Normalized))
+                        if (knownMisspelled.Contains(token.Original))
                         {
                             errorTokens.Add(token);
                             continue;
                         }
 
                         // First encounter — single HashSet lookup
-                        if (_dictionary.Contains(token.Normalized))
+                        if (IsCorrect(token.Original))
                         {
-                            knownCorrect.Add(token.Normalized);
+                            knownCorrect.Add(token.Original);
                         }
                         else
                         {
-                            knownMisspelled.Add(token.Normalized);
+                            knownMisspelled.Add(token.Original);
                             errorTokens.Add(token);
                         }
                     }
@@ -403,6 +418,8 @@ namespace UzbekOrfoAddIn.Services
 
                         errors.Add(error);
                     }
+
+                    _unknownWords?.RecordBatch(errorTokens.Select(token => token.Normalized));
 
                     Logger.Info($"Текширув натижаси: {errors.Count} та хато / {tokens.Count} та сўз " +
                                 $"({knownCorrect.Count} тўғри, {knownMisspelled.Count} хато сўз)");

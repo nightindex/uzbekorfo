@@ -20,6 +20,9 @@ namespace UzbekOrfoAddIn.Models
         /// <summary>Extracted root after suffix stripping.</summary>
         public string Root { get; set; }
 
+        /// <summary>Reviewed dictionary lemma associated with the root, when available.</summary>
+        public string Lemma { get; set; }
+
         /// <summary>Ordered list of detected suffix IDs (inner → outer).</summary>
         public List<string> SuffixIds { get; set; } = new List<string>();
 
@@ -31,6 +34,19 @@ namespace UzbekOrfoAddIn.Models
 
         /// <summary>Guessed part of speech: "noun", "verb", or "unknown".</summary>
         public string PartOfSpeech { get; set; } = "unknown";
+
+        /// <summary>
+        /// Whether the complete suffix chain has valid ordering, root type,
+        /// allomorphs, and mutation rules.
+        /// </summary>
+        public bool IsValidSuffixChain { get; set; }
+
+        /// <summary>
+        /// True only for a derived form that is safe to accept during spelling.
+        /// Exact dictionary entries are accepted before this fallback is needed.
+        /// </summary>
+        public bool IsValidInflectedForm =>
+            IsKnownRoot && SuffixIds.Count > 0 && IsValidSuffixChain;
 
         /// <summary>True if the word could be successfully decomposed.</summary>
         public bool IsAnalyzed => SuffixIds.Count > 0 || IsKnownRoot;
