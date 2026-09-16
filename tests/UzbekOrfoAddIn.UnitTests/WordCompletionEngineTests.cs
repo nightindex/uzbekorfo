@@ -114,4 +114,26 @@ public class WordCompletionEngineTests
         Assert.Null(WordCompletionEngine.GetGhostTail("ki", "kitob", 3));
         Assert.Equal("ob", WordCompletionEngine.GetGhostTail("kit", "kitob", 3));
     }
+
+    [Theory]
+    [InlineData("Sal", "Sala", "Salom", "Salomat")]
+    [InlineData("Сал", "Сала", "Салом", "Саломат")]
+    public void WordCompletionPrefersUsefulTailAndStaysStableWhileTyping(
+        string prefix, string shortWord, string wholeWord, string longerWord)
+    {
+        var engine = new WordCompletionEngine(new[] { shortWord, wholeWord, longerWord });
+        Assert.Equal(wholeWord, engine.Complete(prefix, 1)[0]);
+        string nextPrefix = wholeWord.Substring(0, wholeWord.Length - 1);
+        Assert.Equal(wholeWord, engine.Complete(nextPrefix, 1, continuedWord: wholeWord)[0]);
+        Assert.Single(WordCompletionEngine.GetGhostTail(nextPrefix, wholeWord)!);
+        Assert.Equal(longerWord, engine.Complete(wholeWord, 1, continuedWord: wholeWord)[0]);
+        Assert.Empty(engine.Complete("xyz", continuedWord: wholeWord));
+    }
+
+    [Fact]
+    public void RetainedWordMustStillBelongToVocabulary()
+    {
+        var engine = new WordCompletionEngine(new[] { "kitob" });
+        Assert.Equal(new[] { "kitob" }, engine.Complete("ki", continuedWord: "kitxyz"));
+    }
 }

@@ -98,6 +98,18 @@ namespace UzbekOrfoAddIn.Services
             catch (COMException) { return false; }
         }
 
+        internal bool CanContinueAt(WordCompletionContext other)
+        {
+            try
+            {
+                return other != null && _range != null && other._range != null &&
+                    WindowHandle == other.WindowHandle && Start == other.Start && End < other.End &&
+                    other.Prefix.StartsWith(Prefix, StringComparison.Ordinal) &&
+                    DocumentHelper.IsSameDocument(_range.Document, other._range.Document);
+            }
+            catch (COMException) { return false; }
+        }
+
         public bool TryInsert(Word.Application app, string completion, bool requireFocus = true)
         {
             if (completion == null || !completion.StartsWith(Prefix, StringComparison.Ordinal) || completion.Length <= Prefix.Length ||
@@ -145,6 +157,19 @@ namespace UzbekOrfoAddIn.Services
                 {
                     window = app.ActiveWindow;
                     window.GetPoint(out x, out y, out width, out height, caret);
+                    Rectangle caretBounds;
+                    bool nativeCaret = OverlayPositioner.TryGetNativeCaret(owner, out caretBounds);
+                    if (!nativeCaret)
+                    {
+                        // A collapsed range can describe the paragraph end, whose
+                        // height/format differs from the text the user just typed.
+                        caret.SetRange(End - 1, End);
+                        int textX, textY, textWidth, textHeight;
+                        window.GetPoint(out textX, out textY, out textWidth, out textHeight, caret);
+                        caretBounds = new Rectangle(x, textY, 1, Math.Max(1, textHeight));
+                    }
+                    // Read formatting from the last typed character, not the paragraph mark.
+                    caret.SetRange(End - 1, End);
                     try
                     {
                         wordFont = caret.Font;
@@ -168,9 +193,10 @@ namespace UzbekOrfoAddIn.Services
                     fontSize *= zoomPercentage / 100f;
                     // Keep all screen-coordinate APIs in Word's DPI context. Otherwise
                     // monitor work areas can be virtualized differently from GetPoint.
-                    return OverlayPositioner.CreateAnchor(
-                        new Rectangle(x, y, Math.Max(1, width), Math.Max(1, height)),
+                    var anchor = OverlayPositioner.CreateAnchor(
+                        caretBounds,
                         owner, fontName, fontSize, fontStyle);
+                    return nativeCaret ? anchor : OverlayPositioner.WithTextHeight(anchor);
                 }
             }
             finally

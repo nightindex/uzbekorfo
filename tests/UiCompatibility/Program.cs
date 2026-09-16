@@ -108,8 +108,15 @@ internal static class Program
         Rectangle ghost = OverlayPositioner.PlaceGhost(inlineAnchor, new Size(180, 32));
         Require(!ghost.IsEmpty && rightMonitor.Contains(ghost),
             "Ghost text stays inline on a differently scaled monitor");
-        Require(ghost.Left == inlineAnchor.CaretBounds.Right + ScreenGeometry.Scale(1, inlineAnchor.Dpi),
+        Require(ghost.Left == inlineAnchor.CaretBounds.Right,
             "Ghost text starts immediately after the physical caret");
+        Rectangle aligned = OverlayPositioner.PlaceGhost(inlineAnchor, new Size(180, 42), 30f);
+        Require(aligned.Top == inlineAnchor.CaretBounds.Top,
+            "Bitmap padding does not move the ghost baseline below the typed text");
+        var topAnchor = new OverlayAnchor(new Rectangle(2400, rightMonitor.Top, 2, 10), rightMonitor,
+            IntPtr.Zero, 144, "Segoe UI", 11f, FontStyle.Regular, false);
+        Require(OverlayPositioner.PlaceGhost(topAnchor, new Size(180, 42), 30f).IsEmpty,
+            "Clipped ghost text is hidden instead of shifting its baseline");
 
         var edgeAnchor = new OverlayAnchor(new Rectangle(rightMonitor.Right - 12, 300, 2, 30), rightMonitor,
             IntPtr.Zero, 144, "Segoe UI", 11f, FontStyle.Regular, false);

@@ -58,7 +58,8 @@ namespace UzbekOrfoAddIn.Services
         /// <param name="deferMorphologyValidation">Generation-only mode for the Word adapter.
         /// Caller MUST validate every returned candidate on the owning thread before display.</param>
         public string[] Complete(string prefix, int count = 3, CancellationToken cancellation = default(CancellationToken),
-            bool deferMorphologyValidation = false, IDictionary<string, int> acceptanceCounts = null)
+            bool deferMorphologyValidation = false, IDictionary<string, int> acceptanceCounts = null,
+            string continuedWord = null)
         {
             cancellation.ThrowIfCancellationRequested();
             if (count <= 0 || !IsToken(prefix)) return new string[0];
@@ -66,6 +67,10 @@ namespace UzbekOrfoAddIn.Services
             string normalized = TextHelper.NormalizeWord(prefix);
             if (normalized.Length < 2) return new string[0];
             var found = new HashSet<string>(StringComparer.Ordinal);
+            string continued = CanContinueWord(prefix, continuedWord)
+                ? TextHelper.NormalizeWord(continuedWord) : null;
+            if (continued != null && Array.BinarySearch(_words, continued, StringComparer.Ordinal) >= 0)
+                found.Add(continued);
             // Small opt-in overlay; learned completions outside the lexical retrieval window
             // must still be proposed. The Word adapter validates them before display.
             if (acceptanceCounts != null)
@@ -106,11 +111,18 @@ namespace UzbekOrfoAddIn.Services
                     if (checkedForms >= 24 || budget.ElapsedMilliseconds >= 8) break;
                 }
             }
-            // No fabricated frequency model: deterministic short-completion ranking for MVP.
-            return found.OrderByDescending(w => acceptanceCounts != null && acceptanceCounts.ContainsKey(w) ? acceptanceCounts[w] : 0)
+            // Keep the displayed word while the user types it. On a new prediction,
+            // prefer a useful continuation over an isolated final letter.
+            return found.OrderByDescending(w => w == continued)
+                .ThenByDescending(w => acceptanceCounts != null && acceptanceCounts.ContainsKey(w) ? acceptanceCounts[w] : 0)
+                .ThenByDescending(w => w.Skip(normalized.Length).Count(char.IsLetter) >= 2)
                 .ThenBy(w => w.Length).ThenBy(w => w, StringComparer.Ordinal).Take(count)
                 .Select(w => PreservePrefix(prefix, w.Substring(normalized.Length))).ToArray();
         }
+
+        public static bool CanContinueWord(string prefix, string candidate) =>
+            IsToken(prefix) && IsToken(candidate) && candidate.Length > prefix.Length &&
+            candidate.StartsWith(prefix, StringComparison.Ordinal);
 
         private static string PreservePrefix(string prefix, string tail)
         {

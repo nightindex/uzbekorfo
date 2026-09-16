@@ -69,6 +69,7 @@ namespace UzbekOrfoAddIn.Forms
         private FontStyle _fontStyle;
         private int _dpi;
         private bool _darkBackground;
+        private float _textCellHeight;
 
         protected override bool ShowWithoutActivation => true;
         protected override CreateParams CreateParams
@@ -106,7 +107,7 @@ namespace UzbekOrfoAddIn.Forms
                 anchor.DarkBackground == _darkBackground;
             if (sameVisual)
             {
-                Rectangle moved = OverlayPositioner.PlaceGhost(anchor, PresentationBounds.Size);
+                Rectangle moved = OverlayPositioner.PlaceGhost(anchor, PresentationBounds.Size, _textCellHeight);
                 if (moved.IsEmpty)
                 {
                     Hide();
@@ -126,9 +127,11 @@ namespace UzbekOrfoAddIn.Forms
                 format.FormatFlags |= StringFormatFlags.NoWrap | StringFormatFlags.MeasureTrailingSpaces;
                 SizeF measured = graphics.MeasureString(tail, font, int.MaxValue, format);
                 int width = Math.Max(2, (int)Math.Ceiling(measured.Width) + ScreenGeometry.Scale(5, anchor.Dpi));
-                int height = Math.Max(anchor.CaretBounds.Height,
-                    (int)Math.Ceiling(font.GetHeight(graphics)) + ScreenGeometry.Scale(4, anchor.Dpi));
-                Rectangle bounds = OverlayPositioner.PlaceGhost(anchor, new Size(width, height));
+                float cellHeight = font.Size * (font.FontFamily.GetCellAscent(font.Style) +
+                    font.FontFamily.GetCellDescent(font.Style)) / font.FontFamily.GetEmHeight(font.Style);
+                int height = (int)Math.Ceiling(Math.Max(cellHeight, font.GetHeight(graphics))) +
+                    ScreenGeometry.Scale(4, anchor.Dpi);
+                Rectangle bounds = OverlayPositioner.PlaceGhost(anchor, new Size(width, height), cellHeight);
                 if (bounds.IsEmpty)
                 {
                     Hide();
@@ -159,6 +162,7 @@ namespace UzbekOrfoAddIn.Forms
                 _fontStyle = anchor.FontStyle;
                 _dpi = anchor.Dpi;
                 _darkBackground = anchor.DarkBackground;
+                _textCellHeight = cellHeight;
                 AccessibleName = "MatnAI таклифи: " + tail;
                 AccessibleDescription = "Tab тугмаси билан қабул қилинг";
                 AccessibilityNotifyClients(AccessibleEvents.NameChange, -1);
@@ -178,9 +182,9 @@ namespace UzbekOrfoAddIn.Forms
                     graphics.CompositingMode = CompositingMode.SourceOver;
                     graphics.SmoothingMode = SmoothingMode.HighQuality;
                     graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-                    float textHeight = font.GetHeight(graphics);
-                    float y = Math.Max(0f, (bounds.Height - textHeight) / 2f - 1f);
-                    graphics.DrawString(tail, font, brush, new PointF(0, y), format);
+                    // PlaceGhost aligns the font's ascent/descent box with the caret.
+                    // Centering inside a Word range also adds paragraph line spacing.
+                    graphics.DrawString(tail, font, brush, PointF.Empty, format);
                 }
 
                 IntPtr screenDc = GetDC(IntPtr.Zero);

@@ -13,7 +13,7 @@ using Word = Microsoft.Office.Interop.Word;
 internal static class Program
 {
     [STAThread]
-    private static int Main()
+    private static int Main(string[] args)
     {
         Word.Application app = null;
         var documents = new List<Word.Document>();
@@ -31,6 +31,11 @@ internal static class Program
             app.Visible = false;
             app.DisplayAlerts = Word.WdAlertLevel.wdAlertsNone;
             var a = app.Documents.Add(); documents.Add(a);
+            if (args.Contains("--visual-ghost"))
+            {
+                GhostVisualChecks.Run(app, a);
+                return 0;
+            }
             var b = app.Documents.Add(); documents.Add(b);
             a.Activate();
             a.Content.Text = "kit";

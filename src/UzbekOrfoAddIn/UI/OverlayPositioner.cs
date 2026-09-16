@@ -46,6 +46,15 @@ namespace UzbekOrfoAddIn.UI
         [StructLayout(LayoutKind.Sequential)]
         private struct NativeRect { internal int Left, Top, Right, Bottom; }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct GuiThreadInfo
+        {
+            internal int Size;
+            internal uint Flags;
+            internal IntPtr Active, Focus, Capture, MenuOwner, MoveSize, Caret;
+            internal NativeRect CaretRect;
+        }
+
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private struct MonitorInfo
         {
@@ -71,6 +80,32 @@ namespace UzbekOrfoAddIn.UI
         [DllImport("gdi32.dll")]
         private static extern uint GetPixel(IntPtr dc, int x, int y);
 
+        [DllImport("user32.dll")]
+        private static extern bool GetGUIThreadInfo(uint thread, ref GuiThreadInfo info);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")]
+        private static extern bool IsChild(IntPtr parent, IntPtr child);
+        [DllImport("user32.dll")]
+        private static extern int MapWindowPoints(IntPtr from, IntPtr to, ref NativeRect rect, uint count);
+
+        internal static bool TryGetNativeCaret(IntPtr owner, out Rectangle caret)
+        {
+            caret = Rectangle.Empty;
+            if (owner == IntPtr.Zero || GetForegroundWindow() != owner) return false;
+            var info = new GuiThreadInfo { Size = Marshal.SizeOf(typeof(GuiThreadInfo)) };
+            if (!GetGUIThreadInfo(0, ref info) || info.Active != owner || info.Caret == IntPtr.Zero ||
+                info.Focus != info.Caret || !IsChild(owner, info.Caret) ||
+                info.CaretRect.Bottom <= info.CaretRect.Top) return false;
+            // rcCaret uses the caret HWND's logical coordinates. Map in that HWND's
+            // DPI context so it agrees with Word's screen coordinates on each monitor.
+            using (new DpiLayout.Context(DpiLayout.WindowContext(info.Caret)))
+                MapWindowPoints(info.Caret, IntPtr.Zero, ref info.CaretRect, 2);
+            caret = Rectangle.FromLTRB(info.CaretRect.Left, info.CaretRect.Top,
+                Math.Max(info.CaretRect.Left + 1, info.CaretRect.Right), info.CaretRect.Bottom);
+            return true;
+        }
+
         internal static OverlayAnchor CreateAnchor(Rectangle caret, IntPtr ownerHandle,
             string fontName, float fontSizePoints, FontStyle fontStyle)
         {
@@ -93,15 +128,32 @@ namespace UzbekOrfoAddIn.UI
             return new Rectangle(x, y, width, height);
         }
 
-        internal static Rectangle PlaceGhost(OverlayAnchor anchor, Size size)
+        internal static OverlayAnchor WithTextHeight(OverlayAnchor anchor)
+        {
+            // GetPoint includes paragraph spacing in a character's rectangle. Use
+            // the font's cell height at the character top when no native caret exists.
+            using (var font = new Font(anchor.FontName, anchor.FontSizePoints * anchor.Dpi / 72f,
+                anchor.FontStyle, GraphicsUnit.Pixel))
+            {
+                float height = font.Size * (font.FontFamily.GetCellAscent(font.Style) +
+                    font.FontFamily.GetCellDescent(font.Style)) / font.FontFamily.GetEmHeight(font.Style);
+                var caret = new Rectangle(anchor.CaretBounds.Left,
+                    anchor.CaretBounds.Top + ScreenGeometry.Scale(1, anchor.Dpi), 1, (int)Math.Round(height));
+                return new OverlayAnchor(caret, anchor.WorkArea, anchor.OwnerHandle, anchor.Dpi,
+                    anchor.FontName, anchor.FontSizePoints, anchor.FontStyle, anchor.DarkBackground);
+            }
+        }
+
+        internal static Rectangle PlaceGhost(OverlayAnchor anchor, Size size, float textCellHeight = 0f)
         {
             if (anchor == null || size.Width <= 0 || size.Height <= 0) return Rectangle.Empty;
             Rectangle area = anchor.WorkArea;
-            int x = anchor.CaretBounds.Right + ScreenGeometry.Scale(1, anchor.Dpi);
-            int y = anchor.CaretBounds.Top + (anchor.CaretBounds.Height - size.Height) / 2;
-            if (x < area.Left || x + size.Width > area.Right || size.Height > area.Height)
+            int x = anchor.CaretBounds.Right;
+            int y = textCellHeight > 0f
+                ? (int)Math.Round(anchor.CaretBounds.Bottom - textCellHeight)
+                : anchor.CaretBounds.Top;
+            if (x < area.Left || x + size.Width > area.Right || y < area.Top || y + size.Height > area.Bottom)
                 return Rectangle.Empty; // A ghost must remain inline; never move it to a misleading position.
-            y = Math.Max(area.Top, Math.Min(y, area.Bottom - size.Height));
             return new Rectangle(x, y, size.Width, size.Height);
         }
 

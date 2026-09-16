@@ -52,13 +52,18 @@ copy, as disclosed in the confirmation.
   proposals before display. No recursively generated suffix combinations are added.
   Conservative generation requires an exact known stem and a partially typed ending;
   it does not guarantee completion of every valid inflection or mutated stem.
-- Optional acceptance counts influence ranking. Without them, ranking is deterministic
-  and favors shorter completions. There is no trained contextual or sentence model.
+- The displayed word stays first while the user continues typing that same word.
+  New predictions honor optional acceptance counts, then favor continuations of two
+  or more letters before shorter completions. A remaining single letter can still
+  complete the displayed word. There is no trained contextual or sentence model.
 - A click-through layered ghost window follows the caret without modifying the document.
   Down opens a compact, non-activating alternatives popup with accessible list items and
   stale-action rejection. Both overlays use the Word window's DPI context and the caret's
   monitor work area. Document identity, window, token span and exact typed prefix are
   rechecked immediately before insertion. Only the missing tail is inserted.
+- Ghost text follows the native caret and the last typed character's font at Word's
+  current zoom. Its font ascent/descent determines the baseline. When the native caret
+  is unavailable, the fallback removes paragraph spacing from Word's range bounds.
 - Word COM access remains on the UI thread. Background queries receive plain strings
   and snapshots. Completion temporarily suspends the existing autocorrect service
   during insertion to prevent reentrant corrections.
@@ -71,10 +76,15 @@ copy, as disclosed in the confirmation.
 
 Run `eng/test-unit.ps1 -Configuration Debug`, `eng/test-word.ps1 -Configuration Debug`
 and `eng/test-ui.ps1 -Configuration Debug` after a Debug build.
+The opt-in `eng/test-word.ps1 -Configuration Debug -VisualGhost` briefly opens its own
+temporary Word document and compares cropped ghost text with accepted Word text. It
+checks both native-caret and range-fallback placement in Arial, Calibri and Times New
+Roman, Latin/Cyrillic, at 100%/150% zoom (24 cases). Captures are saved in the harness
+output folder. It does not inspect existing documents or change add-in settings.
 
 Current measured evidence:
 
-- 66 unit tests passed, including configurable ghost-tail eligibility, cancellation, optional preference ranking, settings
+- 69 unit tests passed, including stable whole-word continuation, configurable ghost-tail eligibility, cancellation, optional preference ranking, settings
   consent migration, script/apostrophe preservation and deferred validation.
 - Real-Word smoke passed: accepted tail insertion, single Undo, stale prefix rejection,
   other-document rejection, selected-text/tracked-change suppression, suffix validation,
@@ -83,8 +93,11 @@ Current measured evidence:
   continuation/list behavior, compact popup sizing, stale-action rejection, and placement
   on negative-coordinate and differently scaled monitor geometries. The full UI suite
   passed from 100% through 400% scaling.
-- The latest local Word smoke run built the full lexical index in 189 ms. Across 1,200
-  warmed queries, lexical engine p95 was 0.029 ms. These are **not** keystroke-to-suggestion measurements
+- Visual Word checks passed all 24 cases; ghost and accepted glyph top/bottom positions
+  differed by at most one screen pixel in this run. This does not replace testing on
+  the user's actual pair of monitors.
+- The latest local Word smoke run built the full lexical index in 168 ms. Across 1,200
+  warmed queries, lexical engine p95 was 0.046 ms. These are **not** keystroke-to-suggestion measurements
   and do not include suffix validation, Word polling, UI rendering or cold startup.
 
 ## Remaining work before a production claim

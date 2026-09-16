@@ -30,6 +30,7 @@ namespace UzbekOrfoAddIn.Services
         private CancellationTokenSource _buildCancel;
         private bool _disposed;
         private string[] _shown = new string[0];
+        private string _continuedWord;
         public bool PopupVisible => !_disposed && _popup.Visible;
         public bool GhostVisible => !_disposed && _ghost.Visible;
         public bool SuggestionVisible => PopupVisible || GhostVisible;
@@ -116,6 +117,7 @@ namespace UzbekOrfoAddIn.Services
 
         public void Dismiss()
         {
+            _continuedWord = null;
             _popup.Hide();
             _ghost.Hide();
             _shown = new string[0];
@@ -126,6 +128,7 @@ namespace UzbekOrfoAddIn.Services
 
         private void Clear()
         {
+            _continuedWord = null;
             _popup.Hide();
             _ghost.Hide();
             _shown = new string[0];
@@ -151,7 +154,17 @@ namespace UzbekOrfoAddIn.Services
                     if (latest == null) { Clear(); return; }
                     if (_current == null || !_current.SameAs(latest))
                     {
+                        // Carry a visible completion only through typing at the end of
+                        // this same token and document. Edits, moves and dismissal reset it.
+                        string continued = null;
+                        if (_current != null && _current.CanContinueAt(latest))
+                        {
+                            string previous = _ghost.Visible ? _shown.FirstOrDefault() : _continuedWord;
+                            if (WordCompletionEngine.CanContinueWord(latest.Prefix, previous))
+                                continued = previous;
+                        }
                         Clear();
+                        _continuedWord = continued;
                         _current = WordCompletionContext.Capture(_app);
                         if (_current == null) return;
                     }
@@ -188,10 +201,11 @@ namespace UzbekOrfoAddIn.Services
                 string prefix = _queryContext.Prefix;
                 var engine = _engine;
                 var preferences = _settings.MatnAiLearningConsent ? _preferences.Snapshot() : null;
+                string continuedWord = _continuedWord;
                 _cancel = new CancellationTokenSource();
                 var token = _cancel.Token;
                 _query = Task.Run(() => engine.Complete(prefix, 10, token, deferMorphologyValidation: true,
-                    acceptanceCounts: preferences), token);
+                    acceptanceCounts: preferences, continuedWord: continuedWord), token);
             }
             catch (Exception ex)
             {
