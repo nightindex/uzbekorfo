@@ -1,0 +1,1802 @@
+[
+  {
+    "id": 1,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "аж устав ",
+    "Prefix": "ка",
+    "Expected": "капиталидаги",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 2,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "бошқа ҳолларда ",
+    "Prefix": "",
+    "Expected": "конституциявий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 3,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "шу билан ",
+    "Prefix": "би",
+    "Expected": "бирга",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 4,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ҳолда камида бир марта аҳоли ва ",
+    "Prefix": "",
+    "Expected": "уй-жой",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 5,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "олишга тайёргарлик кўриш ва уни ўтказиш ",
+    "Prefix": "",
+    "Expected": "билан",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 6,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "харид қийматида сотишда шу жумладан ",
+    "Prefix": "",
+    "Expected": "аввал",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 7,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ўзбекистон республикаси бош прокуратураси бошқарма ",
+    "Prefix": "",
+    "Expected": "бошлиғи",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 8,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ички ишлар вазирлиги миллий хавфсизлик хизмати ",
+    "Prefix": "да",
+    "Expected": "давлат",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 9,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "жумладан жазони енгиллаштириш ёки шахсни жиноий ",
+    "Prefix": "жа",
+    "Expected": "жавобгарлик",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 10,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "мулки объектлари тўғрисида тадбиркорлар ва аҳолини ",
+    "Prefix": "до",
+    "Expected": "доимий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 11,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ва қишлоқ аҳоли пунктларидаги уйларнинг тайёргарлик ",
+    "Prefix": "",
+    "Expected": "босқичида",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 12,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ва жиноят-процессуал қонунчиликка илғор хорижий тажрибани ",
+    "Prefix": "им",
+    "Expected": "имплементация",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 13,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "та бўш ",
+    "Prefix": "",
+    "Expected": "турган",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 14,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "қонунларининг ва ўзбекистон республикаси олий мажлиси ",
+    "Prefix": "",
+    "Expected": "палаталари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 15,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "рўйхатга олиш ",
+    "Prefix": "",
+    "Expected": "материалларини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 16,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "бошқа ишга ўтган тақдирда унинг таркибига ",
+    "Prefix": "",
+    "Expected": "ушбу",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 17,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "конституциявий судни сақлаш ва унинг ",
+    "Prefix": "",
+    "Expected": "фаолиятини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 18,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "уларнинг ҳаққоний мустақиллигини таъминлаш шунингдек жиноят ",
+    "Prefix": "иш",
+    "Expected": "иши",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 19,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "республика комиссиясининг ",
+    "Prefix": "",
+    "Expected": "ишчи",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 20,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "таркиби иш режасини тасдиқлаш ва ",
+    "Prefix": "",
+    "Expected": "унинг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 21,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "амалга ошириш бўйича ишчи гуруҳлар ташкил ",
+    "Prefix": "эт",
+    "Expected": "этсин",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 22,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "таъминлаш шарти билан қўшимча сўровларни шакллантириш ",
+    "Prefix": "уч",
+    "Expected": "учун",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 23,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "кафолатлашни янада кучайтириш бўйича комплекс чора-тадбирлар ",
+    "Prefix": "",
+    "Expected": "амалга",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 24,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "республикаси судьялар олий кенгашининг раиси ўзбекистон ",
+    "Prefix": "",
+    "Expected": "республикаси",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 25,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ўтган йиллар ",
+    "Prefix": "",
+    "Expected": "мобайнида",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 26,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "суд ҳужжатлари ",
+    "Prefix": "иж",
+    "Expected": "ижросини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 27,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "бараваридан юқори ",
+    "Prefix": "ле",
+    "Expected": "лекин",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 28,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ҳар бир аҳоли пунктида аҳолини ",
+    "Prefix": "",
+    "Expected": "рўйхатга",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 29,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ўзбекистон республикаси бош прокурори комиссия ",
+    "Prefix": "",
+    "Expected": "раиси",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 30,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "мурожаатларини кўриб чиқиш тартибини бузиш ва ",
+    "Prefix": "",
+    "Expected": "сансалорликка",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 31,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "конституциявий суднинг судьялари ҳужжат қабул ",
+    "Prefix": "",
+    "Expected": "қилар",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 32,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "олиш даврида аҳолини рўйхатга олишни ўтказувчи ",
+    "Prefix": "",
+    "Expected": "органларнинг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 33,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "бош прокуратураси ҳузуридаги иқтисодий жиноятларга қарши ",
+    "Prefix": "ку",
+    "Expected": "курашиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 34,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "ҳудудда жойлашган белгиланган тартибда республика давлат ",
+    "Prefix": "бо",
+    "Expected": "бошқаруви",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 35,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "конституциявий суд судьясининг ваколатларини тўхтатиб ",
+    "Prefix": "",
+    "Expected": "туриш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 36,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "республикаси бош прокурори ўзбекистон республикаси ҳисоб ",
+    "Prefix": "",
+    "Expected": "палатасининг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 37,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "прокурор-тергов ходимлари ",
+    "Prefix": "ма",
+    "Expected": "малакасини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 38,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "бараваригача олди-сотди шартномаси тузилган кундан ",
+    "Prefix": "бо",
+    "Expected": "бошлаб",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 39,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "жабр кўрган шахсларнинг бузилган ҳуқуқларини тиклаш ",
+    "Prefix": "",
+    "Expected": "механизмларининг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 40,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "келгусида самарали ",
+    "Prefix": "",
+    "Expected": "фойдаланиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 41,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "конституциявий суднинг камида уч нафар ",
+    "Prefix": "",
+    "Expected": "судьяси",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 42,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "синов тариқасида аҳолини рўйхатга олишни ",
+    "Prefix": "ўт",
+    "Expected": "ўтказиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 43,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "январга қадар ",
+    "Prefix": "уз",
+    "Expected": "узайтириш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 44,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "жиноий жазоларнинг ",
+    "Prefix": "",
+    "Expected": "санкцияларини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 45,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "суди бош прокуратура ички ишлар вазирлиги ",
+    "Prefix": "ми",
+    "Expected": "миллий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 46,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "юритиш жараёнларини шу жумладан жиноят ишлари ",
+    "Prefix": "",
+    "Expected": "бўйича",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 47,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ривожлантириш меҳнат ресурсларидан фойдаланиш ва уларни ",
+    "Prefix": "жо",
+    "Expected": "жойлаштириш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 48,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "эркинликлари жамият ва давлатнинг манфаатларини самарали ",
+    "Prefix": "",
+    "Expected": "ҳимоя",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 49,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "халқаро ҳамкорлик ",
+    "Prefix": "ма",
+    "Expected": "масалаларини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 50,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "базасини мустаҳкамлаш бўйича чора-тадбирлар дастурини ишлаб ",
+    "Prefix": "",
+    "Expected": "чиқиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 51,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ижтимоий хавфи ",
+    "Prefix": "",
+    "Expected": "катта",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 52,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "конституциявий суд фақат ўзбекистон республикасининг ",
+    "Prefix": "",
+    "Expected": "конституциясига",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 53,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "кадрларни шаффоф танлов асосида ишга қабул ",
+    "Prefix": "қи",
+    "Expected": "қилиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 54,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "келиб чиққан ҳолда аҳолини рўйхатга олишга ",
+    "Prefix": "та",
+    "Expected": "тайёргарлик",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 55,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "воситалари илмий доиралар вакиллари ва хорижий ",
+    "Prefix": "",
+    "Expected": "экспертларни",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 56,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "аҳолини рўйхатга ",
+    "Prefix": "",
+    "Expected": "олишни",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 57,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "давлат статистика қўмитасининг талабномалари бўйича босқичма-босқич ",
+    "Prefix": "ра",
+    "Expected": "равишда",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 58,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "илғор хорижий тажрибани ўрганиш асосида фуқаролик ",
+    "Prefix": "",
+    "Expected": "жиноят",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 59,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "оладиган ишончли холис ва яхлит маълумотларни ",
+    "Prefix": "",
+    "Expected": "ягона",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 60,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "инвестиция мажбуриятлари бажарилган деб қабул қилинган ",
+    "Prefix": "",
+    "Expected": "пайтдан",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 61,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "жорий этиш маркази вакилларидан иборат ишчи ",
+    "Prefix": "",
+    "Expected": "гуруҳи",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 62,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "иштироки улар меҳнатига ҳақ тўлашнинг аниқ ",
+    "Prefix": "",
+    "Expected": "механизмлари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 63,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "суриштирув органлари билан муносабатларнинг ҳуқуқий ",
+    "Prefix": "ас",
+    "Expected": "асосларини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 64,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "иқтисодиёт ва саноат вазирлиги қорақалпоғистон республикаси ",
+    "Prefix": "",
+    "Expected": "вазирлар",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 65,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ўтказиш бўйича хорижий давлатлар тажрибаларини ўрганиш ",
+    "Prefix": "",
+    "Expected": "юзасидан",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 66,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "чиқилаётган барча масалалар юзасидан ўз фикрларини ",
+    "Prefix": "",
+    "Expected": "баён",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 67,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "нормалар ва жамоат таъсир чоралари етарли ",
+    "Prefix": "",
+    "Expected": "даражада",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 68,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "мустақиллик коллегиаллик ошкоралик тарафларнинг тортишуви ва ",
+    "Prefix": "",
+    "Expected": "тенг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 69,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "аҳолини рўйхатга олиш материалларини автоматлаштирилган ",
+    "Prefix": "ти",
+    "Expected": "тизимда",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 70,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "судья огоҳлантирилганидан ёки унинг ваколатлари ",
+    "Prefix": "",
+    "Expected": "тўхтатилганидан",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 71,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ишлар бўйича судгача ва судда иш ",
+    "Prefix": "",
+    "Expected": "юритишнинг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 72,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "аҳолини рўйхатга ",
+    "Prefix": "ол",
+    "Expected": "олишни",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 73,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "эътироф этилган жиноят-ҳуқуқий институтларнинг етарли даражада ",
+    "Prefix": "",
+    "Expected": "жумладан",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 74,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "тўлиқ бажарилган тақдирда ижара муддати уч ",
+    "Prefix": "йи",
+    "Expected": "йил",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 75,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "амалга ошириш тартибларини жумладан электрон шаклда ",
+    "Prefix": "",
+    "Expected": "санкциялар",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 76,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "келгусида самарали фойдаланиш учун давлат ",
+    "Prefix": "ор",
+    "Expected": "органларига",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 77,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "амалиётда эътироф этилган жиноят-ҳуқуқий институтларнинг етарли ",
+    "Prefix": "да",
+    "Expected": "даражада",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 78,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "конституциявий суд судьясининг ваколатлари қуйидаги ",
+    "Prefix": "",
+    "Expected": "ҳолларда",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 79,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "агентлиги ўзбекистон республикаси президенти администрацияси ҳузуридаги ",
+    "Prefix": "",
+    "Expected": "ахборот",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 80,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "конституциявий суднинг судьяси ўз ваколатлари ",
+    "Prefix": "",
+    "Expected": "даврида",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 81,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "аҳолини рўйхатга олишни ўтказиш бўйича ",
+    "Prefix": "",
+    "Expected": "ташкилий-ҳуқуқий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 82,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "варақаларидаги аҳоли тўғрисидаги шахсий маълумотлар фойдаланилиши ",
+    "Prefix": "че",
+    "Expected": "чекланган",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 83,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ҳисобга олган ҳолда шахсий мукофотлаш тартибини ",
+    "Prefix": "",
+    "Expected": "жорий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 84,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "институтини жорий ",
+    "Prefix": "эт",
+    "Expected": "этиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 85,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "жиноий қилмишнинг ",
+    "Prefix": "иж",
+    "Expected": "ижтимоий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 86,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "тартибдан ҳамда асослардан бошқача тарзда тугатилиши ",
+    "Prefix": "",
+    "Expected": "ёки",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 87,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ҳолда суд қарорларининг қонунийлиги асослилиги ва ",
+    "Prefix": "",
+    "Expected": "адолатлилигини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 88,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "бунда давлат мулки объектларининг бошланғич ",
+    "Prefix": "",
+    "Expected": "нархи",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 89,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "сифат жиҳатидан яхшилаш кадрларни танлашнинг энг ",
+    "Prefix": "му",
+    "Expected": "муносиб",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 90,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "бўйича статистика юритишни автоматлаштириш орқали жорий ",
+    "Prefix": "қи",
+    "Expected": "қилиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 91,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "белгиланган тартибда ",
+    "Prefix": "со",
+    "Expected": "сотилиши",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 92,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ва эркинликларини ишончли ҳимоя қилиш кафолатларини ",
+    "Prefix": "ку",
+    "Expected": "кучайтириш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 93,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "бараваридан юқори бўлганда олди-сотди шартномаси ",
+    "Prefix": "",
+    "Expected": "тузилган",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 94,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "қўядиган ёхуд ижтимоий хавфлилик даражаси ва ",
+    "Prefix": "ха",
+    "Expected": "характери",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 95,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "лавозими билан бир вақтда шуғулланиб бўлмайдиган ",
+    "Prefix": "",
+    "Expected": "фаолият",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 96,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "республикасининг конституцияси ушбу қонун ва бошқа ",
+    "Prefix": "",
+    "Expected": "қонун",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 97,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "жинси ёши оилавий аҳволи маълумоти даражаси ",
+    "Prefix": "",
+    "Expected": "яшаш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 98,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "қуйидагилар ўзбекистон ",
+    "Prefix": "",
+    "Expected": "республикасининг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 99,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "фуқаролик жамияти институтлари оммавий ахборот воситалари ",
+    "Prefix": "",
+    "Expected": "вакиллари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 100,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "тутувчи давлат жиноят-ҳуқуқий сиёсатининг мутлақо янги ",
+    "Prefix": "ус",
+    "Expected": "устувор",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 101,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "мақсади ўзбекистон республикаси конституциявий судининг фаолиятини ",
+    "Prefix": "",
+    "Expected": "тартибга",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 102,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "жиноят процессига ",
+    "Prefix": "иж",
+    "Expected": "ижтимоий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 103,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ва давлат статистика органлари билан биргаликда ",
+    "Prefix": "до",
+    "Expected": "доимий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 104,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "қуйидагиларни назарда ",
+    "Prefix": "ту",
+    "Expected": "тутган",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 105,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "судларни янада ",
+    "Prefix": "их",
+    "Expected": "ихтисослаштириш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 106,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "ўринбосарини қўшган ҳолда конституциявий суднинг етти ",
+    "Prefix": "",
+    "Expected": "нафар",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 107,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "суд-ҳуқуқ тизимини ",
+    "Prefix": "",
+    "Expected": "янада",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 108,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "назарда тутувчи мажбуриятлар бажарилгандан сўнг ўзбекистон ",
+    "Prefix": "",
+    "Expected": "республикаси",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 109,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "жорий қилиниши муносабати билан жиноят ва ",
+    "Prefix": "",
+    "Expected": "жиноят-процессуал",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 110,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "этмайди бундан эҳтиёт чораси сифатида судьяга ",
+    "Prefix": "",
+    "Expected": "нисбатан",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 111,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ўзбекистон республикаси ",
+    "Prefix": "ад",
+    "Expected": "адвокатлар",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 112,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "конституциявий суд норматив-ҳуқуқий ҳужжатнинг конституцияга ",
+    "Prefix": "",
+    "Expected": "мувофиқлигини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 113,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "суҳбатлари семинарлар ва конференциялар ўтказиш орқали ",
+    "Prefix": "",
+    "Expected": "кенг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 114,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "бошланғич нархи базавий ҳисоблаш миқдорининг ўн ",
+    "Prefix": "ми",
+    "Expected": "минг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 115,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "иш ўринларини сақлаб қолиш тартиби бекор ",
+    "Prefix": "қи",
+    "Expected": "қилинсин",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 116,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "жиҳозлаш ички локал-ҳисоблаш тармоқларини ташкил этиш ",
+    "Prefix": "",
+    "Expected": "тегишли",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 117,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "жиноят ва жиноят-процессуал ҳуқуқи соҳасидаги ",
+    "Prefix": "",
+    "Expected": "илғор",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 118,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "тўловлари миқдоридан келиб чиққан ҳолда сотиб ",
+    "Prefix": "",
+    "Expected": "олиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 119,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "давлат активларини бошқариш агентлиги молия вазирлиги ",
+    "Prefix": "иқ",
+    "Expected": "иқтисодиёт",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 120,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "судьяси ташаббуси билан ҳам конституциявий судда ",
+    "Prefix": "",
+    "Expected": "кўриб",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 121,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "муҳофаза қилувчи ва назорат органларининг муҳим ",
+    "Prefix": "ва",
+    "Expected": "вазифалари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 122,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "олий суд адлия вазирлиги молия ",
+    "Prefix": "ва",
+    "Expected": "вазирлиги",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 123,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ҳолларда бошқа тоифадаги шахслар ҳам улар ",
+    "Prefix": "аҳ",
+    "Expected": "аҳоли",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 124,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "органларига оператив бошқарув ҳуқуқи асосида берилиши ",
+    "Prefix": "ло",
+    "Expected": "лозим",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 125,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "мамлакатларнинг давлат органлари ва халқаро ташкилотлар ",
+    "Prefix": "ва",
+    "Expected": "вакиллари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 126,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "мажбурий ижро бюроси тошкент шаҳар яккасарой ",
+    "Prefix": "",
+    "Expected": "тумани",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 127,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "янги жиноят процессуал институтларни жорий ",
+    "Prefix": "эт",
+    "Expected": "этишни",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 128,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "юридик шахсларни жалб этиш ҳамда иштирок ",
+    "Prefix": "",
+    "Expected": "этганларни",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 129,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "технологиялари ва коммуникацияларини ривожлантириш вазирлиги молия ",
+    "Prefix": "",
+    "Expected": "вазирлиги",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 130,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "шартномаларини қимматли қоғозлар савдолари ташкилотчиларининг савдо ",
+    "Prefix": "ма",
+    "Expected": "майдончаларидан",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 131,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "ҳузурида маслаҳат органи бўлган ва жамоатчилик ",
+    "Prefix": "",
+    "Expected": "асосида",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 132,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "розилигисиз жиноий ва маъмурий жавобгарликка тортилиши ",
+    "Prefix": "",
+    "Expected": "шунингдек",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 133,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "олий суд ",
+    "Prefix": "ол",
+    "Expected": "олий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 134,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ўзбекистон республикаси ",
+    "Prefix": "ол",
+    "Expected": "олий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 135,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ва жиноятдан жабр кўрган шахсларни ҳимоя ",
+    "Prefix": "",
+    "Expected": "қилиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 136,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "суд ва ҳуқуқни муҳофаза қилиш ",
+    "Prefix": "ти",
+    "Expected": "тизими",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 137,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "тўхтатилган жиноят ",
+    "Prefix": "",
+    "Expected": "ишлари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 138,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "қилмишнинг жиноийлигини ",
+    "Prefix": "",
+    "Expected": "истисно",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 139,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "олишни ўтказишга ваколатли орган ҳамда бошқа ",
+    "Prefix": "да",
+    "Expected": "давлат",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 140,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "меҳнатига ҳақ тўлаш шартлари тўғрисидаги норматив ",
+    "Prefix": "",
+    "Expected": "ҳужжатларни",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 141,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "ҳужжатлари барча давлат ҳокимияти ва бошқаруви ",
+    "Prefix": "",
+    "Expected": "органлари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 142,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "уларнинг оила аъзоларини ижтимоий муҳофаза қилиш ",
+    "Prefix": "",
+    "Expected": "чора-тадбирлари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 143,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "республикаси президентига мамлакатдаги конституциявий қонунийликнинг ҳолати ",
+    "Prefix": "",
+    "Expected": "тўғрисида",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 144,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "бўйича судгача ва суд жараёнида қонунийликни ",
+    "Prefix": "",
+    "Expected": "таъминлашга",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 145,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "ўз она тилида сўзга чиқиши ва ",
+    "Prefix": "",
+    "Expected": "тушунтиришлар",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 146,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "умумлаштириш натижалари юзасидан ҳар йили ўзбекистон ",
+    "Prefix": "",
+    "Expected": "республикаси",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 147,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "у аҳоли ",
+    "Prefix": "",
+    "Expected": "сонини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 148,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "бефарқ муносабатда бўлиш ҳолатларига йўл қўйганлик ",
+    "Prefix": "уч",
+    "Expected": "учун",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 149,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "у вафот ",
+    "Prefix": "",
+    "Expected": "этганида",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 150,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "тасарруфига оператив бошқарув ҳуқуқи асосида беғараз ",
+    "Prefix": "бе",
+    "Expected": "бериш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 151,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "тузилган кундан бошлаб йигирма тўрт ойдан ",
+    "Prefix": "",
+    "Expected": "кўп",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 152,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "боғлиқ бўлган қатор муаммо ва камчиликлар ",
+    "Prefix": "",
+    "Expected": "сақланиб",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 153,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "кунлик муддатдан кечиктирмай масалани ўрганиб чиқишга ",
+    "Prefix": "",
+    "Expected": "киришади",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 154,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "мувофиқлигини текшириб текширилган ҳужжатга асосланган ёхуд ",
+    "Prefix": "",
+    "Expected": "унинг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 155,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "жумладан қуйидагиларни назарда тутувчи барча зарурий ",
+    "Prefix": "чо",
+    "Expected": "чораларни",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 156,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ишларни ташкил этиш ва мувофиқлаштириш учун ",
+    "Prefix": "тў",
+    "Expected": "тўлов-шартнома",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 157,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "ўзбекистон республикаси президенти девонининг етакчи ",
+    "Prefix": "ко",
+    "Expected": "консультанти",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 158,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ўзбекистон адвокатлар ",
+    "Prefix": "",
+    "Expected": "палатаси",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 159,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "электрон тартибда суд ва ижро ",
+    "Prefix": "",
+    "Expected": "ишини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 160,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "қилиш кафолатларини кучайтириш бўйича комплекс чора-тадбирлар ",
+    "Prefix": "да",
+    "Expected": "дастури",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 161,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "ҳужжат қабул ",
+    "Prefix": "",
+    "Expected": "қилинишига",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 162,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "тортишуви принципини таъминлаш орқали жиноят ва ",
+    "Prefix": "фу",
+    "Expected": "фуқаролик",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 163,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "тузилган кундан бошлаб бир йилдан кўп ",
+    "Prefix": "бў",
+    "Expected": "бўлмаган",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 164,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "олишга тайёргарлик кўриш ва уни ўтказиш ",
+    "Prefix": "жа",
+    "Expected": "жараёнини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 165,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "судлар ва хўжалик судларининг ваколатларини қайта ",
+    "Prefix": "кў",
+    "Expected": "кўриб",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 166,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "кўрсатиш ҳуқуқларини бериш шунингдек комиссия ижро ",
+    "Prefix": "",
+    "Expected": "аппарати",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 167,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "олий суд ",
+    "Prefix": "",
+    "Expected": "олий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 168,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ижтимоий-иқтисодий муаммолар ",
+    "Prefix": "",
+    "Expected": "бўйича",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 169,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "олий мажлиси сенатининг қарори билан муддатидан ",
+    "Prefix": "",
+    "Expected": "илгари",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 170,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "этилган шахсларнинг хавфсизлигини ва рўйхатга олиш ",
+    "Prefix": "ма",
+    "Expected": "материалларининг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 171,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "белгиланган давлат мулки объектларини сотиш тартибини ",
+    "Prefix": "со",
+    "Expected": "соддалаштириш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 172,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "идентификаторини жорий этишни ҳисобга олган ҳолда ",
+    "Prefix": "",
+    "Expected": "жисмоний",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 173,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "автомототранспорт воситаларни ҳамда бошқа асосий ",
+    "Prefix": "",
+    "Expected": "воситаларини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 174,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "ўзбекистон республикаси давлат бюджети маблағлари ва ",
+    "Prefix": "қо",
+    "Expected": "қонун",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 175,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "кучайтириш одоб-ахлоқ қоидаларига оғишмай риоя этилишини ",
+    "Prefix": "та",
+    "Expected": "таъминлаш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 176,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "фуқароларнинг ҳуқуқлари эркинликлари ва қонуний ",
+    "Prefix": "ма",
+    "Expected": "манфаатларига",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 177,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "маҳкумларга нисбатан амнистия ва афв ",
+    "Prefix": "",
+    "Expected": "этиш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 178,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ва бир қанча жиноят содир этиш ",
+    "Prefix": "ин",
+    "Expected": "институтларини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 179,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "ва ижро этувчи ҳокимият ҳужжатларининг конституцияга ",
+    "Prefix": "",
+    "Expected": "мувофиқлиги",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 180,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "мазкур фармон ",
+    "Prefix": "иж",
+    "Expected": "ижросини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 181,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "ёки ўзга органларнинг ваколатларига кирадиган барча ",
+    "Prefix": "",
+    "Expected": "ҳолларда",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 182,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "аризасига кўра амалга ошириладиган жиноят таркиблари ",
+    "Prefix": "",
+    "Expected": "рўйхатини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 183,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "адвокатларнинг процессуал ",
+    "Prefix": "ҳу",
+    "Expected": "ҳуқуқ",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 184,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ҳужжатларнинг ягона электрон шаклларини шакллантиришни кўзда ",
+    "Prefix": "ту",
+    "Expected": "тутувчи",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 185,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "суд-тергов фаолиятига ",
+    "Prefix": "за",
+    "Expected": "замонавий",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 186,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "тегишли ер участкалари бино ва иншоотларнинг ",
+    "Prefix": "ка",
+    "Expected": "кадастр",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 187,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "ҳамда уларга бўлган ҳуқуқларнинг қонунчиликда белгиланган ",
+    "Prefix": "",
+    "Expected": "тартибда",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 188,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "ҳуқуқларнинг қонунчиликда белгиланган тартибда давлат рўйхатидан ",
+    "Prefix": "ўт",
+    "Expected": "ўтказилишини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 189,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "суд органлари мажбурий ижро бюроси ходимларидан ",
+    "Prefix": "иб",
+    "Expected": "иборат",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 190,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "чиқиш барқарор ривожланиш миллий мақсадлари индикаторларини ",
+    "Prefix": "",
+    "Expected": "шакллантириш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 191,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "давлат мулки ",
+    "Prefix": "об",
+    "Expected": "объектларидан",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 192,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+    "Context": "эълон қилинган маълумотлар миқдоридан ортиқ ҳажмдаги ",
+    "Prefix": "",
+    "Expected": "фойдаланувчиларнинг",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 193,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "ўзбекистон республикаси қонунларининг ўзбекистон республикасининг конституциясига ",
+    "Prefix": "",
+    "Expected": "мувофиқлигини",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 194,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "ва коррупциявий жиноятларни шу билан бирга ",
+    "Prefix": "ую",
+    "Expected": "уюшган",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 195,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "электрон савдо ",
+    "Prefix": "пл",
+    "Expected": "платформаси",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 196,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+    "Context": "мулк ва тадбиркорликни ривожлантириш учун қўшимча ",
+    "Prefix": "ша",
+    "Expected": "шарт-шароитлар",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 197,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "судьяларининг ваколатлари тугаганидан кейин уларни ишга ",
+    "Prefix": "",
+    "Expected": "жойлаштириш",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 198,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+    "Context": "адлия вазирлиги ",
+    "Prefix": "мо",
+    "Expected": "молия",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 199,
+    "Source": "corpus/raw/sud_uz_qonunlar/lexuz-3221763.doc",
+    "Context": "палатаси депутатлари умумий сонининг камида тўртдан ",
+    "Prefix": "",
+    "Expected": "бир",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 200,
+    "Source": "corpus/raw/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+    "Context": "бош прокуратураси ҳузуридаги мажбурий ижро бюроси ",
+    "Prefix": "то",
+    "Expected": "тошкент",
+    "reviewer": "",
+    "decision": "pending"
+  }
+]

@@ -113,6 +113,9 @@ internal static class Program
         Rectangle aligned = OverlayPositioner.PlaceGhost(inlineAnchor, new Size(180, 42), 30f);
         Require(aligned.Top == inlineAnchor.CaretBounds.Top,
             "Bitmap padding does not move the ghost baseline below the typed text");
+        var fallbackAnchor = OverlayPositioner.WithTextHeight(inlineAnchor);
+        Require(fallbackAnchor.CaretBounds.Top == inlineAnchor.CaretBounds.Top,
+            "Fallback positioning must not add a DPI-scaled vertical nudge to Word's text top");
         var topAnchor = new OverlayAnchor(new Rectangle(2400, rightMonitor.Top, 2, 10), rightMonitor,
             IntPtr.Zero, 144, "Segoe UI", 11f, FontStyle.Regular, false);
         Require(OverlayPositioner.PlaceGhost(topAnchor, new Size(180, 42), 30f).IsEmpty,
@@ -155,6 +158,18 @@ internal static class Program
             Require(workArea.Contains(ghost.PresentationBounds), "Ghost suggestion stays in the current work area");
             Require(GetForegroundWindow() == foreground, "Ghost suggestion does not activate or steal focus");
             int normalWidth = ghost.PresentationBounds.Width;
+            int renders = ghost.RenderCount;
+            int visibilityChanges = 0;
+            ghost.VisibleChanged += (s, e) => visibilityChanges++;
+            for (int tick = 0; tick < 20; tick++) Require(ghost.Present("oblar", anchor, owner), "Idle ghost remains visible");
+            Require(ghost.RenderCount == renders && visibilityChanges == 0, "Idle polling neither repaints nor hides the ghost");
+            var clipped = new OverlayAnchor(caret, workArea, owner.Handle, dpi, "Segoe UI", 11f, FontStyle.Regular, false)
+                { TextRight = caret.Right + normalWidth + ScreenGeometry.Scale(5, dpi) };
+            Require(ghost.Present("oblar bilan birga", clipped, owner) && ghost.SuggestionTail == "oblar", "Ghost clips only at a complete word");
+            renders = ghost.RenderCount;
+            for (int tick = 0; tick < 20; tick++) Require(ghost.Present("oblar bilan birga", clipped, owner), "Clipped ghost stays visible");
+            Require(ghost.RenderCount == renders, "Clipped phrases reuse their rendered surface during idle polling");
+            Require(ghost.Present("blar", anchor, owner) && visibilityChanges == 0, "Matching typing updates the surface without hiding it");
             var zoomedAnchor = new OverlayAnchor(
                 new Rectangle(caret.X, caret.Y, caret.Width, ScreenGeometry.Scale(33, dpi)),
                 workArea, owner.Handle, dpi, "Segoe UI", 16.5f, FontStyle.Regular, false);

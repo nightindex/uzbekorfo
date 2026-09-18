@@ -1,12 +1,25 @@
 param(
     [string]$Destination = (Join-Path $PSScriptRoot '..\obj\restored-hunspell'),
-    [string]$BundlePath = (Join-Path $PSScriptRoot '..\docs\reference\hunspell_sources.json')
+    [string]$BundlePath = (Join-Path $PSScriptRoot '..\docs\reference\hunspell_sources.json.gz')
 )
 $ErrorActionPreference = 'Stop'
 [void][Reflection.Assembly]::LoadWithPartialName('System.Web.Extensions')
 $serializer = New-Object System.Web.Script.Serialization.JavaScriptSerializer
 $serializer.MaxJsonLength = [int]::MaxValue
-$bundle = $serializer.DeserializeObject([IO.File]::ReadAllText($BundlePath))
+if ($BundlePath.EndsWith('.gz', [StringComparison]::OrdinalIgnoreCase)) {
+    $inputStream = [IO.File]::OpenRead($BundlePath)
+    try {
+        $gzip = New-Object IO.Compression.GZipStream($inputStream, [IO.Compression.CompressionMode]::Decompress)
+        try {
+            $reader = New-Object IO.StreamReader($gzip, [Text.Encoding]::UTF8)
+            try { $bundle = $serializer.DeserializeObject($reader.ReadToEnd()) }
+            finally { $reader.Dispose() }
+        } finally { $gzip.Dispose() }
+    } finally { $inputStream.Dispose() }
+} else {
+    # Allow an explicitly supplied legacy JSON bundle for recovery.
+    $bundle = $serializer.DeserializeObject([IO.File]::ReadAllText($BundlePath))
+}
 if ($bundle.Schema -ne 'uzbekorfo-hunspell-v1') { throw 'Unsupported bundle schema.' }
 $destinationPath = [IO.Path]::GetFullPath($Destination)
 [void][IO.Directory]::CreateDirectory($destinationPath)

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using UzbekOrfoAddIn.Helpers;
@@ -13,6 +14,7 @@ namespace UzbekOrfoAddIn.Services
     {
         private Word.Range _range;
         public string Prefix { get; private set; }
+        public string PrecedingContext { get; private set; }
         public int Start { get; private set; }
         public int End { get; private set; }
         public int WindowHandle { get; private set; }
@@ -65,19 +67,22 @@ namespace UzbekOrfoAddIn.Services
                 int end = selection.End;
                 if (end < 2) return null;
                 range = selection.Range.Duplicate;
-                range.SetRange(Math.Max(0, end - 81), end);
+                range.SetRange(Math.Max(0, end - 512), end);
                 string preceding = range.Text ?? "";
                 int start = preceding.Length;
                 while (start > 0 && WordCompletionEngine.IsTokenCharacter(preceding[start - 1])) start--;
                 string prefix = preceding.Substring(start);
-                if (prefix.Length < 2 || !WordCompletionEngine.IsToken(prefix)) return null;
+                if (prefix.Length > 0 && !WordCompletionEngine.IsToken(prefix)) return null;
+                if (prefix.Length == 0 && (preceding.Length == 0 || preceding[preceding.Length - 1] != ' ')) return null;
+                string context = preceding.Substring(0, start);
                 range.SetRange(end, end + 1);
                 var following = range.Text;
                 if (!string.IsNullOrEmpty(following) && WordCompletionEngine.IsTokenCharacter(following[0])) return null;
                 range.SetRange(end - prefix.Length, end);
                 if (range.Fields.Count != 0) return null;
                 var result = new WordCompletionContext {
-                    _range = range, Prefix = prefix, Start = range.Start, End = end, WindowHandle = app.ActiveWindow.Hwnd
+                    _range = range, Prefix = prefix, PrecedingContext = context,
+                    Start = range.Start, End = end, WindowHandle = app.ActiveWindow.Hwnd
                 };
                 range = null;
                 return result;
@@ -92,7 +97,8 @@ namespace UzbekOrfoAddIn.Services
             {
                 return other != null && _range != null && other._range != null &&
                     WindowHandle == other.WindowHandle && Start == other.Start && End == other.End && Prefix == other.Prefix &&
-                    _range.Start == Start && _range.End == End && _range.Text == Prefix &&
+                    PrecedingContext == other.PrecedingContext &&
+                    _range.Start == Start && _range.End == End && (_range.Text ?? string.Empty) == Prefix &&
                     DocumentHelper.IsSameDocument(_range.Document, other._range.Document);
             }
             catch (COMException) { return false; }
@@ -110,10 +116,31 @@ namespace UzbekOrfoAddIn.Services
             catch (COMException) { return false; }
         }
 
+        /// <summary>Advance an already visible phrase only through exact matching typing.</summary>
+        public bool TryContinueSuggestion(WordCompletionContext other, string completion, out string continued)
+        {
+            continued = null;
+            try
+            {
+                if (other == null || _range == null || other._range == null || WindowHandle != other.WindowHandle ||
+                    !DocumentHelper.IsSameDocument(_range.Document, other._range.Document) ||
+                    completion == null || !completion.StartsWith(Prefix, StringComparison.Ordinal)) return false;
+                int typed = other.End - End;
+                string tail = completion.Substring(Prefix.Length);
+                if (typed <= 0 || typed >= tail.Length) return false;
+                string expected = PrecedingContext + Prefix + tail.Substring(0, typed);
+                if (expected.Length > 512) expected = expected.Substring(expected.Length - 512);
+                if (other.PrecedingContext + other.Prefix != expected) return false;
+                continued = other.Prefix + tail.Substring(typed);
+                return IsSafeCompletion(continued);
+            }
+            catch (COMException) { return false; }
+        }
+
         public bool TryInsert(Word.Application app, string completion, bool requireFocus = true)
         {
             if (completion == null || !completion.StartsWith(Prefix, StringComparison.Ordinal) || completion.Length <= Prefix.Length ||
-                !WordCompletionEngine.IsToken(completion)) return false;
+                !IsSafeCompletion(completion)) return false;
             using (var current = Capture(app, requireFocus))
             {
                 if (!SameAs(current)) return false;
@@ -130,6 +157,13 @@ namespace UzbekOrfoAddIn.Services
                 finally { undo.EndCustomRecord(); }
                 return true;
             }
+        }
+
+        internal static bool IsSafeCompletion(string completion)
+        {
+            if (string.IsNullOrEmpty(completion) || completion.Length > 404) return false;
+            var words = completion.Split(' ');
+            return words.Length <= 5 && words.All(WordCompletionEngine.IsToken);
         }
 
         public Rectangle GetCaretBounds(Word.Application app)
@@ -196,6 +230,28 @@ namespace UzbekOrfoAddIn.Services
                     var anchor = OverlayPositioner.CreateAnchor(
                         caretBounds,
                         owner, fontName, fontSize, fontStyle);
+                    Word.PageSetup page = null;
+                    Word.ParagraphFormat paragraph = null;
+                    Word.TextColumns columns = null;
+                    try
+                    {
+                        page = _range.Document.PageSetup;
+                        paragraph = _range.ParagraphFormat;
+                        columns = page.TextColumns;
+                        caret.SetRange(End, End);
+                        float horizontal = Convert.ToSingle(caret.get_Information(Word.WdInformation.wdHorizontalPositionRelativeToPage));
+                        float remaining = page.PageWidth - page.RightMargin - Math.Max(0, paragraph.RightIndent) - horizontal;
+                        // Inline placement is conservative when Word cannot expose a single text column.
+                        anchor.TextRight = horizontal < 0 || columns.Count != 1 ? caretBounds.Right :
+                            caretBounds.Right + Math.Max(0, (int)(remaining * zoomPercentage / 100f * anchor.Dpi / 72f));
+                    }
+                    catch (COMException) { anchor.TextRight = caretBounds.Right; }
+                    finally
+                    {
+                        if (columns != null) Marshal.ReleaseComObject(columns);
+                        if (paragraph != null) Marshal.ReleaseComObject(paragraph);
+                        if (page != null) Marshal.ReleaseComObject(page);
+                    }
                     return nativeCaret ? anchor : OverlayPositioner.WithTextHeight(anchor);
                 }
             }

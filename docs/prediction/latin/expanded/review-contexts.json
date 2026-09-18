@@ -1,0 +1,1802 @@
+[
+  {
+    "id": 1,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "qismida ko'rsatib o'tilgan qonun buzilishlari aniqlanganda ",
+    "Prefix": "",
+    "Expected": "balki",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 2,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "organlari korxonalar muassasalar tashkilotlar jamoat birlashmalari ",
+    "Prefix": "",
+    "Expected": "fuqarolarning",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 3,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "mablag'lari hisobidan zamonaviy kompyuter sinflarini ochish ",
+    "Prefix": "ta",
+    "Expected": "tarbiyalanuvchilarni",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 4,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/05-fuqarolik-protsessual-kodeksi.doc",
+    "Context": "raislik qiluvchi ",
+    "Prefix": "",
+    "Expected": "tarjimonga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 5,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "hisoblashdagi yoki boshqa texnik xato ",
+    "Prefix": "",
+    "Expected": "oqibatida",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 6,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "ishlarni ko'rishga vakolatli bo'lgan organlar uchun ",
+    "Prefix": "",
+    "Expected": "jinoyat-protsessual",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 7,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "shaxslar jamoat birlashmalarining g'ayriqonuniy xatti-harakatlari ustidan ",
+    "Prefix": "",
+    "Expected": "sudga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 8,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "tarzidagi davlat moliyaviy nazoratining natijalari davlat ",
+    "Prefix": "mo",
+    "Expected": "moliyaviy",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 9,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "sudlarni tashkil ",
+    "Prefix": "",
+    "Expected": "etish",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 10,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "ishga kirishish uchun huquq beruvchi hujjatlar ",
+    "Prefix": "sh",
+    "Expected": "shartnoma",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 11,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "qayd etilgan mansabdor shaxslar sud ",
+    "Prefix": "",
+    "Expected": "ishlari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 12,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "organning qoidabuzarliklarni tugatish to'g'risidagi dastlabki holatni ",
+    "Prefix": "ti",
+    "Expected": "tiklash",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 13,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "shaharchalariga hamda ijtimoiy muassasalarning boshqa muqobil ",
+    "Prefix": "sh",
+    "Expected": "shakllariga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 14,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "son farmoni o'z kuchini yo'qotgan ",
+    "Prefix": "",
+    "Expected": "deb",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 15,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "o'zbekiston respublikasi vazirlar mahkamasi o'zbekiston ",
+    "Prefix": "",
+    "Expected": "respublikasi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 16,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "protsessual harakatlarni sodir etish uchun qonun ",
+    "Prefix": "",
+    "Expected": "maxsus",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 17,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "layoqatsiz muomala layoqati cheklangan bedarak yo'qolgan ",
+    "Prefix": "de",
+    "Expected": "deb",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 18,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "sudya faqat ",
+    "Prefix": "o'",
+    "Expected": "o'zi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 19,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "o'zbekiston respublikasining respublika budjetidan qoraqalpog'iston ",
+    "Prefix": "",
+    "Expected": "respublikasi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 20,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "subyektdan bir martalik yoki boshqa yig'imlar ",
+    "Prefix": "uc",
+    "Expected": "uchun",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 21,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+    "Context": "boshqa og'irroq jinoyat sodir etilganligi oqibatida ",
+    "Prefix": "",
+    "Expected": "yuz",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 22,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "vafot etgan deb e'lon qilingan shaxslar ",
+    "Prefix": "",
+    "Expected": "huquqlari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 23,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "umrbod ozodlikdan mahrum qilishga hukm ",
+    "Prefix": "",
+    "Expected": "etilgan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 24,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "shakllantirish bo'yicha keng ko'lamli ishlar amalga ",
+    "Prefix": "",
+    "Expected": "oshirildi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 25,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "bunday talabga ",
+    "Prefix": "na",
+    "Expected": "nafaqat",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 26,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "protsessda bir necha da'vogar yoki javobgar ",
+    "Prefix": "sh",
+    "Expected": "shuningdek",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 27,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "qilishi lozim bo'lib ularga ko'ra quyidagilar ",
+    "Prefix": "qa",
+    "Expected": "qarindoshlar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 28,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "oktabrdan mehribonlik ",
+    "Prefix": "uy",
+    "Expected": "uylari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 29,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "yoshga to'lgunga ",
+    "Prefix": "",
+    "Expected": "qadar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 30,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "muayyan huquqdan ",
+    "Prefix": "",
+    "Expected": "mahrum",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 31,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "bo'yicha davlat maqsadli jamg'armalarini taqsimlovchi organlar ",
+    "Prefix": "",
+    "Expected": "tomonidan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 32,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "ustidan shikoyat berishga huquqi bo'lgan shaxslar ",
+    "Prefix": "do",
+    "Expected": "doirasi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 33,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "o'zbekiston respublikasi oldida pul majburiyatlari ",
+    "Prefix": "",
+    "Expected": "bo'yicha",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 34,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "mahkumni jazodan to'liq yoki qisman ozod ",
+    "Prefix": "",
+    "Expected": "etadigan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 35,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "bilan tasdiqlangan ish vaqti sifatida imtiyozli ",
+    "Prefix": "",
+    "Expected": "pensiya",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 36,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "bankrotlik to'g'risida gi o'zbekiston respublikasi ",
+    "Prefix": "",
+    "Expected": "qonuniga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 37,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "pensiyasi tayinlanganidan keyingi ishlangan vaqt ish ",
+    "Prefix": "",
+    "Expected": "stajiga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 38,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "tashqi boshqaruv muddatini uzaytirish to'g'risidagi ",
+    "Prefix": "il",
+    "Expected": "iltimosnoma",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 39,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "huquqbuzarliklarga doir materiallar sudlarga yoki tegishli ",
+    "Prefix": "va",
+    "Expected": "vakolatli",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 40,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "jazo muddatidan ham ilgarigi hukm bo'yicha ",
+    "Prefix": "",
+    "Expected": "belgilangan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 41,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "respublikasi iqtisodiyot va moliya vazirligi kelgusidagi ",
+    "Prefix": "o'",
+    "Expected": "o'rta",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 42,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "muayyan navbatdagi ",
+    "Prefix": "",
+    "Expected": "kreditorlar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 43,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "huquqbuzarliklar jamiyat uchun katta ijtimoiy xavf ",
+    "Prefix": "",
+    "Expected": "tug'dirishini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 44,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "qoraqalpog'iston respublikasi ",
+    "Prefix": "",
+    "Expected": "budjetini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 45,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "barobarga oshirish va uni umumta'lim ",
+    "Prefix": "",
+    "Expected": "maktablarining",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 46,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "etuvchi boshqa shaxslarga va odil sudlovni ",
+    "Prefix": "",
+    "Expected": "amalga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 47,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "huquqlarini himoya qilishi mumkinligiga kafolat bo'lib ",
+    "Prefix": "",
+    "Expected": "xizmat",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 48,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "qonunchilikka budjet va smeta-shtat intizomiga rioya ",
+    "Prefix": "et",
+    "Expected": "etilishi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 49,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "qonun fuqarolarning davlat organlari korxonalar muassasalar ",
+    "Prefix": "ta",
+    "Expected": "tashkilotlar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 50,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "egallamasligi yoki faoliyat turi bilan shug'ullanmasligi ",
+    "Prefix": "",
+    "Expected": "holati",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 51,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "bajarmaganligi munosabati bilan qarzdorni bankrot deb ",
+    "Prefix": "",
+    "Expected": "topish",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 52,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "qaramog'idan mahrum bo'lgan bolalarni davlat tomonidan ",
+    "Prefix": "qo",
+    "Expected": "qo'llab-quvvatlash",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 53,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "qoplanmay qolgan qarzdorlikka taalluqli qismi borasidagi ",
+    "Prefix": "",
+    "Expected": "talablari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 54,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "o'n kundan kechikmay o'zbekiston respublikasi ichki ",
+    "Prefix": "",
+    "Expected": "ishlar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 55,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "munosabatlarni tartibga soladigan o'zbekiston respublikasi qonunlarining ",
+    "Prefix": "",
+    "Expected": "buzilishi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 56,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "etish to'g'risidagi iltimosnomalar hisobi yuritiladigan maxsus ",
+    "Prefix": "",
+    "Expected": "jurnalda",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 57,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "kreditlari shuningdek tadbirkorlik faoliyati bilan shug'ullanish ",
+    "Prefix": "",
+    "Expected": "uchun",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 58,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/05-fuqarolik-protsessual-kodeksi.doc",
+    "Context": "vaqti va joyi haqida takroran xabar ",
+    "Prefix": "",
+    "Expected": "yuboradi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 59,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/05-fuqarolik-protsessual-kodeksi.doc",
+    "Context": "sudining ish yurituvida ayni bir taraflar ",
+    "Prefix": "",
+    "Expected": "o'rtasida",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 60,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+    "Context": "moddasida nazarda tutilgan jinoyatni sodir ",
+    "Prefix": "et",
+    "Expected": "etgan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 61,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "bandiga muvofiq ",
+    "Prefix": "",
+    "Expected": "mazkur",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 62,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "va o'zbekiston respublikasi oliy xo'jalik sudi ",
+    "Prefix": "",
+    "Expected": "plenumi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 63,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "shaharni tashkil etuvchi korxona hamda ",
+    "Prefix": "un",
+    "Expected": "unga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 64,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/05-fuqarolik-protsessual-kodeksi.doc",
+    "Context": "boshqa shaxslar shuningdek ishda ishtirok etishga ",
+    "Prefix": "",
+    "Expected": "jalb",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 65,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "qilish to'g'risida gi qonun fuqarolarning davlat ",
+    "Prefix": "",
+    "Expected": "organlari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 66,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "oshirish bilan bog'liq bo'lmagan vazifalarni yuklashi ",
+    "Prefix": "mu",
+    "Expected": "mumkin",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 67,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "bunda uzil-kesil jazo hukmda belgilangan ",
+    "Prefix": "",
+    "Expected": "jazo",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 68,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "nazorat instansiyasi sudi ishni yangidan ",
+    "Prefix": "",
+    "Expected": "sudda",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 69,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "bildiruvchi va vakil orasida qarindoshlik aloqalarini ",
+    "Prefix": "",
+    "Expected": "tasdiqlovchi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 70,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "da'vo arizalari va boshqa arizalar bilan ",
+    "Prefix": "",
+    "Expected": "sudga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 71,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "o'zbekiston respublikasi oliy majlisining qonunchilik ",
+    "Prefix": "",
+    "Expected": "palatasi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 72,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "ishtirokchilardan biri ",
+    "Prefix": "bo",
+    "Expected": "boshqa",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 73,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+    "Context": "o'zini o'zi o'ldirish balki o'zini o'zi ",
+    "Prefix": "",
+    "Expected": "o'ldirishga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 74,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "mehnat shartnomalarini ro'yxatdan o'tkazish elektron mehnat ",
+    "Prefix": "",
+    "Expected": "daftarchalarini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 75,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "o'zi istagan axborotni izlash olish va ",
+    "Prefix": "",
+    "Expected": "uni",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 76,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "ichki ishlar vazirligi adliya vazirligi kambag'allikni ",
+    "Prefix": "",
+    "Expected": "qisqartirish",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 77,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "boquvchisini yo'qotganlik pensiya miqdorini oshirish ham ",
+    "Prefix": "",
+    "Expected": "ota",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 78,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "haq olish ",
+    "Prefix": "",
+    "Expected": "evaziga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 79,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "ishtirokchilardan biri boshqa ishtirokchilarning topshirig'i ",
+    "Prefix": "",
+    "Expected": "bo'yicha",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 80,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "davlatning asosiy qonuni sud hokimiyatining ",
+    "Prefix": "",
+    "Expected": "qonun",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 81,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "qilib ishni yangidan sudda ko'rishga yuborayotganda ",
+    "Prefix": "",
+    "Expected": "o'z",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 82,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "bepul umumiy ",
+    "Prefix": "",
+    "Expected": "ta'lim",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 83,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+    "Context": "vasiylik va tarbiyalashni amalga oshirish va ",
+    "Prefix": "",
+    "Expected": "boshqalar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 84,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/05-fuqarolik-protsessual-kodeksi.doc",
+    "Context": "arizalar va ",
+    "Prefix": "",
+    "Expected": "murojaatlar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 85,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "fuqarolik protsessual qonunchiligi normalarining sudlar tomonidan ",
+    "Prefix": "",
+    "Expected": "qo'llanilishi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 86,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "hukm qilingan moddalari tayinlangan jazo turi ",
+    "Prefix": "",
+    "Expected": "muddati",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 87,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "moddasi birinchi qismi talablariga rioya ",
+    "Prefix": "et",
+    "Expected": "etgan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 88,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "yetarli bo'lmasa bu mablag'lar tegishli navbatdagi ",
+    "Prefix": "kr",
+    "Expected": "kreditorlar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 89,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "va tugatuvchi boshqaruvchilikka nomzod shuningdek u ",
+    "Prefix": "ha",
+    "Expected": "haqdagi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 90,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "agar bunday ",
+    "Prefix": "",
+    "Expected": "faoliyat",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 91,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "taqsimlovchilarning tasdiqlangan jamlanma xarajatlar smetalari va ",
+    "Prefix": "",
+    "Expected": "jamlanma",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 92,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "umrbod ozodlikdan mahrum qilish tariqasidagi jazo ",
+    "Prefix": "",
+    "Expected": "faqat",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 93,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "ushbu nizom talablariga rioya qilinganligi yuzasidan ",
+    "Prefix": "",
+    "Expected": "o'rganiladi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 94,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "buzilgan deb hisoblagan fuqaroning o'zi yoki ",
+    "Prefix": "un",
+    "Expected": "uning",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 95,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "o'zbekiston respublikasi moliya vazirligi manfaatdor ",
+    "Prefix": "",
+    "Expected": "vazirliklar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 96,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "shikoyat o'z ",
+    "Prefix": "",
+    "Expected": "huquq",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 97,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "budjetdan tashqari pensiya jamg'armasiga sug'urta badallari ",
+    "Prefix": "",
+    "Expected": "to'langan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 98,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "dastlabki tekshirish predmeti bo'lmaganligi va qonunga ",
+    "Prefix": "mu",
+    "Expected": "muvofiq",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 99,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "qilishga ta'sir etishi mumkin bo'lgan boshqa ",
+    "Prefix": "",
+    "Expected": "holatlar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 100,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "realizatsiya qilish va sotish uchun qabul ",
+    "Prefix": "qi",
+    "Expected": "qilish",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 101,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "tergov yuritish uchun yuborayotganda sud dastlabki ",
+    "Prefix": "te",
+    "Expected": "tergov",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 102,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "miqdoridan ortiqcha pullar to'langan taqdirda qo'llanilishi ",
+    "Prefix": "",
+    "Expected": "mumkin",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 103,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "palatalariga ma'lumot uchun kiritiladi va o'zbekiston ",
+    "Prefix": "",
+    "Expected": "respublikasi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 104,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "buzilishi oqibatida vujudga kelgan xatoni tushunish ",
+    "Prefix": "",
+    "Expected": "lozim",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 105,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "qonun bilan tasdiqlanadigan o'z davlat ramzlari ",
+    "Prefix": "",
+    "Expected": "bayrog'i",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 106,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "yildan boshlab ",
+    "Prefix": "",
+    "Expected": "uy-joyga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 107,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "deb topilgan yoki vafot etgan deb ",
+    "Prefix": "e'",
+    "Expected": "e'lon",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 108,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "respublika budjetiga tushadigan ayrim soliqlar va ",
+    "Prefix": "",
+    "Expected": "boshqa",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 109,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "moddasiga muvofiq harbiy xizmatchilar ularning ",
+    "Prefix": "",
+    "Expected": "huquqlari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 110,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "vazirlar mahkamasi ijro etuvchi hokimiyatni amalga ",
+    "Prefix": "",
+    "Expected": "oshiradi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 111,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "sudgacha sanatsiya ",
+    "Prefix": "qi",
+    "Expected": "qilishni",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 112,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "narxda yoxud tekinga berishda tovarni zo'rlik ",
+    "Prefix": "is",
+    "Expected": "ishlatib",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 113,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "kreditorlar yig'ilishining ",
+    "Prefix": "ke",
+    "Expected": "kelishuv",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 114,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "o'zbekiston respublikasining chet davlatlardagi diplomatik va ",
+    "Prefix": "",
+    "Expected": "boshqa",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 115,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "etadigan harakatlari ham jinoyat kodeksining mazkur ",
+    "Prefix": "mo",
+    "Expected": "moddasi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 116,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "sud sanatsiyasining ",
+    "Prefix": "",
+    "Expected": "rejasini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 117,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "yuqumli jinsiy ",
+    "Prefix": "",
+    "Expected": "yo'l",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 118,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "davlat maqsadli jamg'armalarini taqsimlovchi organlar ",
+    "Prefix": "",
+    "Expected": "tomonidan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 119,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "mahrum qilish bilan bog'liq bo'lmagan jazo ",
+    "Prefix": "",
+    "Expected": "qo'llanilishi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 120,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "qilmish jinoyat kodeksining turli moddalari ",
+    "Prefix": "",
+    "Expected": "bo'yicha",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 121,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "jinoyat sodir etgan shaxs xuddi shuningdek ",
+    "Prefix": "",
+    "Expected": "o'ta",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 122,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "ko'ra davlat hisobidan yuridik yordam ko'rsatish ",
+    "Prefix": "",
+    "Expected": "to'g'risida",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 123,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "orqali o'zining buzilgan huquqlarini himoya qilishi ",
+    "Prefix": "mu",
+    "Expected": "mumkinligiga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 124,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "respublika budjetining viloyatlar viloyat budjetlarining va ",
+    "Prefix": "",
+    "Expected": "toshkent",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 125,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "natijasida olingan nazorat qilinmaydigan daromad ",
+    "Prefix": "mi",
+    "Expected": "miqdorini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 126,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "tariqasida jinoyat ",
+    "Prefix": "ko",
+    "Expected": "kodeksining",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 127,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "moddasi uchinchi qismi bilan ma'muriy ",
+    "Prefix": "ja",
+    "Expected": "javobgarlikni",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 128,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "bo'yicha tarmoq shtatlar va kontingentga doir ",
+    "Prefix": "re",
+    "Expected": "rejaning",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 129,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "videoyozuvlar maxsus arxivda kamida bir oy ",
+    "Prefix": "",
+    "Expected": "davomida",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 130,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "nazorat instansiyasi ",
+    "Prefix": "su",
+    "Expected": "sudi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 131,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "instansiyasi hukmni bekor qilib ishni to'liq ",
+    "Prefix": "ha",
+    "Expected": "hajmda",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 132,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "tegishli mol-mulk sud xarajatlarini qoplash uchun ",
+    "Prefix": "ye",
+    "Expected": "yetarli",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 133,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "fuqarolik ishlari ",
+    "Prefix": "bo",
+    "Expected": "bo'yicha",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 134,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "ijtimoiy yetimlikni yanada kamaytirish yetim ",
+    "Prefix": "",
+    "Expected": "bolalar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 135,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "etish to'g'risidagi iltimosnoma kelib tushgan kundan ",
+    "Prefix": "",
+    "Expected": "boshlab",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 136,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/05-fuqarolik-protsessual-kodeksi.doc",
+    "Context": "ishda prokurorning ",
+    "Prefix": "",
+    "Expected": "ishtirok",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 137,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "bo'lgan hamda alohida xizmat ko'rsatgan eng ",
+    "Prefix": "",
+    "Expected": "obro'li",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 138,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "qo'shimcha jazolarni ",
+    "Prefix": "",
+    "Expected": "qo'llash",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 139,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "asos bo'la olmaydi chunki qonun hujjatlarida ",
+    "Prefix": "",
+    "Expected": "sug'urta",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 140,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "nazorat instansiyasi sudi tomonidan mahkumning ",
+    "Prefix": "",
+    "Expected": "ahvolini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 141,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "ularning boshqaruv organlari va mansabdor shaxslarning ",
+    "Prefix": "qa",
+    "Expected": "qarorlari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 142,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "javobgarlikka tortilishi ushlab turilishi qamoqqa olinishi ",
+    "Prefix": "",
+    "Expected": "yoki",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 143,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "toshkent shahar mahalliy budjetlarining daromadlari va ",
+    "Prefix": "xa",
+    "Expected": "xarajatlari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 144,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "etishda kreditorlar qo'mitasining har bir a'zosi ",
+    "Prefix": "bi",
+    "Expected": "bir",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 145,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "aybdor tomonidan aynan qaysi savdo qoidasi ",
+    "Prefix": "bu",
+    "Expected": "buzilganligini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 146,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "moddasiga muvofiq ",
+    "Prefix": "ra",
+    "Expected": "rasmiylashtirilgan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 147,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-3250191.doc",
+    "Context": "jinoyat ishlari bo'yicha sudlar va ma'muriy ",
+    "Prefix": "",
+    "Expected": "sud",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 148,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "chiqarilgunga qadar sodir etilgan boshqa jinoyatda ",
+    "Prefix": "",
+    "Expected": "ham",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 149,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "oliy majlisining qonunchilik palatasi deputati va ",
+    "Prefix": "",
+    "Expected": "senati",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 150,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "bo'yicha tadbirlar rejasini va uni o'zlashtirish ",
+    "Prefix": "ja",
+    "Expected": "jadvalini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 151,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "attestatsiya qilinganligi to'g'risidagi hujjatlar mavjud bo'lmaganda ",
+    "Prefix": "",
+    "Expected": "o'ta",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 152,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "fuqaroning o'z huquqlari va erkinliklarini ",
+    "Prefix": "ro",
+    "Expected": "ro'yobga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 153,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "jismoniy shaxslar ",
+    "Prefix": "va",
+    "Expected": "vakili",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 154,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "mustaqillik prinsipi ",
+    "Prefix": "",
+    "Expected": "sudlarga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 155,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "tuzilgan bitimlarni agar qonunchilikda nazarda tutilgan ",
+    "Prefix": "",
+    "Expected": "asoslar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 156,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+    "Context": "yillarda mehribonlik ",
+    "Prefix": "uy",
+    "Expected": "uylarini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 157,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "mazkur farmonning ijrosini nazorat qilish ",
+    "Prefix": "",
+    "Expected": "o'zbekiston",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 158,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "fikr bildirishga yoki boshqacha usullar bilan ",
+    "Prefix": "is",
+    "Expected": "ishda",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 159,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "tashkilotlar vakolatli vakillari sifatida mazkur notijorat ",
+    "Prefix": "ta",
+    "Expected": "tashkilotlarda",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 160,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "yer uchastkasiga egalik qiluvchi shaxslar ega ",
+    "Prefix": "bo",
+    "Expected": "bo'ladilar",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 161,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "sudlarning e'tibori shunga qaratilsinki ayrim ",
+    "Prefix": "",
+    "Expected": "protsessual",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 162,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "hukm chiqarilgandan ",
+    "Prefix": "",
+    "Expected": "so'ng",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 163,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "lozim bo'lgan shaxsni aniqlash yuzasidan chora ",
+    "Prefix": "",
+    "Expected": "ko'rish",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 164,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "qurolli kuchlarining oliy bosh qo'mondoni hisoblanadi ",
+    "Prefix": "",
+    "Expected": "qurolli",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 165,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "jazo amnistiya akti qo'llanilmagan holda ham ",
+    "Prefix": "",
+    "Expected": "mahkum",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 166,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+    "Context": "o'zini o'zi ",
+    "Prefix": "",
+    "Expected": "o'ldirish",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 167,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "boshqaruvchining tashqi boshqaruvchining yoki tugatuvchi boshqaruvchining ",
+    "Prefix": "no",
+    "Expected": "nomzodlarini",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 168,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "harakatlari va ",
+    "Prefix": "",
+    "Expected": "qarorlari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 169,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "to'lov muddati ",
+    "Prefix": "",
+    "Expected": "o'tkazib",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 170,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "mahkumni afv etish mumkinligi masalasi yuzasidan ",
+    "Prefix": "",
+    "Expected": "xulosa",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 171,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "qo'llashning qanchalik ",
+    "Prefix": "",
+    "Expected": "maqsadga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 172,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "kreditorning talablari yoki majburiyatlarni bajarish muddati ",
+    "Prefix": "ku",
+    "Expected": "kuzatuv",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 173,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "shaxs amaldagi ",
+    "Prefix": "",
+    "Expected": "qonunchilikka",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 174,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "ish davomida ",
+    "Prefix": "",
+    "Expected": "jamoat",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 175,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+    "Context": "umumiy kasallik ",
+    "Prefix": "",
+    "Expected": "tufayli",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 176,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "raqobatni cheklashga olib kelgan yoki olib ",
+    "Prefix": "ke",
+    "Expected": "kelishi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 177,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+    "Context": "moddasining tegishli ",
+    "Prefix": "",
+    "Expected": "qismlari",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 178,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "qonuniy vakillar ",
+    "Prefix": "is",
+    "Expected": "ishga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 179,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "haqidagi iqtisodiy sud tomonidan qarzdorni bankrot ",
+    "Prefix": "",
+    "Expected": "deb",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 180,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+    "Context": "ularni o'z vaqtida yoki lozim darajada ",
+    "Prefix": "ba",
+    "Expected": "bajarmaslik",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 181,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "shaxsni sudda ",
+    "Prefix": "",
+    "Expected": "vakil",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 182,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "buzadigan bo'lsa bunday shartnomalar bajarilishini ta'minlashi ",
+    "Prefix": "sh",
+    "Expected": "shart",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 183,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "o'zbekiston respublikasi prezidenti huzuridagi maslahat-kengash organi ",
+    "Prefix": "",
+    "Expected": "hisoblangan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 184,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+    "Context": "shuni hisobga ",
+    "Prefix": "ol",
+    "Expected": "olgan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 185,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "qonuniy vakillik ",
+    "Prefix": "",
+    "Expected": "belgilangan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 186,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "o'zbekiston respublikasining barcha davlat organlari ",
+    "Prefix": "",
+    "Expected": "jamoat",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 187,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+    "Context": "o'ldirish darajasiga yetkazish to'g'risida jamoatchilik xabardor ",
+    "Prefix": "",
+    "Expected": "qilinmaydi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 188,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "moddasi beshinchi qismiga muvofiq mahkumni ",
+    "Prefix": "",
+    "Expected": "unga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 189,
+    "Source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+    "Context": "vakil sifatida ota-onalar vasiylar homiylar va ",
+    "Prefix": "fp",
+    "Expected": "fpk",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 190,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "to'g'risidagi iltimosnomani kelib tushgan materiallar bilan ",
+    "Prefix": "",
+    "Expected": "birga",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 191,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+    "Context": "to'g'risida ariza muallifiga xat orqali xabar ",
+    "Prefix": "yu",
+    "Expected": "yuborishi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 192,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+    "Context": "o'zbekiston respublikasining ichki mablag'ni va xorijdan ",
+    "Prefix": "",
+    "Expected": "mablag'",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 193,
+    "Source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+    "Context": "muddatga ozodlikdan mahrum qilish yoxud umrbod ",
+    "Prefix": "",
+    "Expected": "ozodlikdan",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 194,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+    "Context": "sud ishlari bilan tanishish sud ",
+    "Prefix": "",
+    "Expected": "hokimiyati",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 195,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "tajovuzdan bir-birini mudofaa qilish yuzasidan tuzilgan ",
+    "Prefix": "",
+    "Expected": "shartnoma",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 196,
+    "Source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+    "Context": "iqtisodiy sud qarzdor yakka tartibdagi ",
+    "Prefix": "ta",
+    "Expected": "tadbirkorning",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 197,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+    "Context": "hukmlarning har biri bilan mahrum qilingan ",
+    "Prefix": "",
+    "Expected": "huquqlarning",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 198,
+    "Source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+    "Context": "yetkazishdagi aybdorning harakatlari qo'shimcha tavsiflashni talab ",
+    "Prefix": "qi",
+    "Expected": "qiladi",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 199,
+    "Source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+    "Context": "palatasi deputati shuningdek o'zbekiston respublikasi oliy ",
+    "Prefix": "",
+    "Expected": "majlisining",
+    "reviewer": "",
+    "decision": "pending"
+  },
+  {
+    "id": 200,
+    "Source": "corpus/raw-latin/sud_uz_kodekslar/05-fuqarolik-protsessual-kodeksi.doc",
+    "Context": "qilinishi yoxud ularga belgilangan tartibda apostil ",
+    "Prefix": "",
+    "Expected": "qo'yilgan",
+    "reviewer": "",
+    "decision": "pending"
+  }
+]

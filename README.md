@@ -35,6 +35,8 @@ Toʻliq yigʻish va debugging jarayoni uchun VSTO workload hamda kompyuterga mos
 
 ## Loyiha tuzilmasi
 
+Hujjatlar va ma'lumotlarni saqlash tartibi: [hujjatlar indeksi](docs/README.md).
+
 - `src/UzbekOrfoAddIn/` — VSTO host va ilova manba kodi
 - `eng/` — repozitoriy tekshiruvlari va muhandislik skriptlari
 - `tests/` — hostga bogʻliq boʻlmagan mantiq uchun avtomatlashtirilgan testlar

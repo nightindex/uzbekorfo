@@ -10,6 +10,7 @@ namespace UzbekOrfoAddIn.UI
     {
         internal Rectangle CaretBounds { get; }
         internal Rectangle WorkArea { get; }
+        internal int TextRight { get; set; } = int.MaxValue;
         internal IntPtr OwnerHandle { get; }
         internal int Dpi { get; }
         internal string FontName { get; }
@@ -87,6 +88,8 @@ namespace UzbekOrfoAddIn.UI
         [DllImport("user32.dll")]
         private static extern bool IsChild(IntPtr parent, IntPtr child);
         [DllImport("user32.dll")]
+        private static extern bool GetClientRect(IntPtr window, out NativeRect rect);
+        [DllImport("user32.dll")]
         private static extern int MapWindowPoints(IntPtr from, IntPtr to, ref NativeRect rect, uint count);
 
         internal static bool TryGetNativeCaret(IntPtr owner, out Rectangle caret)
@@ -109,7 +112,16 @@ namespace UzbekOrfoAddIn.UI
         internal static OverlayAnchor CreateAnchor(Rectangle caret, IntPtr ownerHandle,
             string fontName, float fontSizePoints, FontStyle fontStyle)
         {
-            return new OverlayAnchor(caret, GetWorkArea(caret), ownerHandle,
+            Rectangle area = GetWorkArea(caret);
+            var info = new GuiThreadInfo { Size = Marshal.SizeOf(typeof(GuiThreadInfo)) };
+            NativeRect client;
+            if (GetGUIThreadInfo(0, ref info) && info.Active == ownerHandle &&
+                IsChild(ownerHandle, info.Focus) && GetClientRect(info.Focus, out client))
+            {
+                MapWindowPoints(info.Focus, IntPtr.Zero, ref client, 2);
+                area = Rectangle.Intersect(area, Rectangle.FromLTRB(client.Left, client.Top, client.Right, client.Bottom));
+            }
+            return new OverlayAnchor(caret, area, ownerHandle,
                 GetOwnerDpi(ownerHandle), fontName, fontSizePoints, fontStyle,
                 IsDarkAtCaret(caret));
         }
@@ -138,9 +150,9 @@ namespace UzbekOrfoAddIn.UI
                 float height = font.Size * (font.FontFamily.GetCellAscent(font.Style) +
                     font.FontFamily.GetCellDescent(font.Style)) / font.FontFamily.GetEmHeight(font.Style);
                 var caret = new Rectangle(anchor.CaretBounds.Left,
-                    anchor.CaretBounds.Top + ScreenGeometry.Scale(1, anchor.Dpi), 1, (int)Math.Round(height));
+                    anchor.CaretBounds.Top, 1, (int)Math.Round(height));
                 return new OverlayAnchor(caret, anchor.WorkArea, anchor.OwnerHandle, anchor.Dpi,
-                    anchor.FontName, anchor.FontSizePoints, anchor.FontStyle, anchor.DarkBackground);
+                    anchor.FontName, anchor.FontSizePoints, anchor.FontStyle, anchor.DarkBackground) { TextRight = anchor.TextRight };
             }
         }
 
@@ -152,7 +164,7 @@ namespace UzbekOrfoAddIn.UI
             int y = textCellHeight > 0f
                 ? (int)Math.Round(anchor.CaretBounds.Bottom - textCellHeight)
                 : anchor.CaretBounds.Top;
-            if (x < area.Left || x + size.Width > area.Right || y < area.Top || y + size.Height > area.Bottom)
+            if (x < area.Left || x + size.Width > Math.Min(area.Right, anchor.TextRight) || y < area.Top || y + size.Height > area.Bottom)
                 return Rectangle.Empty; // A ghost must remain inline; never move it to a misleading position.
             return new Rectangle(x, y, size.Width, size.Height);
         }
@@ -166,6 +178,17 @@ namespace UzbekOrfoAddIn.UI
                 SetWindowPos(overlay.Handle, IntPtr.Zero, bounds.X, bounds.Y,
                     bounds.Width, bounds.Height, SwpNoZOrder | SwpNoActivate | SwpNoOwnerZOrder);
             }
+        }
+
+        internal static void RaiseWithoutActivation(Form overlay, IntPtr ownerHandle)
+        {
+            // An owned non-activating layered HWND can remain behind Office after
+            // Show/UpdateLayeredWindow. Correct its z-order without focusing it or
+            // making it globally topmost. Never raise over a different application.
+            if (overlay == null || overlay.IsDisposed || !overlay.IsHandleCreated ||
+                ownerHandle == IntPtr.Zero || GetForegroundWindow() != ownerHandle) return;
+            SetWindowPos(overlay.Handle, IntPtr.Zero /* HWND_TOP */, 0, 0, 0, 0,
+                0x0001 /* SWP_NOSIZE */ | 0x0002 /* SWP_NOMOVE */ | SwpNoActivate | SwpNoOwnerZOrder);
         }
 
         private static int GetOwnerDpi(IntPtr ownerHandle)
@@ -201,8 +224,11 @@ namespace UzbekOrfoAddIn.UI
             if (dc == IntPtr.Zero) return ThemeManager.IsDarkTheme;
             try
             {
-                int sampleX = caret.Right + 3;
-                int sampleY = caret.Top + Math.Max(1, caret.Height / 2);
+                // Sampling to the right, halfway down the caret, samples OUR gray
+                // glyphs. That feeds back into theme detection and alternates the
+                // ghost color every polling tick. Sample above/left of the overlay.
+                int sampleX = caret.Left - 4;
+                int sampleY = caret.Top - 3;
                 uint value = GetPixel(dc, sampleX, sampleY);
                 if (value == 0xffffffff) return ThemeManager.IsDarkTheme;
                 int red = (int)(value & 0xff);

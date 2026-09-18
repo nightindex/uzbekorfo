@@ -22,8 +22,8 @@ if ([regex]::Matches($designer, 'this\.Tabs\.Add\(').Count -ne 1 -or
 if ([regex]::Matches($designer, [regex]::Escape('this.tabUzbekOrfo.Groups.Add(this.groupMatnAi);')).Count -ne 1) {
     throw 'Expected one MatnAi group in the Uzbek Orfo tab.'
 }
-if (-not $designer.Contains('this.groupMatnAi.Label = "MatnAI";')) {
-    throw 'The feature group must use the MatnAI product name.'
+if (-not [regex]::IsMatch($designer, 'this\.groupMatnAi\.Label = "\u0422\u0435\u0437\u043a\u043e\u0440 \u041c\u0430\u0442\u043d";')) {
+    throw 'The feature group must use the current localized display name.'
 }
 foreach ($control in @('matnaiEnabled', 'btnMatnAiSettings', 'btnMatnAiHelp')) {
     if (-not $designer.Contains("this.$control = this.Factory.CreateRibbon") -or

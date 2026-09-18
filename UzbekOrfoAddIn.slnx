@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="src/UzbekOrfoAddIn/UzbekOrfoAddIn.csproj" Id="30569f6d-6e20-4740-a2c8-c1ffe163c776" />
   <Project Path="tests/UzbekOrfoAddIn.UnitTests/UzbekOrfoAddIn.UnitTests.csproj" />
+  <Project Path="tools/MatnAi.Corpus/MatnAi.Corpus.csproj" />
 </Solution>

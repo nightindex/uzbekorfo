@@ -1,294 +1,440 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using UzbekOrfoAddIn.UI;
 using UzbekOrfoAddIn.UI.Controls;
 
 namespace UzbekOrfoAddIn.Forms
 {
-    /// <summary>Theme-aware MatnAI preferences and local-data controls.</summary>
+    /// <summary>Optional lifetime contract, independent of the prediction implementation.</summary>
+    public interface IMatnAiSettingsWork
+    {
+        bool IsBusy { get; }
+        event EventHandler BusyChanged;
+        Task CancelAndWaitAsync();
+    }
+
     public sealed class MatnAiSettingsForm : ModernForm
     {
-        private readonly int _initialMinimum;
-        private readonly int _initialCount;
         private readonly bool _initialLearning;
         private readonly Action<int, int, bool> _save;
         private readonly Action _clearLearning;
         private readonly Action _refreshIndex;
+        private readonly Action<bool> _saveMetrics;
         private readonly NumericUpDown _minimum;
         private readonly NumericUpDown _count;
         private readonly ModernToggle _learning;
+        private readonly CheckBox _metrics;
         private readonly Label _indexStatus;
+        private readonly IMatnAiSettingsWork _backgroundWork;
+        private ModernButton _saveButton;
+        private bool _closing;
+        private bool _closeReady;
 
+        public bool MetricsConsent { get { return _metrics.Checked; } }
         protected override bool ReflowContent => false;
 
         public MatnAiSettingsForm(int minimum, int count, bool learningEnabled,
-            Action<int, int, bool> save, Action clearLearning, Action refreshIndex)
+            Action<int, int, bool> save, Action clearLearning, Action refreshIndex,
+            Control collectionsControl = null, bool metricsEnabled = false, Action<bool> saveMetrics = null)
         {
-            _initialMinimum = Math.Max(2, Math.Min(15, minimum));
-            _initialCount = Math.Max(1, Math.Min(10, count));
             _initialLearning = learningEnabled;
             _save = save ?? throw new ArgumentNullException(nameof(save));
             _clearLearning = clearLearning ?? throw new ArgumentNullException(nameof(clearLearning));
             _refreshIndex = refreshIndex ?? throw new ArgumentNullException(nameof(refreshIndex));
+            _saveMetrics = saveMetrics;
+            _backgroundWork = collectionsControl as IMatnAiSettingsWork;
 
             Title = "MatnAI — Созламалар";
-            Size = new Size(720, 730);
-            MinimumSize = new Size(560, 700);
+            Size = new Size(900, 800);
+            MinimumSize = new Size(600, 620);
             AllowResize = true;
             ShowMinimizeButton = false;
-
-            _minimum = CreateNumber(Math.Max(2, _initialMinimum), 2, 15, "Энг кам ҳарфлар сони");
-            _count = CreateNumber(_initialCount, 1, 10, "Таклифлар сони");
+            _minimum = CreateNumber(Math.Max(2, Math.Min(15, minimum)), 2, 15, "Энг кам ҳарфлар сони");
+            _count = CreateNumber(Math.Max(1, Math.Min(10, count)), 1, 10, "Таклифлар сони");
             _learning = new ModernToggle
             {
-                IsOn = _initialLearning,
-                ShowLabel = true,
-                OnText = "Ёқилган",
-                OffText = "Ўчирилган",
-                Size = new Size(130, 30),
-                AccessibleName = "Шахсий ўрганиш"
+                IsOn = learningEnabled, ShowLabel = true, OnText = "Ёқилган", OffText = "Ўчирилган",
+                Size = new Size(145, 32), AccessibleName = "Шахсий ўрганиш", BackColor = ThemeManager.Surface
+            };
+            _metrics = new CheckBox
+            {
+                Text = "Маҳаллий умумий статистикани ёқиш",
+                AccessibleName = "Маҳаллий умумий статистикани ёқиш",
+                Checked = metricsEnabled, AutoSize = true, ForeColor = ThemeManager.TextPrimary,
+                Font = ThemeManager.FontBase, Margin = new Padding(0, 4, 0, 10)
             };
             _indexStatus = BodyLabel("Луғат сақланганда индекс автоматик янгиланади.");
-
-            BuildContent();
+            BuildContent(collectionsControl);
             BuildActions();
+            if (_backgroundWork != null)
+            {
+                _backgroundWork.BusyChanged += BackgroundWorkChanged;
+                BackgroundWorkChanged(this, EventArgs.Empty);
+            }
         }
 
-        private void BuildContent()
+        private void BuildContent(Control collectionsControl)
         {
-            ContentPanel.Padding = new Padding(ThemeManager.SpaceXL, ThemeManager.SpaceLG,
-                ThemeManager.SpaceXL, ThemeManager.SpaceLG);
-
-            var root = new TableLayoutPanel
+            ContentPanel.Padding = new Padding(20);
+            var tabs = new SettingsTabs
             {
-                Dock = DockStyle.Fill,
-                ColumnCount = 1,
-                RowCount = 4,
-                BackColor = Color.Transparent,
-                Margin = Padding.Empty
+                Dock = DockStyle.Fill, Font = ThemeManager.FontBase,
+                AccessibleName = "MatnAI созламалари"
             };
-            root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 82f));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 185f));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 170f));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 130f));
-
-            var header = new Panel { Dock = DockStyle.Fill, BackColor = Color.Transparent };
-            header.Controls.Add(new Label
+            var suggestions = NewPage("Таклифлар");
+            var documents = NewPage("Ҳужжатлардан ўрганиш");
+            var personal = NewPage("Шахсий ўрганиш");
+            tabs.TabPages.AddRange(new[] { suggestions, documents, personal });
+            var suggestionBody = Stack();
+            Add(suggestionBody, PageHeading("Таклифларни ўзингизга мосланг"));
+            Add(suggestionBody, BodyLabel("MatnAI офлайн ишлайди. Созламалар фақат шу компьютерда сақланади."));
+            Add(suggestionBody, BuildSuggestionCard());
+            Add(suggestionBody, BuildIndexCard());
+            suggestions.Controls.Add(suggestionBody);
+            if (collectionsControl != null)
             {
-                Text = "Таклифларни ўзингизга мосланг",
-                AutoSize = true,
-                Font = ThemeManager.FontXLBold,
-                ForeColor = ThemeManager.TextPrimary,
-                Location = new Point(0, 2)
-            });
-            header.Controls.Add(new Label
+                // The collection control owns its scroll viewport. Nested automatic
+                // scrolling can expand a docked child past the visible tab bounds.
+                documents.AutoScroll = false;
+                collectionsControl.Dock = DockStyle.Fill;
+                documents.Controls.Add(collectionsControl);
+            }
+            else
             {
-                Text = "MatnAI офлайн ишлайди. Бу созламалар фақат шу компьютерда сақланади.",
-                AutoSize = false,
-                Font = ThemeManager.FontBase,
-                ForeColor = ThemeManager.TextSecondary,
-                Location = new Point(0, 36),
-                Size = new Size(640, 40),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
-            });
-
-            root.Controls.Add(header, 0, 0);
-            root.Controls.Add(BuildSuggestionCard(), 0, 1);
-            root.Controls.Add(BuildLearningCard(), 0, 2);
-            root.Controls.Add(BuildIndexCard(), 0, 3);
-            ContentPanel.Controls.Add(root);
+                var body = Stack();
+                Add(body, BodyLabel("Ҳужжат тўпламлари хизмати ҳозир мавжуд эмас. Ҳужжатлардан ўрганиш учун MatnAI ойнасини қайта очинг."));
+                documents.Controls.Add(body);
+            }
+            var personalBody = Stack();
+            Add(personalBody, PageHeading("Ўрганиш ва махфийлик"));
+            Add(personalBody, BodyLabel("Қайси маълумотлар сақланишини ўзингиз танланг. Барчаси шу компьютерда қолади."));
+            Add(personalBody, BuildLearningCard());
+            Add(personalBody, BodyLabel("Тозалаш дарҳол амалга ошади. «Бекор қилиш» бу амални қайтармайди. Ўрганишни ёқиш ёки ўчириш учун «Сақлаш»ни босинг."));
+            var metricsBody = Stack();
+            Add(metricsBody, _metrics);
+            Add(metricsBody, BodyLabel("Ихтиёрий: фақат умумий сонлар ва ишлаш вақти шу компьютерда сақланади. Сўзлар, иборалар ва ҳужжат мазмуни статистикага киритилмайди; маълумот юборилмайди."));
+            Add(personalBody, Card("Маҳаллий статистика", metricsBody));
+            personal.Controls.Add(personalBody);
+            ContentPanel.Controls.Add(tabs);
         }
 
-        private ModernCard BuildSuggestionCard()
+        private static Label PageHeading(string text) => new Label
         {
-            var card = NewCard("ТАКЛИФЛАР");
-            AddSettingRow(card, "Энг кам ҳарфлар",
-                "Таклиф кўрсатилиши учун ёзиладиган ҳарфлар сони.", _minimum, 54);
-            AddSettingRow(card, "Таклифлар сони",
-                "Бир вақтда кўрсатиладиган энг яхши вариантлар сони.", _count, 112);
-            return card;
+            Text = text, AutoSize = true, Dock = DockStyle.Top,
+            Font = ThemeManager.FontXLBold, ForeColor = ThemeManager.TextPrimary,
+            Margin = new Padding(0, 4, 0, 12)
+        };
+
+        // Retain native tab keyboard navigation and accessibility, replacing only
+        // the small classic tab headers. No custom focus or global shortcuts.
+        private sealed class SettingsTabs : TabControl
+        {
+            private bool _fitting;
+            internal SettingsTabs()
+            {
+                SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint |
+                    ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+                DrawMode = TabDrawMode.OwnerDrawFixed;
+                SizeMode = TabSizeMode.Fixed;
+                Multiline = false;
+                Padding = new Point(12, 8);
+            }
+
+            protected override void OnPaintBackground(PaintEventArgs e) => e.Graphics.Clear(ThemeManager.Background);
+
+            protected override void OnPaint(PaintEventArgs e)
+            {
+                e.Graphics.Clear(ThemeManager.Background);
+                for (int index = 0; index < TabCount; index++)
+                    OnDrawItem(new DrawItemEventArgs(e.Graphics, Font, GetTabRect(index), index,
+                        index == SelectedIndex ? DrawItemState.Selected : DrawItemState.None));
+            }
+
+            protected override void OnResize(EventArgs e)
+            {
+                base.OnResize(e);
+                FitHeaders();
+            }
+
+            protected override void OnFontChanged(EventArgs e)
+            {
+                base.OnFontChanged(e);
+                FitHeaders();
+            }
+
+            protected override void OnSelectedIndexChanged(EventArgs e)
+            {
+                base.OnSelectedIndexChanged(e);
+                FitHeaders();
+            }
+
+            private void FitHeaders()
+            {
+                if (_fitting) return;
+                _fitting = true;
+                try
+                {
+                    using (new DpiLayout.Context(IsHandleCreated ? DpiLayout.WindowContext(Handle) : IntPtr.Zero))
+                    {
+                        int height = Math.Max(44, Font.Height * 3);
+                        var size = new Size(Math.Max(40, (ClientSize.Width - DpiLayout.Pixels(this, 40)) / Math.Max(3, TabCount)), height);
+                        if (ItemSize != size) ItemSize = size;
+                        Invalidate();
+                    }
+                }
+                finally { _fitting = false; }
+            }
+
+            protected override void OnDrawItem(DrawItemEventArgs e)
+            {
+                if (e.Index < 0 || e.Index >= TabCount) return;
+                using (var background = new SolidBrush(ThemeManager.Background)) e.Graphics.FillRectangle(background, e.Bounds);
+                Rectangle bounds = Rectangle.Inflate(e.Bounds, -4, -4);
+                bool selected = e.Index == SelectedIndex;
+                int radius = Math.Max(6, Font.Height / 2), diameter = radius * 2;
+                using (var path = new GraphicsPath())
+                {
+                    path.AddArc(bounds.Left, bounds.Top, diameter, diameter, 180, 90);
+                    path.AddArc(bounds.Right - diameter, bounds.Top, diameter, diameter, 270, 90);
+                    path.AddArc(bounds.Right - diameter, bounds.Bottom - diameter, diameter, diameter, 0, 90);
+                    path.AddArc(bounds.Left, bounds.Bottom - diameter, diameter, diameter, 90, 90);
+                    path.CloseFigure();
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    using (var fill = new SolidBrush(selected ? ThemeManager.Primary : ThemeManager.Surface))
+                        e.Graphics.FillPath(fill, path);
+                }
+                TextRenderer.DrawText(e.Graphics, TabPages[e.Index].Text, Font, Rectangle.Inflate(bounds, -8, -3),
+                    selected ? ThemeManager.TextOnPrimary : ThemeManager.TextPrimary,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
+                if (selected && Focused && ShowFocusCues)
+                    ControlPaint.DrawFocusRectangle(e.Graphics, Rectangle.Inflate(bounds, -5, -5),
+                        ThemeManager.TextOnPrimary, ThemeManager.Primary);
+            }
         }
 
-        private ModernCard BuildLearningCard()
+        private Control BuildSuggestionCard()
         {
-            var card = NewCard("ШАХСИЙ ЎРГАНИШ");
-            var title = TitleLabel("Қабул қилинган сўзлардан ўрганиш");
-            title.Location = new Point(20, 52);
-            title.Size = new Size(390, 24);
-            var description = BodyLabel("Фақат сўз ва қабул қилиш сони сақланади. Ҳужжат матни йиғилмайди ёки юборилмайди.");
-            description.Location = new Point(20, 84);
-            description.Size = new Size(420, 28);
-            _learning.Location = new Point(500, 52);
+            var body = Stack();
+            Add(body, SettingRow("Энг кам ҳарфлар",
+                "Таклиф кўрсатилиши учун ёзиладиган ҳарфлар сони.", _minimum));
+            Add(body, SettingRow("Таклифлар сони",
+                "Бир вақтда кўрсатиладиган энг яхши вариантлар сони.", _count));
+            return Card("Таклифлар", body);
+        }
 
-            var clear = new ModernButton
-            {
-                Text = "Ўрганишни тозалаш",
-                Style = ModernButton.ButtonStyle.Secondary,
-                Font = ThemeManager.FontBaseBold,
-                Size = new Size(190, 34),
-                Location = new Point(20, 116),
-                AccessibleName = "Шахсий ўрганиш маълумотларини тозалаш"
-            };
+        private Control BuildLearningCard()
+        {
+            var body = Stack();
+            Add(body, SettingRow("Қабул қилинган таклифлардан ўрганиш",
+                "Ихтиёрий: қабул қилинган сўз ва иборалар ҳамда уларни қабул қилиш сони шу компьютерда сақланади. Ҳужжатнинг тўлиқ матни сақланмайди ва юборилмайди.", _learning));
+            var clear = Button("Ўрганишни тозалаш", ModernButton.ButtonStyle.Secondary);
+            clear.AccessibleName = "Шахсий ўрганиш маълумотларини тозалаш";
             clear.Click += (s, e) =>
             {
                 if (!ModernMessageBox.Confirm(
-                    "MatnAI қабул қилинган таклифлар ҳисобини тозаласинми? Луғатлар ўзгартирилмайди.",
+                    "Қабул қилинган сўз ва иборалар ҳамда уларнинг ҳисоби тозалансинми? Бу амални қайтариб бўлмайди. Луғатлар ва ҳужжат тўпламлари ўзгармайди.",
                     "MatnAI — Тасдиқ", "Тозалаш", "Бекор қилиш")) return;
-                _clearLearning();
-                ModernMessageBox.Success("Шахсий ўрганиш маълумотлари тозаланди.", "MatnAI");
+                try
+                {
+                    _clearLearning();
+                    ModernMessageBox.Success("Шахсий ўрганиш маълумотлари тозаланди.", "MatnAI");
+                }
+                catch (Exception ex) { ShowError(ex); }
             };
-
-            card.Controls.Add(title);
-            card.Controls.Add(description);
-            card.Controls.Add(_learning);
-            card.Controls.Add(clear);
-            card.Resize += (s, e) =>
-            {
-                _learning.Left = Math.Max(Px(260), card.ClientSize.Width - _learning.Width - Px(20));
-                title.Width = Math.Max(Px(180), _learning.Left - Px(40));
-                description.Width = Math.Max(Px(220), card.ClientSize.Width - Px(40));
-            };
-            return card;
+            Add(body, clear);
+            return Card("Шахсий ўрганиш", body);
         }
 
-        private ModernCard BuildIndexCard()
+        private Control BuildIndexCard()
         {
-            var card = NewCard("ЛУҒАТ ИНДЕКСИ");
-            _indexStatus.Location = new Point(20, 55);
-            _indexStatus.Size = new Size(365, 42);
-
-            var refresh = new ModernButton
-            {
-                Text = "Ҳозир янгилаш",
-                Style = ModernButton.ButtonStyle.Secondary,
-                Font = ThemeManager.FontBaseBold,
-                Size = new Size(180, 40),
-                Location = new Point(450, 55),
-                AccessibleName = "Таклифлар индексини ҳозир янгилаш"
-            };
+            var body = Stack();
+            Add(body, _indexStatus);
+            var refresh = Button("Ҳозир янгилаш", ModernButton.ButtonStyle.Secondary);
+            refresh.AccessibleName = "Таклифлар индексини ҳозир янгилаш";
             refresh.Click += (s, e) =>
             {
-                _refreshIndex();
-                _indexStatus.Text = "Индекс янгиланмоқда — тайёр бўлгач таклифлар автоматик кўринади.";
-                _indexStatus.ForeColor = ThemeManager.Success;
+                try
+                {
+                    _refreshIndex();
+                    _indexStatus.Text = "Индекс янгиланмоқда — тайёр бўлгач таклифлар автоматик кўринади.";
+                    _indexStatus.ForeColor = ThemeManager.Success;
+                }
+                catch (Exception ex) { ShowError(ex); }
             };
-
-            card.Controls.Add(_indexStatus);
-            card.Controls.Add(refresh);
-            card.Resize += (s, e) =>
-            {
-                refresh.Left = Math.Max(Px(260), card.ClientSize.Width - refresh.Width - Px(20));
-                _indexStatus.Width = Math.Max(Px(210), refresh.Left - Px(40));
-            };
-            return card;
+            Add(body, refresh);
+            return Card("Луғат индекси", body);
         }
 
         private void BuildActions()
         {
             ActionBar.Height = 68;
-            var cancel = new ModernButton
-            {
-                Text = "Бекор қилиш",
-                Style = ModernButton.ButtonStyle.Secondary,
-                Font = ThemeManager.FontLGBold,
-                Size = new Size(150, 42)
-            };
+            var cancel = Button("Бекор қилиш", ModernButton.ButtonStyle.Secondary);
+            cancel.Size = new Size(155, 42);
             cancel.Click += (s, e) => { DialogResult = DialogResult.Cancel; Close(); };
-
-            var save = new ModernButton
-            {
-                Text = "Сақлаш",
-                Style = ModernButton.ButtonStyle.Primary,
-                Font = ThemeManager.FontLGBold,
-                Size = new Size(150, 42)
-            };
-            save.Click += SaveAndClose;
-
+            _saveButton = Button("Сақлаш", ModernButton.ButtonStyle.Primary);
+            _saveButton.Size = new Size(155, 42);
+            _saveButton.Click += SaveAndClose;
             ActionBar.Controls.Add(cancel);
-            ActionBar.Controls.Add(save);
-            ActionBar.Resize += (s, e) =>
-            {
-                int y = (ActionBar.Height - save.Height) / 2;
-                int right = ActionBar.Width - Px(ThemeManager.SpaceXL);
-                save.Location = new Point(right - save.Width, y);
-                cancel.Location = new Point(save.Left - Px(12) - cancel.Width, y);
-            };
+            ActionBar.Controls.Add(_saveButton);
+            ActionBar.Resize += (s, e) => LayoutActions(cancel);
+            LayoutActions(cancel);
+        }
+
+        private void LayoutActions(Control cancel)
+        {
+            int y = (ActionBar.Height - _saveButton.Height) / 2;
+            _saveButton.Location = new Point(ActionBar.Width - Px(24) - _saveButton.Width, y);
+            cancel.Location = new Point(_saveButton.Left - Px(12) - cancel.Width, y);
         }
 
         private void SaveAndClose(object sender, EventArgs e)
         {
+            if (_closing || (_backgroundWork != null && _backgroundWork.IsBusy)) return;
             if (!_initialLearning && _learning.IsOn && !ModernMessageBox.Confirm(
-                "Қабул қилинган сўзлар ва уларнинг сони таклифларни яхшилаш учун фақат шу компьютерда сақлансинми?\n\nҲужжат матни йиғилмайди ва юборилмайди.",
+                "Қабул қилинган сўз ва иборалар ҳамда уларни қабул қилиш сони таклифларни яхшилаш учун фақат шу компьютерда сақлансинми?\n\nҲужжатнинг тўлиқ матни сақланмайди ва юборилмайди.",
                 "MatnAI — Шахсий ўрганиш", "Розиман", "Бекор қилиш")) return;
-
-            _save((int)_minimum.Value, (int)_count.Value, _learning.IsOn);
-            DialogResult = DialogResult.OK;
-            Close();
+            try
+            {
+                _save((int)_minimum.Value, (int)_count.Value, _learning.IsOn);
+                _saveMetrics?.Invoke(MetricsConsent);
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex) { ShowError(ex); }
         }
 
-        private static NumericUpDown CreateNumber(int value, int minimum, int maximum, string accessibleName)
+        private void BackgroundWorkChanged(object sender, EventArgs e)
+        {
+            if (!IsDisposed) _saveButton.Enabled = !_closing && !_backgroundWork.IsBusy;
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (!_closeReady && (_closing || (_backgroundWork != null && _backgroundWork.IsBusy)))
+            {
+                e.Cancel = true;
+                if (!_closing)
+                {
+                    _closing = true;
+                    var result = DialogResult == DialogResult.None ? DialogResult.Cancel : DialogResult;
+                    DialogResult = DialogResult.None;
+                    ActionBar.Enabled = false;
+                    ContentPanel.Enabled = false;
+                    // Finish this closing event before attempting another Close.
+                    BeginInvoke(new Action(() => CancelWorkAndCloseAsync(result)));
+                }
+            }
+            base.OnFormClosing(e);
+        }
+
+        private async void CancelWorkAndCloseAsync(DialogResult result)
+        {
+            try
+            {
+                await _backgroundWork.CancelAndWaitAsync();
+                if (IsDisposed) return;
+                _closeReady = true;
+                DialogResult = result;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                if (IsDisposed) return;
+                _closing = false;
+                ActionBar.Enabled = true;
+                ContentPanel.Enabled = true;
+                BackgroundWorkChanged(this, EventArgs.Empty);
+                ShowError(ex);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && _backgroundWork != null) _backgroundWork.BusyChanged -= BackgroundWorkChanged;
+            base.Dispose(disposing);
+        }
+
+        private static TabPage NewPage(string text)
+        {
+            return new TabPage(text)
+            {
+                BackColor = ThemeManager.Background, ForeColor = ThemeManager.TextPrimary,
+                Padding = new Padding(16), AutoScroll = true
+            };
+        }
+
+        private static TableLayoutPanel Stack()
+        {
+            var panel = new TableLayoutPanel
+            {
+                Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                ColumnCount = 1, RowCount = 0, Margin = Padding.Empty, BackColor = Color.Transparent
+            };
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            return panel;
+        }
+
+        private static void Add(TableLayoutPanel panel, Control control)
+        {
+            int row = panel.RowCount++;
+            panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            panel.Controls.Add(control, 0, row);
+        }
+
+        private static Control Card(string header, TableLayoutPanel body)
+        {
+            var card = new ModernCard
+            {
+                Header = header, Dock = DockStyle.Top, AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink, Margin = new Padding(0, 0, 0, 14),
+                CornerRadius = ThemeManager.RadiusLG
+            };
+            card.Controls.Add(body);
+            return card;
+        }
+
+        private static Control SettingRow(string title, string description, Control input)
+        {
+            var row = new TableLayoutPanel
+            {
+                AutoSize = true, Dock = DockStyle.Top, ColumnCount = 2, RowCount = 1,
+                Margin = new Padding(0, 0, 0, 16)
+            };
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            var labels = Stack();
+            var heading = BodyLabel(title);
+            heading.Font = ThemeManager.FontLGBold;
+            heading.ForeColor = ThemeManager.TextPrimary;
+            Add(labels, heading);
+            Add(labels, BodyLabel(description));
+            input.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            input.Margin = new Padding(12, 4, 0, 0);
+            row.Controls.Add(labels, 0, 0);
+            row.Controls.Add(input, 1, 0);
+            return row;
+        }
+
+        private static NumericUpDown CreateNumber(int value, int minimum, int maximum, string name)
         {
             return new NumericUpDown
             {
-                Minimum = minimum,
-                Maximum = maximum,
-                Value = value,
-                Width = 82,
-                Height = 32,
-                Font = ThemeManager.FontLG,
-                BackColor = ThemeManager.SurfaceElevated,
-                ForeColor = ThemeManager.TextPrimary,
-                BorderStyle = BorderStyle.FixedSingle,
-                TextAlign = HorizontalAlignment.Center,
-                AccessibleName = accessibleName
+                Minimum = minimum, Maximum = maximum, Value = value, Width = 104,
+                Font = ThemeManager.FontLG, BackColor = ThemeManager.SurfaceElevated,
+                ForeColor = ThemeManager.TextPrimary, BorderStyle = BorderStyle.FixedSingle,
+                TextAlign = HorizontalAlignment.Center, AccessibleName = name
             };
         }
 
-        private static ModernCard NewCard(string header)
+        private static ModernButton Button(string text, ModernButton.ButtonStyle style)
         {
-            return new ModernCard
+            return new ModernButton
             {
-                Header = header,
-                Dock = DockStyle.Fill,
-                Margin = new Padding(0, 0, 0, ThemeManager.SpaceMD),
-                CornerRadius = ThemeManager.RadiusLG
-            };
-        }
-
-        private static void AddSettingRow(Control card, string title, string description,
-            Control input, int y)
-        {
-            var titleLabel = TitleLabel(title);
-            titleLabel.Location = new Point(20, y);
-            titleLabel.Size = new Size(390, 22);
-            var descriptionLabel = BodyLabel(description);
-            descriptionLabel.Location = new Point(20, y + 24);
-            descriptionLabel.Size = new Size(430, 28);
-            input.Location = new Point(548, y + 5);
-            card.Controls.Add(titleLabel);
-            card.Controls.Add(descriptionLabel);
-            card.Controls.Add(input);
-            card.Resize += (s, e) =>
-            {
-                int margin = DpiLayout.Pixels(card, 20);
-                int gap = DpiLayout.Pixels(card, 40);
-                input.Left = Math.Max(DpiLayout.Pixels(card, 250), card.ClientSize.Width - input.Width - margin);
-                titleLabel.Width = Math.Max(DpiLayout.Pixels(card, 180), input.Left - gap);
-                descriptionLabel.Width = Math.Max(DpiLayout.Pixels(card, 220), input.Left - gap);
-            };
-        }
-
-        private static Label TitleLabel(string text)
-        {
-            return new Label
-            {
-                Text = text,
-                AutoSize = false,
-                Font = ThemeManager.FontLGBold,
-                ForeColor = ThemeManager.TextPrimary,
-                BackColor = Color.Transparent
+                Text = text, AccessibleName = text, Style = style, Font = ThemeManager.FontBaseBold,
+                Size = new Size(200, 38), MinimumSize = new Size(200, 38), Margin = new Padding(0, 4, 0, 10)
             };
         }
 
@@ -296,12 +442,15 @@ namespace UzbekOrfoAddIn.Forms
         {
             return new Label
             {
-                Text = text,
-                AutoSize = false,
-                Font = ThemeManager.FontBase,
-                ForeColor = ThemeManager.TextSecondary,
-                BackColor = Color.Transparent
+                Text = text, AutoSize = true, Dock = DockStyle.Top, Margin = new Padding(0, 0, 0, 10),
+                Font = ThemeManager.FontBase, ForeColor = ThemeManager.TextSecondary,
+                BackColor = Color.Transparent, UseMnemonic = false
             };
+        }
+
+        private static void ShowError(Exception exception)
+        {
+            ModernMessageBox.Error("Амал бажарилмади.\n\n" + exception.Message, "MatnAI");
         }
     }
 }

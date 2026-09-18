@@ -1,0 +1,55 @@
+{
+  "schema": "matnai-memory-comparison-v1",
+  "scope": "Development PC, .NET 8 managed retained memory. Not Word process memory, transient peak, or the reference PC. Replay metrics compared without rebuilding packaged models.",
+  "changes": [
+    "Snapshot-local string sharing; no process-wide string interning",
+    "Immutable provenance shared per source/support; compact provenance arrays",
+    "Settings retains only metadata for read-only built-ins; editable private models retained"
+  ],
+  "runs": [
+    {
+      "script": "Cyrillic",
+      "beforeGeneratedUtc": "2026-09-17T05:13:22.5586889Z",
+      "afterGeneratedUtc": "2026-09-17T05:20:41.4517685Z",
+      "before": {
+        "retainedModelsAndIndexBytes": 152126528,
+        "retainedIndexOnlyBytes": 83625720,
+        "warmQueryP95Ms": 0.7542,
+        "processorCount": 16,
+        "machineMemoryBytes": 16908804096,
+        "scope": ".NET 8 managed retained source models plus both phrase indexes, four query smoke workload. Excludes Word, dictionary, private collections, import and peak allocation. Not the reference PC or end-to-end typing latency."
+      },
+      "after": {
+        "retainedModelsAndIndexBytes": 108452128,
+        "retainedIndexOnlyBytes": 39877192,
+        "warmQueryP95Ms": 0.5996,
+        "processorCount": 16,
+        "machineMemoryBytes": 16908804096,
+        "scope": ".NET 8 managed retained source models plus both phrase indexes, four query smoke workload. Excludes Word, dictionary, private collections, import and peak allocation. Not the reference PC or end-to-end typing latency."
+      },
+      "validationAndTestReplayMetricsUnchanged": true
+    },
+    {
+      "script": "Latin",
+      "beforeGeneratedUtc": "2026-09-17T05:06:21.7155538Z",
+      "afterGeneratedUtc": "2026-09-17T05:21:12.4980717Z",
+      "before": {
+        "retainedModelsAndIndexBytes": 152128256,
+        "retainedIndexOnlyBytes": 83627704,
+        "warmQueryP95Ms": 0.7245,
+        "processorCount": 16,
+        "machineMemoryBytes": 16908804096,
+        "scope": ".NET 8 managed retained source models plus both phrase indexes, four query smoke workload. Excludes Word, dictionary, private collections, import and peak allocation. Not the reference PC or end-to-end typing latency."
+      },
+      "after": {
+        "retainedModelsAndIndexBytes": 108449336,
+        "retainedIndexOnlyBytes": 39874632,
+        "warmQueryP95Ms": 0.6751,
+        "processorCount": 16,
+        "machineMemoryBytes": 16908804096,
+        "scope": ".NET 8 managed retained source models plus both phrase indexes, four query smoke workload. Excludes Word, dictionary, private collections, import and peak allocation. Not the reference PC or end-to-end typing latency."
+      },
+      "validationAndTestReplayMetricsUnchanged": true
+    }
+  ]
+}

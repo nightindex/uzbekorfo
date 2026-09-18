@@ -31,7 +31,10 @@ $requiredData = @(
     "grammar_rules.json",
     "proper_nouns.json",
     "uzbek_dictionary.json",
-    "uzbek_dictionary_metadata.json"
+    "uzbek_dictionary_metadata.json",
+    "legal_prediction.collection.gz",
+    "legal_prediction_latin.collection.gz",
+    "prediction_casing.json"
 )
 
 foreach ($f in $requiredData) {

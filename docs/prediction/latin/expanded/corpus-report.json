@@ -1,0 +1,1739 @@
+{
+  "schema": "matnai-corpus-evaluation-v1",
+  "generatedUtc": "2026-09-18T05:00:00.0443756Z",
+  "filesFound": 155,
+  "script": "Latin",
+  "collectionId": "legal-latin",
+  "filesExtracted": 154,
+  "failures": [],
+  "exclusions": [
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3515278.doc",
+      "error": "Expected Latin source text; found empty or Cyrillic content."
+    }
+  ],
+  "includeCourt": true,
+  "rawBytes": 22137350,
+  "originalCorpusSameHoldout": {
+    "Cases": 4169,
+    "Offered": 2562,
+    "Top1": 734,
+    "Top3": 920,
+    "SavedCharacters": 3165,
+    "RemainingCharacters": 30718,
+    "Top1Rate": 0.1760614056128568,
+    "Top3Rate": 0.2206764212041257,
+    "Coverage": 0.6145358599184456,
+    "Top1WhenOffered": 0.2864949258391881,
+    "SimulatedKeystrokesSaved": 0.10303405169607396
+  },
+  "qualitySlices": {
+    "originalDocuments": {
+      "original": {
+        "Cases": 1800,
+        "Offered": 1067,
+        "Top1": 319,
+        "Top3": 381,
+        "SavedCharacters": 1557,
+        "RemainingCharacters": 13945,
+        "Top1Rate": 0.17722222222222223,
+        "Top3Rate": 0.21166666666666667,
+        "Coverage": 0.5927777777777777,
+        "Top1WhenOffered": 0.29896907216494845,
+        "SimulatedKeystrokesSaved": 0.11165292219433488
+      },
+      "expanded": {
+        "Cases": 1800,
+        "Offered": 1112,
+        "Top1": 359,
+        "Top3": 423,
+        "SavedCharacters": 1768,
+        "RemainingCharacters": 13945,
+        "Top1Rate": 0.19944444444444445,
+        "Top3Rate": 0.235,
+        "Coverage": 0.6177777777777778,
+        "Top1WhenOffered": 0.322841726618705,
+        "SimulatedKeystrokesSaved": 0.12678379347436358
+      }
+    },
+    "courtDocuments": {
+      "original": {
+        "Cases": 2369,
+        "Offered": 1495,
+        "Top1": 415,
+        "Top3": 539,
+        "SavedCharacters": 1608,
+        "RemainingCharacters": 16773,
+        "Top1Rate": 0.17517940059096665,
+        "Top3Rate": 0.22752216124947236,
+        "Coverage": 0.6310679611650486,
+        "Top1WhenOffered": 0.27759197324414714,
+        "SimulatedKeystrokesSaved": 0.09586835986406725
+      },
+      "expanded": {
+        "Cases": 2369,
+        "Offered": 1565,
+        "Top1": 538,
+        "Top3": 675,
+        "SavedCharacters": 2105,
+        "RemainingCharacters": 16773,
+        "Top1Rate": 0.22710004221190375,
+        "Top3Rate": 0.28493035035880115,
+        "Coverage": 0.6606162937948501,
+        "Top1WhenOffered": 0.3437699680511182,
+        "SimulatedKeystrokesSaved": 0.12549931437429201
+      }
+    },
+    "afterSpace": {
+      "original": {
+        "Cases": 2835,
+        "Offered": 1231,
+        "Top1": 296,
+        "Top3": 305,
+        "SavedCharacters": 1664,
+        "RemainingCharacters": 22655,
+        "Top1Rate": 0.10440917107583775,
+        "Top3Rate": 0.10758377425044091,
+        "Coverage": 0.43421516754850087,
+        "Top1WhenOffered": 0.2404549147034931,
+        "SimulatedKeystrokesSaved": 0.07344956963142794
+      },
+      "expanded": {
+        "Cases": 2835,
+        "Offered": 1343,
+        "Top1": 410,
+        "Top3": 422,
+        "SavedCharacters": 2179,
+        "RemainingCharacters": 22655,
+        "Top1Rate": 0.14462081128747795,
+        "Top3Rate": 0.14885361552028217,
+        "Coverage": 0.47372134038800706,
+        "Top1WhenOffered": 0.3052866716306776,
+        "SimulatedKeystrokesSaved": 0.09618185830942397
+      }
+    },
+    "twoLetterPrefix": {
+      "original": {
+        "Cases": 1334,
+        "Offered": 1331,
+        "Top1": 438,
+        "Top3": 615,
+        "SavedCharacters": 1501,
+        "RemainingCharacters": 8063,
+        "Top1Rate": 0.328335832083958,
+        "Top3Rate": 0.46101949025487254,
+        "Coverage": 0.9977511244377811,
+        "Top1WhenOffered": 0.3290758827948911,
+        "SimulatedKeystrokesSaved": 0.18615899789160362
+      },
+      "expanded": {
+        "Cases": 1334,
+        "Offered": 1334,
+        "Top1": 487,
+        "Top3": 676,
+        "SavedCharacters": 1694,
+        "RemainingCharacters": 8063,
+        "Top1Rate": 0.3650674662668666,
+        "Top3Rate": 0.5067466266866567,
+        "Coverage": 1.0,
+        "Top1WhenOffered": 0.3650674662668666,
+        "SimulatedKeystrokesSaved": 0.2100954979536153
+      }
+    }
+  },
+  "comparisonScope": "Original-only and expanded training on the same expanded grouped split; not a comparison with historical report splits. Script checks are conservative heuristics, not linguistic approval.",
+  "extractedUniqueSentenceWords": 1169255,
+  "duplicateDocuments": 0,
+  "duplicateSentences": 8261,
+  "modelRecords": 163054,
+  "artifactBytes": 923220,
+  "files": [
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1437927.doc",
+      "url": "https://lex.uz/docs/-1437927?type=doc",
+      "hash": "8e8d5dd88f4c224adddeb72ee510e2a670cf4f69adcdcd6d7e38c286ddcab561",
+      "family": "group-33",
+      "split": "train",
+      "words": 2518,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1438529.doc",
+      "url": "https://lex.uz/docs/-1438529?type=doc",
+      "hash": "5fb275824efb2590c5a110c60133e8e818516b0383db2e8aa40e88fff2aca54e",
+      "family": "group-38",
+      "split": "train",
+      "words": 1394,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1439854.doc",
+      "url": "https://lex.uz/docs/-1439854?type=doc",
+      "hash": "a8174231556f5b2b24fee4a44272900374d3ec19d7131173f667aad3c7203b39",
+      "family": "group-59",
+      "split": "train",
+      "words": 642,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1440047.doc",
+      "url": "https://lex.uz/docs/-1440047?type=doc",
+      "hash": "607ed7cc515a070d281b60e403a77ed5d4952bc7e5c6deb933bfb871c2f73f4e",
+      "family": "group-94",
+      "split": "train",
+      "words": 816,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1440212.doc",
+      "url": "https://lex.uz/docs/-1440212?type=doc",
+      "hash": "9590158b51b692fc6924b3470df86b0ab784c22087581826c0515aaad27fa8e5",
+      "family": "group-91",
+      "split": "train",
+      "words": 2007,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1443000.doc",
+      "url": "https://lex.uz/docs/-1443000?type=doc",
+      "hash": "4bb04043184b15eecd012a145197906620b2123b5e0a1f26e54d087973f8fbdf",
+      "family": "group-77",
+      "split": "train",
+      "words": 2226,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1444779.doc",
+      "url": "https://lex.uz/docs/-1444779?type=doc",
+      "hash": "1931cbc86edea7bbc94693102b8a97a5b5d1826331c1985564ed7797b8dd60d7",
+      "family": "group-129",
+      "split": "train",
+      "words": 9696,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1446055.doc",
+      "url": "https://lex.uz/docs/-1446055?type=doc",
+      "hash": "87946f10b3326f1129b63a678060d2263fb7118d6ce1edeba5f0e059cb86412c",
+      "family": "group-138",
+      "split": "train",
+      "words": 2300,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1447402.doc",
+      "url": "https://lex.uz/docs/-1447402?type=doc",
+      "hash": "40219e0a03372faea5feea138360fe668aab8ccc02dcca20d71bd854fc7a7a06",
+      "family": "group-128",
+      "split": "train",
+      "words": 3746,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1448773.doc",
+      "url": "https://lex.uz/docs/-1448773?type=doc",
+      "hash": "a0bd085f0e4a5f1b5292bdb2704721ffeca8d44e115c19bf3468f4af6b58855d",
+      "family": "group-144",
+      "split": "train",
+      "words": 1585,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1448993.doc",
+      "url": "https://lex.uz/docs/-1448993?type=doc",
+      "hash": "40df7c8f397c1b38ce6b8f3c736770b9c7c12de693f79fb8064cd2e2705e5fc0",
+      "family": "group-114",
+      "split": "train",
+      "words": 1300,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1449509.doc",
+      "url": "https://lex.uz/docs/-1449509?type=doc",
+      "hash": "35375775ae841849fdc2c9d6ed678e93c8ed5383bcb72b7399ffcb4cf7afb06b",
+      "family": "group-130",
+      "split": "train",
+      "words": 1497,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1451193.doc",
+      "url": "https://lex.uz/docs/-1451193?type=doc",
+      "hash": "71915c78c61a02435c9c0aca512c5792131596e94fa7d9d021a38430ee081568",
+      "family": "group-27",
+      "split": "validation",
+      "words": 2116,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1452371.doc",
+      "url": "https://lex.uz/docs/-1452371?type=doc",
+      "hash": "764b8165bcc124681c352636e46842e80f2cf5ca72b7c24082dff84c9328516c",
+      "family": "group-39",
+      "split": "train",
+      "words": 2992,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1454007.doc",
+      "url": "https://lex.uz/docs/-1454007?type=doc",
+      "hash": "fe5defa027729c9c43e2cc1f6696b101e7872ca03c45e097708cd70b9f5dc72b",
+      "family": "group-108",
+      "split": "train",
+      "words": 2068,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1455241.doc",
+      "url": "https://lex.uz/docs/-1455241?type=doc",
+      "hash": "649ba6bddfdb61cdcfe84559f88a240857425dcca8ed41032f24bf9b9bcfb89f",
+      "family": "group-52",
+      "split": "train",
+      "words": 3500,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1455965.doc",
+      "url": "https://lex.uz/docs/-1455965?type=doc",
+      "hash": "233eb32088ddd22e4c3da4225883afbdcbf47fd27040d2396a98a95197fb115f",
+      "family": "group-40",
+      "split": "train",
+      "words": 2506,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1455984.doc",
+      "url": "https://lex.uz/docs/-1455984?type=doc",
+      "hash": "addd36a296a79fc9d7b2f2a4db7c16368114e299ffaa233a133b7ae2c7bbff04",
+      "family": "group-132",
+      "split": "train",
+      "words": 1333,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1455990.doc",
+      "url": "https://lex.uz/docs/-1455990?type=doc",
+      "hash": "c2458e5fa7d3c8f4b906b7a27994dbea0dabec07a245194a4e493a2097dd89d1",
+      "family": "group-32",
+      "split": "train",
+      "words": 1270,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1480290.doc",
+      "url": "https://lex.uz/docs/-1480290?type=doc",
+      "hash": "7904a139e79b8a348e0c2a64f932d52f7c1dc2a79de56973faf1ec1e8dce4d34",
+      "family": "group-112",
+      "split": "train",
+      "words": 4629,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1590543.doc",
+      "url": "https://lex.uz/docs/-1590543?type=doc",
+      "hash": "16f7050c6407c4c39342bf46c6137d5fc45a950a40881210be09d54bc285e846",
+      "family": "group-117",
+      "split": "train",
+      "words": 2009,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1591190.doc",
+      "url": "https://lex.uz/docs/-1591190?type=doc",
+      "hash": "b22711dd956673d619586d3d0713f325c6e4f1c93eeb2a82786dd57767b9a9c7",
+      "family": "group-17",
+      "split": "validation",
+      "words": 3076,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1591655.doc",
+      "url": "https://lex.uz/docs/-1591655?type=doc",
+      "hash": "d71eb7ded84e5b8ff9f36bf86580d1363115b8dd466792c7f5c6f686a1ec7287",
+      "family": "group-103",
+      "split": "train",
+      "words": 2437,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1617259.doc",
+      "url": "https://lex.uz/docs/-1617259?type=doc",
+      "hash": "08da312118ae2c4f789b6a86b9a8044257218e70116e79fef63b9ed9db5204c3",
+      "family": "group-141",
+      "split": "train",
+      "words": 2348,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1617964.doc",
+      "url": "https://lex.uz/docs/-1617964?type=doc",
+      "hash": "c5c2b71c775e84662c8bf0e1d1d923def963568eb447680426e4b3fcbbf22236",
+      "family": "group-120",
+      "split": "train",
+      "words": 2339,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-1945465.doc",
+      "url": "https://lex.uz/docs/-1945465?type=doc",
+      "hash": "09add4b6ed9a918e767c7df41ff5732d92cd10270a8acc618c72a73557915e27",
+      "family": "group-100",
+      "split": "train",
+      "words": 1685,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2027697.doc",
+      "url": "https://lex.uz/docs/-2027697?type=doc",
+      "hash": "7c41af26ca0830c03ac87bad3cf3f1b713f3c40a3b057ddebdf49a6f797a6936",
+      "family": "group-60",
+      "split": "train",
+      "words": 1338,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2075746.doc",
+      "url": "https://lex.uz/docs/-2075746?type=doc",
+      "hash": "6094b0c82622d685178498ce81ee13a7b28d8b0fed13c6b437e27fba99097b30",
+      "family": "group-15",
+      "split": "validation",
+      "words": 1076,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2307248.doc",
+      "url": "https://lex.uz/docs/-2307248?type=doc",
+      "hash": "7d844cc44cf5586fcfec9709d1c5d49256af0dc6e3aec1d70b675111e4767513",
+      "family": "group-20",
+      "split": "validation",
+      "words": 3217,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414102.doc",
+      "url": "https://lex.uz/docs/-2414102?type=doc",
+      "hash": "6ff3ebd890d13d910efd69e8c9d86e9b0e4fdedf4df26e0be6a5e5d61fc4699a",
+      "family": "group-12",
+      "split": "test",
+      "words": 1150,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414114.doc",
+      "url": "https://lex.uz/docs/-2414114?type=doc",
+      "hash": "51278ca036d3898c868eb8512c08d12f6b7e132d33c6b1c9711a4cf1851b3e97",
+      "family": "group-140",
+      "split": "train",
+      "words": 3142,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2414320.doc",
+      "url": "https://lex.uz/docs/-2414320?type=doc",
+      "hash": "62ec05eac9eef860c1bd994493eba4e63567350a8191236ca39af180d9f10a09",
+      "family": "group-107",
+      "split": "train",
+      "words": 2116,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-2794155.doc",
+      "url": "https://lex.uz/docs/-2794155?type=doc",
+      "hash": "65f276c288d5556ed0b4501903cdcabf530ba5675f5c47893b9c8b5cc6a709a7",
+      "family": "group-45",
+      "split": "train",
+      "words": 1224,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3034913.doc",
+      "url": "https://lex.uz/docs/-3034913?type=doc",
+      "hash": "786ed9861efe6cfceb197ba431eb99450a419fbc74e31722e705df29eb76f217",
+      "family": "group-73",
+      "split": "train",
+      "words": 1783,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3035621.doc",
+      "url": "https://lex.uz/docs/-3035621?type=doc",
+      "hash": "4aea64aa9b071f15ddf8f587c785e0c952471498fd4f0399065f41dbccf21a15",
+      "family": "group-66",
+      "split": "train",
+      "words": 1496,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3515186.doc",
+      "url": "https://lex.uz/docs/-3515186?type=doc",
+      "hash": "e2bc7dcde948a9c5de5ede0655bbb3f183663eba8df56c43a2bc34201dbaaedf",
+      "family": "group-4",
+      "split": "test",
+      "words": 4475,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3761338.doc",
+      "url": "https://lex.uz/docs/-3761338?type=doc",
+      "hash": "6215fdd88132614458b356a0ee1ce0b5c4bf49625e188e8cf5d19211a19239ee",
+      "family": "group-54",
+      "split": "train",
+      "words": 2516,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/fuqarolik-ishlari-tushuntirishlari/lexuz-3897686.doc",
+      "url": "https://lex.uz/docs/-3897686?type=doc",
+      "hash": "bb10a207bc7fda54f71a4431bc75b06e0910fabb04a26f1d4f0b59e67745c8f8",
+      "family": "group-104",
+      "split": "train",
+      "words": 1648,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/mamuriy-ishlar-tushuntirishlari/lexuz-1449823.doc",
+      "url": "https://lex.uz/docs/-1449823?type=doc",
+      "hash": "aa0d16f622d6014d4853a0d5b894da92fb2adf6d4ff34c37561ca9307e7d3c4e",
+      "family": "group-109",
+      "split": "train",
+      "words": 2609,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/mamuriy-ishlar-tushuntirishlari/lexuz-3761216.doc",
+      "url": "https://lex.uz/docs/-3761216?type=doc",
+      "hash": "369483579ed238eeecdf92647100eab04fe596e4f8ac6db0921952391d2262e3",
+      "family": "group-79",
+      "split": "train",
+      "words": 1911,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441585.doc",
+      "url": "https://lex.uz/docs/-1441585?type=doc",
+      "hash": "d917f17adfdb52ec5469d4662b9b2b6ff365d57253b44d5d956d689ff58187e4",
+      "family": "group-36",
+      "split": "train",
+      "words": 1706,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1441818.doc",
+      "url": "https://lex.uz/docs/-1441818?type=doc",
+      "hash": "0acb382977419c11342bc3ce81f989cd257c3cbe4e1145c992ae2e3f08083a5f",
+      "family": "group-11",
+      "split": "test",
+      "words": 1434,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1442456.doc",
+      "url": "https://lex.uz/docs/-1442456?type=doc",
+      "hash": "65640af9ab54dce46845ceb7528ece60cf1a648446a604df480346249662a22c",
+      "family": "group-89",
+      "split": "train",
+      "words": 1815,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1442544.doc",
+      "url": "https://lex.uz/docs/-1442544?type=doc",
+      "hash": "0ea23ffbe2fc86797bbdbe2282f8998622da000e1acaa9a3b2516e8e2ece7c9b",
+      "family": "group-123",
+      "split": "train",
+      "words": 455,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1442601.doc",
+      "url": "https://lex.uz/docs/-1442601?type=doc",
+      "hash": "5111f29e52b41389cb72e4c8581b165ceea9bb84c10efad3b184887380525b2e",
+      "family": "group-29",
+      "split": "validation",
+      "words": 415,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1442647.doc",
+      "url": "https://lex.uz/docs/-1442647?type=doc",
+      "hash": "4919b920cee2e6ffb096a3c766fd12038e91649dfea99984f84d5d52c6a5ee84",
+      "family": "group-22",
+      "split": "validation",
+      "words": 1264,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1443725.doc",
+      "url": "https://lex.uz/docs/-1443725?type=doc",
+      "hash": "e8a510143f670aa5c3a76ff9ba04e7ef8b347644a97b2773c031502e3202a99d",
+      "family": "group-135",
+      "split": "train",
+      "words": 2196,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1443984.doc",
+      "url": "https://lex.uz/docs/-1443984?type=doc",
+      "hash": "63fe92b712e7942a6be21d9f54350860884d6bc94e940d00b246a6448ad961ab",
+      "family": "group-149",
+      "split": "train",
+      "words": 2070,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1446429.doc",
+      "url": "https://lex.uz/docs/-1446429?type=doc",
+      "hash": "a8df3bd265d7e6eb26a8f4d3681e0fa75d60f7419d6ed90782f9de8e2c2611ae",
+      "family": "group-14",
+      "split": "test",
+      "words": 629,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1449106.doc",
+      "url": "https://lex.uz/docs/-1449106?type=doc",
+      "hash": "161504e9543bf17795f89d1267702f542b07feaa81526ea1e6787e22e0c37627",
+      "family": "group-133",
+      "split": "train",
+      "words": 1370,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1449617.doc",
+      "url": "https://lex.uz/docs/-1449617?type=doc",
+      "hash": "3452d7c933b949a193f77e46fdb8b80de552b22f889ce6008e525186474fb8a0",
+      "family": "group-49",
+      "split": "train",
+      "words": 1036,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1449720.doc",
+      "url": "https://lex.uz/docs/-1449720?type=doc",
+      "hash": "a7cd42832518b17c834a1ca8f3ae8888557a2073c577370b60c88f970e018c90",
+      "family": "group-110",
+      "split": "train",
+      "words": 1635,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1449962.doc",
+      "url": "https://lex.uz/docs/-1449962?type=doc",
+      "hash": "cca9b79ed91cff356a67d2f8848a1bb7eb4a7db3952caaee94b010e1dd20ca20",
+      "family": "group-146",
+      "split": "train",
+      "words": 5084,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1451353.doc",
+      "url": "https://lex.uz/docs/-1451353?type=doc",
+      "hash": "9fc6253b95e982fea756de6d7991baa7c46b36f4ba2aed30ee38fbae7c2a3921",
+      "family": "group-47",
+      "split": "train",
+      "words": 2104,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1452654.doc",
+      "url": "https://lex.uz/docs/-1452654?type=doc",
+      "hash": "d52123c42f88078f9472e7e3805a7347bfd47d2099618de1446999684efb9a6c",
+      "family": "group-72",
+      "split": "train",
+      "words": 1561,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1453539.doc",
+      "url": "https://lex.uz/docs/-1453539?type=doc",
+      "hash": "3dab4f850761875b9e64d93cc9dccb3ff693ea779734982eb1bf6c4bce490cc5",
+      "family": "group-125",
+      "split": "train",
+      "words": 952,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1453755.doc",
+      "url": "https://lex.uz/docs/-1453755?type=doc",
+      "hash": "83322f2d1dbd73bcc1ec2668c45b290269b77c4a81f29aa6431f113081db7d27",
+      "family": "group-97",
+      "split": "train",
+      "words": 3764,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1454894.doc",
+      "url": "https://lex.uz/docs/-1454894?type=doc",
+      "hash": "0a387e07968b066ac965106bfcd32e659e6e78fc78e43ceec4216a6bb36eae96",
+      "family": "group-96",
+      "split": "train",
+      "words": 1475,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455957.doc",
+      "url": "https://lex.uz/docs/-1455957?type=doc",
+      "hash": "e2d52af1621062a19d1b9e5b4b11c76fee1ae6d0959293a60308084a2673f31e",
+      "family": "group-98",
+      "split": "train",
+      "words": 974,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455961.doc",
+      "url": "https://lex.uz/docs/-1455961?type=doc",
+      "hash": "cebe934d8f88390a52510b7faba3f941c15412bde60eed6d847aa678ef88709d",
+      "family": "group-16",
+      "split": "validation",
+      "words": 2805,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455976.doc",
+      "url": "https://lex.uz/docs/-1455976?type=doc",
+      "hash": "35d55b48f74222923484521b5360f8fd1164d25981f8c7a8fc80368f69a9d904",
+      "family": "group-10",
+      "split": "test",
+      "words": 7652,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1455980.doc",
+      "url": "https://lex.uz/docs/-1455980?type=doc",
+      "hash": "37235812327a8d3e0682b923b8d9a47ce678a590921e8b0f0731cc51680e3ab1",
+      "family": "group-43",
+      "split": "train",
+      "words": 3235,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1591984.doc",
+      "url": "https://lex.uz/docs/-1591984?type=doc",
+      "hash": "84d4806b9c18132d0501b5da2587a81af40841ee6fc8868d47d1d3f2e7dab5d3",
+      "family": "group-62",
+      "split": "train",
+      "words": 2274,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1592419.doc",
+      "url": "https://lex.uz/docs/-1592419?type=doc",
+      "hash": "0aa92dadcdd1756755bfbea4d86070a531ba36ec4560fd2d75edd666cdc5defb",
+      "family": "group-42",
+      "split": "train",
+      "words": 2868,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1593076.doc",
+      "url": "https://lex.uz/docs/-1593076?type=doc",
+      "hash": "5b94a41befb3ceb72e4b84752e4f711b88b5fca4367fe7c895625528d0d9f357",
+      "family": "group-126",
+      "split": "train",
+      "words": 1121,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1595235.doc",
+      "url": "https://lex.uz/docs/-1595235?type=doc",
+      "hash": "9bab5453547a777a4949c05710043cd28be2fabae99932bb843eff47248a9dd0",
+      "family": "group-68",
+      "split": "train",
+      "words": 3009,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1596771.doc",
+      "url": "https://lex.uz/docs/-1596771?type=doc",
+      "hash": "01bbc7f7b5800dc5ee32c9e55b0f9b769828177f45cf3a09842733116155edf8",
+      "family": "group-102",
+      "split": "train",
+      "words": 3138,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1598893.doc",
+      "url": "https://lex.uz/docs/-1598893?type=doc",
+      "hash": "9c6739bb20d514cdd503162a27de44ef9cc7438376a086fde3e576b4b756933e",
+      "family": "group-6",
+      "split": "test",
+      "words": 3998,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1600001.doc",
+      "url": "https://lex.uz/docs/-1600001?type=doc",
+      "hash": "cee8a24c51a127d1ee17e1149eee293cec9e640318fb5581f7212a377b44153b",
+      "family": "group-69",
+      "split": "train",
+      "words": 2599,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1601125.doc",
+      "url": "https://lex.uz/docs/-1601125?type=doc",
+      "hash": "6106d9b964f3d4044d32361f6ce499b66fe0a5865cb3a3dd746157d420e02b4b",
+      "family": "group-71",
+      "split": "train",
+      "words": 1960,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1602168.doc",
+      "url": "https://lex.uz/docs/-1602168?type=doc",
+      "hash": "1292920a07cdf7ab12f11778bfe794769980e35d9e87261cd2a8f7e0bd04cba4",
+      "family": "group-92",
+      "split": "train",
+      "words": 2058,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1616053.doc",
+      "url": "https://lex.uz/docs/-1616053?type=doc",
+      "hash": "22179c81e04716aa1b903d3603ea72e24305f8ee9bef50c8d5e954b0705ab529",
+      "family": "group-61",
+      "split": "train",
+      "words": 1673,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1616840.doc",
+      "url": "https://lex.uz/docs/-1616840?type=doc",
+      "hash": "ba759ebb614a103c5f0995be1236b9788c0266d5e47461da7c875bd2f89f351d",
+      "family": "group-26",
+      "split": "validation",
+      "words": 1326,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1766419.doc",
+      "url": "https://lex.uz/docs/-1766419?type=doc",
+      "hash": "2a4e9ce3084c31b6d938024b7ed88cef214d2a335b22e2ef3fc7c76e8baaab25",
+      "family": "group-41",
+      "split": "train",
+      "words": 1454,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-1945473.doc",
+      "url": "https://lex.uz/docs/-1945473?type=doc",
+      "hash": "14df5c3b72ea7b9faf28d3a43ca7eda903b5d0ca7052758639d7d6561fc8491c",
+      "family": "group-18",
+      "split": "validation",
+      "words": 1359,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-2212245.doc",
+      "url": "https://lex.uz/docs/-2212245?type=doc",
+      "hash": "964d16e6ee2995b33e3c62f2bf6401c6a7e40b4cc8da0a51c2472e0c17d9d0d3",
+      "family": "group-88",
+      "split": "train",
+      "words": 2605,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-2259789.doc",
+      "url": "https://lex.uz/docs/-2259789?type=doc",
+      "hash": "2f34a589a0f934412935baa41e731efccd6c4cb9c85d51a01c94b8ba3e2fe9cc",
+      "family": "group-101",
+      "split": "train",
+      "words": 2200,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-2307198.doc",
+      "url": "https://lex.uz/docs/-2307198?type=doc",
+      "hash": "6fb0844c548627acdce6f2269dab040c2c3ceb29da2df6a52e5a85bff56b86b9",
+      "family": "group-83",
+      "split": "train",
+      "words": 1930,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-2413562.doc",
+      "url": "https://lex.uz/docs/-2413562?type=doc",
+      "hash": "30b6dabaf11cd4e94ce1298d994db8889828a65121ad7946fd5f0e597f71365e",
+      "family": "group-93",
+      "split": "train",
+      "words": 4830,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-2414120.doc",
+      "url": "https://lex.uz/docs/-2414120?type=doc",
+      "hash": "4234aef9636a8c4927e902423530ebd0890c5043193e40ef4e53b26e27afb983",
+      "family": "group-67",
+      "split": "train",
+      "words": 2348,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-2414513.doc",
+      "url": "https://lex.uz/docs/-2414513?type=doc",
+      "hash": "2e14b241b99c1914415d4d4182d0cb410188e2da712b94b444db81bad00a8453",
+      "family": "group-65",
+      "split": "train",
+      "words": 1532,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-2710284.doc",
+      "url": "https://lex.uz/docs/-2710284?type=doc",
+      "hash": "b149bbe6772a90c93969cf1568b4a4dbbec55cf23d5ae0beb0ff69fe6bb18709",
+      "family": "group-63",
+      "split": "train",
+      "words": 2956,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-2793078.doc",
+      "url": "https://lex.uz/docs/-2793078?type=doc",
+      "hash": "0317b864c551b98d4edbf672a1b9a7949c979b97bbf43c66f1ad3a4bfb13ebc3",
+      "family": "group-118",
+      "split": "train",
+      "words": 1513,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3115182.doc",
+      "url": "https://lex.uz/docs/-3115182?type=doc",
+      "hash": "a3e8ccfdb9067d4355cea44c868b1804177e41b3b03356c11203fd2d4634b160",
+      "family": "group-111",
+      "split": "train",
+      "words": 2819,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3115385.doc",
+      "url": "https://lex.uz/docs/-3115385?type=doc",
+      "hash": "98c9017cec9d5590e3c62954597e019482b6c25dc77ee24de4cfaccc96b03dcf",
+      "family": "group-30",
+      "split": "train",
+      "words": 2257,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3122742.doc",
+      "url": "https://lex.uz/docs/-3122742?type=doc",
+      "hash": "c85637296c4e786d84c9b2e7023497ee27c04358aed490a688d08eb355908f9b",
+      "family": "group-99",
+      "split": "train",
+      "words": 2311,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3203265.doc",
+      "url": "https://lex.uz/docs/-3203265?type=doc",
+      "hash": "b8830025540f09a450ddc002fed1973e7b021d7065fcc120b67f61cde7ff1177",
+      "family": "group-23",
+      "split": "validation",
+      "words": 3224,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3399888.doc",
+      "url": "https://lex.uz/docs/-3399888?type=doc",
+      "hash": "0eabc18ed4248df6bcfab1a7653b9318d6f5affc0b75251e352a9f3fde14e3f1",
+      "family": "group-127",
+      "split": "train",
+      "words": 2966,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3761369.doc",
+      "url": "https://lex.uz/docs/-3761369?type=doc",
+      "hash": "bc78e522b30ee7bd1ceeb9bb88c8f974f53adf98a8702ef4161f820f8fbbf12a",
+      "family": "group-137",
+      "split": "train",
+      "words": 4037,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3895986.doc",
+      "url": "https://lex.uz/docs/-3895986?type=doc",
+      "hash": "f90d153ca8fdf1ae50ca21959e4bdec2931ee3106ffb228a47b529dbc06292ce",
+      "family": "group-46",
+      "split": "train",
+      "words": 2231,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatiga-tegishli/lexuz-3896773.doc",
+      "url": "https://lex.uz/docs/-3896773?type=doc",
+      "hash": "3bbb9938a78832bec27b27500a1c375b52c60a386ad5d776ca111e6640d19d7b",
+      "family": "group-44",
+      "split": "train",
+      "words": 3800,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442041.doc",
+      "url": "https://lex.uz/docs/-1442041?type=doc",
+      "hash": "1acf90856327eaf2bed9421319918370a7d50632bf295d6a48742296a0823015",
+      "family": "group-2",
+      "split": "test",
+      "words": 1728,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1442202.doc",
+      "url": "https://lex.uz/docs/-1442202?type=doc",
+      "hash": "f91f428926ac1619ba38c86741d7257e4c3c7cc9818f78e17d3b3c89acd67664",
+      "family": "group-5",
+      "split": "test",
+      "words": 1304,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-1448376.doc",
+      "url": "https://lex.uz/docs/-1448376?type=doc",
+      "hash": "4bf7bc0bc5d7db79d508bc11595ad4c3b556093da1ece4daf40657180f20abb0",
+      "family": "group-139",
+      "split": "train",
+      "words": 2705,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-2028822.doc",
+      "url": "https://lex.uz/docs/-2028822?type=doc",
+      "hash": "4774d9b9d6b08f2bef042627eb91bb94b901ae3468a7e3caa8fbc277fc3818bd",
+      "family": "group-145",
+      "split": "train",
+      "words": 1797,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-2843766.doc",
+      "url": "https://lex.uz/docs/-2843766?type=doc",
+      "hash": "8a93641348962a03cc606d582aa3fe18584db04c10d8d2bccf3c51b662228084",
+      "family": "group-95",
+      "split": "train",
+      "words": 1724,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud-court/sud-faoliyatining-umumiy-masalalari/lexuz-3250191.doc",
+      "url": "https://lex.uz/docs/-3250191?type=doc",
+      "hash": "c8ae0310334b240f20acdf6d60b09b8c7055700eafe50f5f7e9173667062f2bf",
+      "family": "group-1",
+      "split": "test",
+      "words": 315,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/01-jinoyat-kodeksi.doc",
+      "url": "https://lex.uz/docs/-111453?type=doc",
+      "hash": "5b91cc4208ce8770ec8c7b7fc0245ca8b0cd760ae399c05bd4d57393ce83ae42",
+      "family": "group-143",
+      "split": "train",
+      "words": 43695,
+      "retainedSequences": 65
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/02-jinoyat-protsessual-kodeksi.doc",
+      "url": "https://lex.uz/docs/-111460?type=doc",
+      "hash": "adee884761cd5ebaaba89dc2519fe91b70a10917dfb64c976279c68f113082ad",
+      "family": "group-56",
+      "split": "train",
+      "words": 96684,
+      "retainedSequences": 41
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/03-fuqarolik-kodeksi-1-qism.doc",
+      "url": "https://lex.uz/docs/-111189?type=doc",
+      "hash": "26aa71540cc9571db89bff11f995a882b1002a6422c89dfbe188e074c9dd5b73",
+      "family": "group-116",
+      "split": "train",
+      "words": 33756,
+      "retainedSequences": 309
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/04-fuqarolik-kodeksi-2-qism.doc",
+      "url": "https://lex.uz/docs/-180552?type=doc",
+      "hash": "180c798e19c5702001cc5a38d6d312038af2b3a864eada4c506de87b3b78e667",
+      "family": "group-116",
+      "split": "train",
+      "words": 76124,
+      "retainedSequences": 57
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/05-fuqarolik-protsessual-kodeksi.doc",
+      "url": "https://lex.uz/docs/-3517337?type=doc",
+      "hash": "ba530bbc8a408400b7cc986b051c924edee8b0d27b9bdc686ac885d27f4cf9b9",
+      "family": "group-0",
+      "split": "test",
+      "words": 50480,
+      "retainedSequences": 96
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/06-iqtisodiy-protsessual-kodeksi.doc",
+      "url": "https://lex.uz/docs/-3523891?type=doc",
+      "hash": "7ac40c2bdcb6e3e096e87b12c6e67d7ae9e15fca9608922d2de7be833c30fa8d",
+      "family": "group-87",
+      "split": "train",
+      "words": 45829,
+      "retainedSequences": 99
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/07-mamuriy-sud-ishlari-kodeksi.doc",
+      "url": "https://lex.uz/docs/-3527353?type=doc",
+      "hash": "7a01c46a3d7fa32beb39262b7b1448b30ba048ecea901597b4940ccaae04154b",
+      "family": "group-148",
+      "split": "train",
+      "words": 31567,
+      "retainedSequences": 219
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/08-mamuriy-javobgarlik-kodeksi.doc",
+      "url": "https://lex.uz/docs/-97664?type=doc",
+      "hash": "32180d503ff97e3e19e8ea15af47f935ddc1ee689b2807f74a4e4bb109dd2c81",
+      "family": "group-113",
+      "split": "train",
+      "words": 62094,
+      "retainedSequences": 53
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/09-bojxona-kodeksi.doc",
+      "url": "https://lex.uz/docs/-2876354?type=doc",
+      "hash": "5f3809403336e16e7594033cc77fdb50e986c8a255456d894df8c816621c88ba",
+      "family": "group-75",
+      "split": "train",
+      "words": 57784,
+      "retainedSequences": 77
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/10-byudjet-kodeksi.doc",
+      "url": "https://lex.uz/docs/-2304138?type=doc",
+      "hash": "70c27bd52198e6a3ec9920e3d343514d6901398c3449bd62015f1e5bee981cc0",
+      "family": "group-9",
+      "split": "test",
+      "words": 29922,
+      "retainedSequences": 165
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/11-soliq-kodeksi.doc",
+      "url": "https://lex.uz/docs/-1286558?type=doc",
+      "hash": "3abd88e1db8f882233ed98199a6596d96b5fea2aabe25963ea3271af64f822a5",
+      "family": "group-57",
+      "split": "train",
+      "words": 76661,
+      "retainedSequences": 54
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/12-shaharsozlik-kodeksi.doc",
+      "url": "https://lex.uz/docs/-46868?type=doc",
+      "hash": "de30441d47246536d9fe9355df96b2c674daacc2b2e43bf1c355ceca15e1ef97",
+      "family": "group-58",
+      "split": "train",
+      "words": 7938,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/13-uy-joy-kodeksi.doc",
+      "url": "https://lex.uz/docs/-106136?type=doc",
+      "hash": "620166888dc2930f50fc3dca4ab1c53e46d13ab54f2a224e55444399aeb330a9",
+      "family": "group-31",
+      "split": "train",
+      "words": 15737,
+      "retainedSequences": 840
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/14-yer-kodeksi.doc",
+      "url": "https://lex.uz/docs/-152653?type=doc",
+      "hash": "4225e247fe9fb8d2eaf54a345f5488e5b6d07d734ac18906c9bd71506792b09e",
+      "family": "group-119",
+      "split": "train",
+      "words": 17787,
+      "retainedSequences": 883
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/15-oila-kodeksi.doc",
+      "url": "https://lex.uz/docs/-104720?type=doc",
+      "hash": "60e5cb5737046096741f52cd080379e9c8679ebf9c695052d4da4431b747c04a",
+      "family": "group-81",
+      "split": "train",
+      "words": 17509,
+      "retainedSequences": 1042
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/16-jinoyat-ijroiya-kodeksi.doc",
+      "url": "https://lex.uz/docs/-163629?type=doc",
+      "hash": "7ef3da6f0d7339ce83416996f011c69aa49ac0710226ff122e12c36297204cfb",
+      "family": "group-147",
+      "split": "train",
+      "words": 18984,
+      "retainedSequences": 841
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/17-mehnat-kodeksi.doc",
+      "url": "https://lex.uz/docs/-142859?type=doc",
+      "hash": "a71493ca5acf839614a090e744cc254ca1930618af45337ce84ea9525bef5c4d",
+      "family": "group-53",
+      "split": "train",
+      "words": 25844,
+      "retainedSequences": 472
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_kodekslar/18-havo-kodeksi.doc",
+      "url": "https://lex.uz/docs/-55594?type=doc",
+      "hash": "2ad5ccb8046e4e1d4504784a012b5b002d4d266092f2e48f1238ec98de6902a7",
+      "family": "group-37",
+      "split": "train",
+      "words": 11254,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3050491.doc",
+      "url": "https://lex.uz/docs/-3050491?type=doc",
+      "hash": "42cd9a8483e8439715457f811061776f2590a11d747b18bc33e1ec099dd8a877",
+      "family": "group-84",
+      "split": "train",
+      "words": 4671,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3107036.doc",
+      "url": "https://lex.uz/docs/-3107036?type=doc",
+      "hash": "3544362c1df6114b991ba7b9ff90cf883aec436e37b811efeea5d52f79a0004c",
+      "family": "group-28",
+      "split": "validation",
+      "words": 29895,
+      "retainedSequences": 511
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3121087.doc",
+      "url": "https://lex.uz/docs/-3121087?type=doc",
+      "hash": "34735e7a5a75878e8015817120422d7b75455138fa97d67627080c99f2745ca3",
+      "family": "group-48",
+      "split": "train",
+      "words": 2963,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3252979.doc",
+      "url": "https://lex.uz/docs/-3252979?type=doc",
+      "hash": "f40d183820bb5fab0525d154ce7e8fef07fbfdeaeecad35d3a69fb96e4af3dde",
+      "family": "group-50",
+      "split": "train",
+      "words": 2040,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3286042.doc",
+      "url": "https://lex.uz/docs/-3286042?type=doc",
+      "hash": "e116d7e484bd443e8c1bc69abfeca489d716fc66407c45b36f832378b7f4b5a3",
+      "family": "group-86",
+      "split": "train",
+      "words": 1918,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3323071.doc",
+      "url": "https://lex.uz/docs/-3323071?type=doc",
+      "hash": "ad8a09d78ac71adde67b5bd745b1fb4e435c102b58c4effbc3977b44b452f01a",
+      "family": "group-90",
+      "split": "train",
+      "words": 2373,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3327998.doc",
+      "url": "https://lex.uz/docs/-3327998?type=doc",
+      "hash": "ce3cc8f73548320dc8023ae365629b433a58d3d3cf1a201cc8e685c29beb1d40",
+      "family": "group-150",
+      "split": "train",
+      "words": 1430,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3432426.doc",
+      "url": "https://lex.uz/docs/-3432426?type=doc",
+      "hash": "316d382662a8fb08d6257d45de9ea80783e38db80015414c84e23ce35c46e395",
+      "family": "group-121",
+      "split": "train",
+      "words": 1234,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3516847.doc",
+      "url": "https://lex.uz/docs/-3516847?type=doc",
+      "hash": "8eee6e55aaa22438be203d2e411aa29bd31d057ccc7d726f894cdac6e9e34efa",
+      "family": "group-131",
+      "split": "train",
+      "words": 20993,
+      "retainedSequences": 780
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3725214.doc",
+      "url": "https://lex.uz/docs/-3725214?type=doc",
+      "hash": "84c813bd0d15372bf02964443bc93970b6439b04698794ce5178e4273c3a5ca7",
+      "family": "group-13",
+      "split": "test",
+      "words": 2689,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3731060.doc",
+      "url": "https://lex.uz/docs/-3731060?type=doc",
+      "hash": "a1f38abebfd02127c9f893fc1f2de2ed6ec8cdfff2ed46451ecc81f037d717d2",
+      "family": "group-142",
+      "split": "train",
+      "words": 2696,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-3735818.doc",
+      "url": "https://lex.uz/docs/-3735818?type=doc",
+      "hash": "01fe7c9c5c8b830914a3de43f6042bb8e2dd95651451da6a2bc4dbbd5cffe8a0",
+      "family": "group-76",
+      "split": "train",
+      "words": 3480,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4166958.doc",
+      "url": "https://lex.uz/docs/-4166958?type=doc",
+      "hash": "9a91e22917bc9c822e9df54f9db083f01823a4db1cb75a5226c04dd9799f7c5a",
+      "family": "group-34",
+      "split": "train",
+      "words": 1875,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4172023.doc",
+      "url": "https://lex.uz/docs/-4172023?type=doc",
+      "hash": "1101a652b8e593220d34c26c09ac3f5e903330a2abd855cbba28fbfd8367a6dd",
+      "family": "group-19",
+      "split": "validation",
+      "words": 2058,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4188795.doc",
+      "url": "https://lex.uz/docs/-4188795?type=doc",
+      "hash": "00b405571dbed9a15300fe57198869379da21da335bcaa4c075945b71d2939dc",
+      "family": "group-82",
+      "split": "train",
+      "words": 1148,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4188851.doc",
+      "url": "https://lex.uz/docs/-4188851?type=doc",
+      "hash": "99ee17672ef2685bb17293e122de502e29d8b1090c3ea2d415a4830f59ee18ea",
+      "family": "group-136",
+      "split": "train",
+      "words": 10584,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4190059.doc",
+      "url": "https://lex.uz/docs/-4190059?type=doc",
+      "hash": "d65b4ca74545b0f37199edfa9eb81b5c34d99b0fcd8611ab64745f965ba203f7",
+      "family": "group-74",
+      "split": "train",
+      "words": 4304,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4192433.doc",
+      "url": "https://lex.uz/docs/-4192433?type=doc",
+      "hash": "9b11269e5891a4b675a6c47717e45dca76abe4d3f2d8346f5fe74db7fc812240",
+      "family": "group-78",
+      "split": "train",
+      "words": 2192,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4199119.doc",
+      "url": "https://lex.uz/docs/-4199119?type=doc",
+      "hash": "027ee75bb4329aa10ca396eadb4a417928ce3210aeec6518ef3f659e043cf18b",
+      "family": "group-8",
+      "split": "test",
+      "words": 2078,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4201081.doc",
+      "url": "https://lex.uz/docs/-4201081?type=doc",
+      "hash": "dec4c01fb88087f79e895ef457f4399fffcda3d3e48f32bf106a92a9f094352d",
+      "family": "group-35",
+      "split": "train",
+      "words": 2845,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_prezident-farmonlari-qarorlari/lexuz-4203364.doc",
+      "url": "https://lex.uz/docs/-4203364?type=doc",
+      "hash": "39b4fe9019d0ce6a675cf89f43383a4feee271b2396cc0de90bbfa716b12e681",
+      "family": "group-106",
+      "split": "train",
+      "words": 3912,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunchilik/lexuz-20596.doc",
+      "url": "https://lex.uz/docs/-20596?type=doc",
+      "hash": "f71e0b004b558419e20df2168cc052b9a69c1c5a9b0a81b1a5ac2dbc73325163",
+      "family": "group-3",
+      "split": "test",
+      "words": 7330,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-1072079.doc",
+      "url": "https://lex.uz/docs/-1072079?type=doc",
+      "hash": "ee7c60fc79d06221af26c0b74b3578ca1a591403bfe0962266fe0d18cdaa8fe2",
+      "family": "group-21",
+      "split": "validation",
+      "words": 5738,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-1633102.doc",
+      "url": "https://lex.uz/docs/-1633102?type=doc",
+      "hash": "5e7e0b2401c2fdb1e75ede324c247415531f5ed6e872987c8f54c60083bb2c07",
+      "family": "group-115",
+      "split": "train",
+      "words": 3561,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-1685726.doc",
+      "url": "https://lex.uz/docs/-1685726?type=doc",
+      "hash": "6e7fad8f75d65aa1f81d84033d031754378f1776bb1c81555d7ac32f4adfa754",
+      "family": "group-124",
+      "split": "train",
+      "words": 6667,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-1876877.doc",
+      "url": "https://lex.uz/docs/-1876877?type=doc",
+      "hash": "cfc9ca83393227e42e993e8a9d3bfd13988fa3f56e7fea220a2e160543049963",
+      "family": "group-64",
+      "split": "train",
+      "words": 8772,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-2374282.doc",
+      "url": "https://lex.uz/docs/-2374282?type=doc",
+      "hash": "fb6f6e03dffd339d4097f8daf7537f3900bfd37a4642b905c6b01a769b048c56",
+      "family": "group-55",
+      "split": "train",
+      "words": 5151,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-2381133.doc",
+      "url": "https://lex.uz/docs/-2381133?type=doc",
+      "hash": "4c2e3c44a7b56e2c4a3974639e93ab76b572bab1b55ebf750bf9acef2e0f6e01",
+      "family": "group-25",
+      "split": "validation",
+      "words": 2750,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-2387357.doc",
+      "url": "https://lex.uz/docs/-2387357?type=doc",
+      "hash": "0a3d04900e4813339e43d968fc5a9bec367c73a7c3a5aa9e7b7f7f19839721ce",
+      "family": "group-51",
+      "split": "train",
+      "words": 5305,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-26477.doc",
+      "url": "https://lex.uz/docs/-26477?type=doc",
+      "hash": "3b29558e43bca9f1f6e55f4264ce3d64db8729104bc7e604ea1c97fea8c617a2",
+      "family": "group-24",
+      "split": "validation",
+      "words": 20160,
+      "retainedSequences": 819
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-3088008.doc",
+      "url": "https://lex.uz/docs/-3088008?type=doc",
+      "hash": "7dbc13fc868f9aabd677f7ce2be9140d62137a41d952e87438c0378513cd90dd",
+      "family": "group-70",
+      "split": "train",
+      "words": 5840,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-3093543.doc",
+      "url": "https://lex.uz/docs/-3093543?type=doc",
+      "hash": "8d281f7a0b5d381315bef02dd6edb7782ea9f2ae487c11bd5e0c2bba52e52be5",
+      "family": "group-70",
+      "split": "train",
+      "words": 4786,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-3153668.doc",
+      "url": "https://lex.uz/docs/-3153668?type=doc",
+      "hash": "15d5d5a7e90d66a383a8a86e21dee36690f9b20862335f2f8ac796eec3f8c8b8",
+      "family": "group-85",
+      "split": "train",
+      "words": 3758,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-3221763.doc",
+      "url": "https://lex.uz/docs/-3221763?type=doc",
+      "hash": "35ddcf74b73f48e27815b15728f9379ca2d55c185993d7b1cc8f4c68bcbf91fa",
+      "family": "group-80",
+      "split": "train",
+      "words": 2366,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-3227588.doc",
+      "url": "https://lex.uz/docs/-3227588?type=doc",
+      "hash": "ec855da14a49b86c1d04818988529be019588c95cfb6e06bfedab048e15c77b0",
+      "family": "group-122",
+      "split": "train",
+      "words": 838,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-4202732.doc",
+      "url": "https://lex.uz/docs/-4202732?type=doc",
+      "hash": "3f397cab4ba164ec740720495cd293b4d9d09eace72a379c643353e0a16c884f",
+      "family": "group-70",
+      "split": "train",
+      "words": 39,
+      "retainedSequences": 47
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-68532.doc",
+      "url": "https://lex.uz/docs/-68532?type=doc",
+      "hash": "63e6721bf050462a18fcc8330c4938804389553cd3aa47fcbebf33740d075a60",
+      "family": "group-105",
+      "split": "train",
+      "words": 5989,
+      "retainedSequences": 1168
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_qonunlar/lexuz-955375.doc",
+      "url": "https://lex.uz/docs/-955375?type=doc",
+      "hash": "f0f5e0b659289063e1420ea3615783f91ae8c7e724a4ca463e8344125dd5641d",
+      "family": "group-7",
+      "split": "test",
+      "words": 29452,
+      "retainedSequences": 240
+    },
+    {
+      "source": "corpus/raw-latin/sud_uz_vazirlar-mahkamasi-qarorlari/lexuz-698065.doc",
+      "url": "https://lex.uz/docs/-698065?type=doc",
+      "hash": "7aae277a143cec6c0d4d5a4bfbddb2a2742d8d6c25bf7e889a073f8b33d5281c",
+      "family": "group-134",
+      "split": "train",
+      "words": 2390,
+      "retainedSequences": 1168
+    }
+  ],
+  "validationCases": 4322,
+  "testCases": 4169,
+  "calibration": [
+    {
+      "probability": 0.15,
+      "margin": 0.0,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 936,
+        "Top3": 1126,
+        "SavedCharacters": 3564,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.21656640444238778,
+        "Top3Rate": 0.26052753354928276,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.3306252207700459,
+        "SimulatedKeystrokesSaved": 0.1111007200972599
+      }
+    },
+    {
+      "probability": 0.15,
+      "margin": 0.05,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 935,
+        "Top3": 1128,
+        "SavedCharacters": 3567,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.21633503007866728,
+        "Top3Rate": 0.2609902822767237,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.33027198869657365,
+        "SimulatedKeystrokesSaved": 0.11119423922192088
+      }
+    },
+    {
+      "probability": 0.15,
+      "margin": 0.1,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 936,
+        "Top3": 1135,
+        "SavedCharacters": 3593,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.21656640444238778,
+        "Top3Rate": 0.26260990282276725,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.3306252207700459,
+        "SimulatedKeystrokesSaved": 0.11200473830231615
+      }
+    },
+    {
+      "probability": 0.25,
+      "margin": 0.0,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 943,
+        "Top3": 1142,
+        "SavedCharacters": 3761,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.2181860249884313,
+        "Top3Rate": 0.2642295233688107,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.3330978452843518,
+        "SimulatedKeystrokesSaved": 0.11724180928333178
+      }
+    },
+    {
+      "probability": 0.25,
+      "margin": 0.05,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 943,
+        "Top3": 1143,
+        "SavedCharacters": 3762,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.2181860249884313,
+        "Top3Rate": 0.26446089773253123,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.3330978452843518,
+        "SimulatedKeystrokesSaved": 0.11727298232488544
+      }
+    },
+    {
+      "probability": 0.25,
+      "margin": 0.1,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 943,
+        "Top3": 1148,
+        "SavedCharacters": 3782,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.2181860249884313,
+        "Top3Rate": 0.26561776955113375,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.3330978452843518,
+        "SimulatedKeystrokesSaved": 0.11789644315595872
+      }
+    },
+    {
+      "probability": 0.4,
+      "margin": 0.0,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 945,
+        "Top3": 1160,
+        "SavedCharacters": 4130,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.21864877371587227,
+        "Top3Rate": 0.26839426191577975,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.33380430943129635,
+        "SimulatedKeystrokesSaved": 0.12874466161663395
+      }
+    },
+    {
+      "probability": 0.4,
+      "margin": 0.05,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 946,
+        "Top3": 1160,
+        "SavedCharacters": 4131,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.21888014807959277,
+        "Top3Rate": 0.26839426191577975,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.3341575415047686,
+        "SimulatedKeystrokesSaved": 0.1287758346581876
+      }
+    },
+    {
+      "probability": 0.4,
+      "margin": 0.1,
+      "evaluation": {
+        "Cases": 4322,
+        "Offered": 2831,
+        "Top1": 946,
+        "Top3": 1160,
+        "SavedCharacters": 4131,
+        "RemainingCharacters": 32079,
+        "Top1Rate": 0.21888014807959277,
+        "Top3Rate": 0.26839426191577975,
+        "Coverage": 0.6550208236927348,
+        "Top1WhenOffered": 0.3341575415047686,
+        "SimulatedKeystrokesSaved": 0.1287758346581876
+      }
+    }
+  ],
+  "selectedThresholds": {
+    "probability": 0.4,
+    "margin": 0.05
+  },
+  "evaluatedRuntimeThresholds": {
+    "probability": 0.4,
+    "margin": 0.0
+  },
+  "metricsDefinition": "Deterministic held-out replay, alternating after-space and two-letter prefixes. Top-k measures exact next word; saved characters subtract one acceptance key and require the complete offered continuation to match. Shared training sentences are excluded. No independent linguistic labels.",
+  "contextual": {
+    "Cases": 4169,
+    "Offered": 2677,
+    "Top1": 897,
+    "Top3": 1098,
+    "SavedCharacters": 3873,
+    "RemainingCharacters": 30718,
+    "Top1Rate": 0.21515951067402256,
+    "Top3Rate": 0.26337251139361956,
+    "Coverage": 0.6421204125689614,
+    "Top1WhenOffered": 0.3350765782592454,
+    "SimulatedKeystrokesSaved": 0.12608242724135685
+  },
+  "dictionaryBaseline": {
+    "Cases": 4169,
+    "Offered": 1331,
+    "Top1": 8,
+    "Top3": 10,
+    "SavedCharacters": 5,
+    "RemainingCharacters": 30718,
+    "Top1Rate": 0.001918925401775006,
+    "Top3Rate": 0.0023986567522187576,
+    "Coverage": 0.31926121372031663,
+    "Top1WhenOffered": 0.006010518407212622,
+    "SimulatedKeystrokesSaved": 0.00016277101373787355
+  },
+  "warmQueryP95Ms": 1.7462,
+  "duringImportQueryP95Ms": 5.3819,
+  "engineManagedBytes": 22108416,
+  "processorCount": 16,
+  "machineMemoryBytes": 16908804096,
+  "elapsedSeconds": 76.7624481,
+  "independentReviewPassed": false,
+  "officeMatrixPassed": false,
+  "releaseStatus": "experimental-awaiting-independent-review-and-office-matrix"
+}

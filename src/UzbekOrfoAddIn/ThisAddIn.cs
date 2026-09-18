@@ -649,6 +649,7 @@ namespace UzbekOrfoAddIn
         {
             try
             {
+                Completion?.ForgetDocument(doc);
                 ClearSpellHighlightsIfFlagged(doc, "close");
             }
             catch (Exception ex)

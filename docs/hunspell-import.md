@@ -44,13 +44,14 @@ are not converted or activated. Counts are recorded in
 imported suffix permission. Engineering regression tests cover these restrictions;
 linguistic review remains separate.
 
-`docs/reference/hunspell_sources.json` preserves all six original files byte for
+`docs/reference/hunspell_sources.json.gz` preserves all six original files byte for
 byte, with SHA-256 checksums. It is a reference/recovery archive only, excluded
 from the add-in's compiled resources and normal build inputs.
 
 Recover all six source files using `eng/restore-hunspell-sources.ps1`. It writes
 to `obj/restored-hunspell` by default and refuses to overwrite existing files.
 Pass the restored paths to the import scripts above for future review.
-`eng/migrate-hunspell-bundle.ps1` creates a bundle from six root-level sources;
-`-RemoveSources` deletes only those exact files after byte-for-byte verification.
+The completed one-time bundle migration script has been retired. The archive is
+compressed to reduce checkout size; the restore command verifies the original
+SHA-256 checksums after decompression.
 The original Cyrillic header count discrepancy is preserved for traceability.

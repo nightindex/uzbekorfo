@@ -12,6 +12,9 @@ Uzbek Orfo is a Microsoft Word VSTO add-in targeting .NET Framework 4.7.2. It is
 ## Source responsibilities
 
 - `Core/` defines service contracts.
+- `Prediction/` implements Word-independent document extraction, encrypted collections,
+  observed phrase statistics, asynchronous ranking and opt-in acceptance preferences.
+  See [MatnAI document prediction](prediction/README.md) for storage, safety and validation boundaries.
 - `Models/` holds application data structures.
 - `Services/` implements spelling, grammar, dictionary, export, settings, and workflow behavior.
 - `Forms/` and `UI/` contain WinForms presentation and controls.

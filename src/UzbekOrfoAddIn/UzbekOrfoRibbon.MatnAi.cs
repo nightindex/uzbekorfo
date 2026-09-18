@@ -30,7 +30,12 @@ namespace UzbekOrfoAddIn
                     else ThisAddIn.Completion?.Dismiss();
                 },
                 () => ThisAddIn.Completion?.ResetLearning(),
-                () => ThisAddIn.Completion?.Rebuild()))
+                () => ThisAddIn.Completion?.Rebuild(),
+                ThisAddIn.Completion == null ? null : new MatnAiCollectionsControl(
+                    ThisAddIn.Completion.Collections, () => ThisAddIn.Completion.ReloadCollections(),
+                    () => ThisAddIn.Completion.GetActiveCollectionIds(), ids => ThisAddIn.Completion.SetActiveCollectionIds(ids),
+                    id => ThisAddIn.Completion.ForgetCollectionLearning(id)),
+                current.MatnAiMetricsConsent, enabled => ThisAddIn.Completion?.SetMetricsEnabled(enabled)))
             {
                 form.ShowDialog();
             }

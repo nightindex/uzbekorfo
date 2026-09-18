@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="../../src/UzbekOrfoAddIn/Data/prediction_casing.json" LogicalName="UzbekOrfoAddIn.Data.prediction_casing.json" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="ScratchPad.NPOI.HWPF" Version="2.5.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <PrivateAssets>all</PrivateAssets>
@@ -15,7 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\TextHelper.cs" Link="Helpers\TextHelper.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Prediction\*.cs" Link="Prediction\%(Filename)%(Extension)" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Core\IPredictionEngine.cs" Link="Core\IPredictionEngine.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Services\WordCompletionEngine.cs" Link="Services\WordCompletionEngine.cs" />
+    <Compile Include="..\..\src\UzbekOrfoAddIn\Services\AppUpdateService.cs" Link="Services\AppUpdateService.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Services\CompletionPreferences.cs" Link="Services\CompletionPreferences.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Services\SettingsManager.cs" Link="Services\SettingsManager.cs" />
     <Compile Include="..\..\src\UzbekOrfoAddIn\Helpers\UzbekStringComparer.cs" Link="Helpers\UzbekStringComparer.cs" />
@@ -46,6 +54,8 @@
     <None Include="..\Corpora\uzbek_morphology_corpus.json" Link="Corpora\uzbek_morphology_corpus.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="../../src/UzbekOrfoAddIn/Data/legal_prediction*.collection.gz" Link="Data/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\Corpora\word97-simple.doc" Link="Corpora\word97-simple.doc"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
     <None Include="..\..\src\UzbekOrfoAddIn\Data\uzbek_suffixes.json" Link="Data\uzbek_suffixes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

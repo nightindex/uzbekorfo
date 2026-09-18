@@ -1,5 +1,7 @@
 # MatnAI Word completion MVP
 
+The original lexical MVP is now extended by [document-based phrase prediction](prediction/README.md). Current corpus evidence and unfinished production gates are in [validation](prediction/validation.md).
+
 Implemented on `feature/matnai-word-completion`. The pre-feature recovery tag is
 `checkpoint/pre-matnai-2026-09-15` (commit `0048ba9`). No separate application or
 new dictionary/morphology runtime was introduced.
@@ -35,11 +37,11 @@ Ctrl+Z reverses an accepted completion in one step.
 
 Automatic completion defaults off. Personal learning requires a separate explicit
 opt-in, even if the historical AutoLearn setting was true. The opt-in store contains
-only accepted words and counts in `%AppData%/UzbekOrfo/matnai_acceptances.tsv`,
-capped at 1,000 entries. No document/context text is collected or transmitted.
-Turning learning off stops collection and use, but retains the file. Reset clears
-the active model, not either dictionary; AtomicFile may retain a local .bak recovery
-copy, as disclosed in the confirmation.
+only accepted words/phrases and counts in the encrypted versioned store under
+`%LocalAppData%/UzbekOrfo/MatnAI`. Older accepted-word preferences migrate when
+learning is enabled. Ordinary typing is not recorded or transmitted. Turning
+learning off stops collection and use while retaining preferences. Reset clears
+acceptance preferences and legacy recovery copies, not document collections or dictionaries.
 
 ## Implementation boundaries
 
@@ -55,7 +57,8 @@ copy, as disclosed in the confirmation.
 - The displayed word stays first while the user continues typing that same word.
   New predictions honor optional acceptance counts, then favor continuations of two
   or more letters before shorter completions. A remaining single letter can still
-  complete the displayed word. There is no trained contextual or sentence model.
+  complete the displayed word. The new document-collection engine also ranks observed
+  contextual phrases; it is statistical, not neural sentence generation.
 - A click-through layered ghost window follows the caret without modifying the document.
   Down opens a compact, non-activating alternatives popup with accessible list items and
   stale-action rejection. Both overlays use the Word window's DPI context and the caret's

@@ -1,0 +1,100 @@
+{
+  "schema": "matnai-pilot-evaluation-v1",
+  "generatedUtc": "2026-09-17T05:20:41.4517685Z",
+  "script": "Cyrillic",
+  "policy": "After-space next-word support >=2, probability >=0.4, lead over runner-up >=0.1. Applies before acceptance boosts; prefix behavior unchanged.",
+  "validationAfterSpace": {
+    "legacy": {
+      "Cases": 1350,
+      "Offered": 1082,
+      "Top1": 199,
+      "Top3": 280,
+      "SavedCharacters": 1052,
+      "RemainingCharacters": 10786,
+      "Top1Rate": 0.1474074074074074,
+      "Top3Rate": 0.2074074074074074,
+      "Coverage": 0.8014814814814815,
+      "Top1WhenOffered": 0.18391866913123844,
+      "SimulatedKeystrokesSaved": 0.09753384016317448
+    },
+    "selective": {
+      "Cases": 1350,
+      "Offered": 625,
+      "Top1": 157,
+      "Top3": 159,
+      "SavedCharacters": 851,
+      "RemainingCharacters": 10786,
+      "Top1Rate": 0.1162962962962963,
+      "Top3Rate": 0.11777777777777777,
+      "Coverage": 0.46296296296296297,
+      "Top1WhenOffered": 0.2512,
+      "SimulatedKeystrokesSaved": 0.07889857222325236
+    }
+  },
+  "testAfterSpace": {
+    "legacy": {
+      "Cases": 900,
+      "Offered": 750,
+      "Top1": 161,
+      "Top3": 217,
+      "SavedCharacters": 894,
+      "RemainingCharacters": 7194,
+      "Top1Rate": 0.17888888888888888,
+      "Top3Rate": 0.2411111111111111,
+      "Coverage": 0.8333333333333334,
+      "Top1WhenOffered": 0.21466666666666667,
+      "SimulatedKeystrokesSaved": 0.12427022518765637
+    },
+    "selective": {
+      "Cases": 900,
+      "Offered": 475,
+      "Top1": 144,
+      "Top3": 146,
+      "SavedCharacters": 819,
+      "RemainingCharacters": 7194,
+      "Top1Rate": 0.16,
+      "Top3Rate": 0.1622222222222222,
+      "Coverage": 0.5277777777777778,
+      "Top1WhenOffered": 0.3031578947368421,
+      "SimulatedKeystrokesSaved": 0.11384487072560467
+    }
+  },
+  "testPrefix": {
+    "legacy": {
+      "Cases": 600,
+      "Offered": 600,
+      "Top1": 249,
+      "Top3": 323,
+      "SavedCharacters": 859,
+      "RemainingCharacters": 3586,
+      "Top1Rate": 0.415,
+      "Top3Rate": 0.5383333333333333,
+      "Coverage": 1.0,
+      "Top1WhenOffered": 0.415,
+      "SimulatedKeystrokesSaved": 0.23954266592303403
+    },
+    "selective": {
+      "Cases": 600,
+      "Offered": 600,
+      "Top1": 249,
+      "Top3": 323,
+      "SavedCharacters": 859,
+      "RemainingCharacters": 3586,
+      "Top1Rate": 0.415,
+      "Top3Rate": 0.5383333333333333,
+      "Coverage": 1.0,
+      "Top1WhenOffered": 0.415,
+      "SimulatedKeystrokesSaved": 0.23954266592303403
+    }
+  },
+  "combinedModels": {
+    "retainedModelsAndIndexBytes": 108452128,
+    "retainedIndexOnlyBytes": 39877192,
+    "warmQueryP95Ms": 0.5996,
+    "processorCount": 16,
+    "machineMemoryBytes": 16908804096,
+    "scope": ".NET 8 managed retained source models plus both phrase indexes, four query smoke workload. Excludes Word, dictionary, private collections, import and peak allocation. Not the reference PC or end-to-end typing latency."
+  },
+  "notes": "Same grouped split and normalized replay for both policies. Exact match is not human usefulness. Training-only engine for replay; all-source packaged engines for performance. No review records or model files overwritten.",
+  "independentReviewPassed": false
+}

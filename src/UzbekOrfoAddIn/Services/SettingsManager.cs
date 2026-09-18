@@ -42,6 +42,7 @@ namespace UzbekOrfoAddIn.Services
         /// <summary>Path to the prediction model JSON file.</summary>
         public string PredictionModelPath => Path.Combine(AppDataDir, "prediction_model.json");
         public string MatnAiPreferencesPath => Path.Combine(AppDataDir, "matnai_acceptances.tsv");
+        public bool MatnAiMetricsConsent { get; set; }
 
         /// <summary>Path to the frequency seed JSON file used by suggestion ranking.</summary>
         public string FrequencySeedPath => Path.Combine(AppDataDir, "uzbek_freq_seed.json");
@@ -201,6 +202,9 @@ namespace UzbekOrfoAddIn.Services
                         case "MatnAiLearningConsent":
                             MatnAiLearningConsent = ParseBool(value, false);
                             break;
+                        case "MatnAiMetricsConsent":
+                            MatnAiMetricsConsent = ParseBool(value, false);
+                            break;
                         case "LanguageModelEnabled":
                             LanguageModelEnabled = ParseBool(value, LanguageModelEnabled);
                             break;
@@ -244,6 +248,7 @@ namespace UzbekOrfoAddIn.Services
                     $"MinPredictionLength={MinPredictionLength}",
                     $"AutoLearn={AutoLearn}",
                     $"MatnAiLearningConsent={MatnAiLearningConsent}",
+                    $"MatnAiMetricsConsent={MatnAiMetricsConsent}",
                     $"LanguageModelEnabled={LanguageModelEnabled}",
                     $"PreferredScript={PreferredScript}",
                     $"PredictionSensitivity={PredictionSensitivity.ToString(System.Globalization.CultureInfo.InvariantCulture)}",

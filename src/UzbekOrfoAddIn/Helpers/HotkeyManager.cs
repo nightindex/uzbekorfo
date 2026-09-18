@@ -37,6 +37,8 @@ namespace UzbekOrfoAddIn.Helpers
         private static uint _threadId;
         private static Control _dispatcher;
         private static bool _executing;
+        // Observers must perform no COM calls and must never consume the key.
+        public static event Action<Keys> KeyObserved;
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern IntPtr SetWindowsHookEx(int hook, KeyboardProc callback, IntPtr module, uint threadId);
@@ -122,6 +124,7 @@ namespace UzbekOrfoAddIn.Helpers
                 else
                 {
                     bool repeat = (flags & 0x40000000L) != 0;
+                    if (!repeat && IsForegroundWordWindow()) KeyObserved?.Invoke(key | Control.ModifierKeys);
                     if (repeat && ConsumedKeys.Contains(key)) return new IntPtr(1);
                     // Focus may have moved to another process before the previous
                     // key-up reached this thread. A new press starts a fresh cycle.

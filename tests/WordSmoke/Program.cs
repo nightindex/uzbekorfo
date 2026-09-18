@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using UzbekOrfoAddIn.Helpers;
 using UzbekOrfoAddIn.Models;
 using UzbekOrfoAddIn.Services;
+using UzbekOrfoAddIn.Prediction;
 using Word = Microsoft.Office.Interop.Word;
 
 internal static class Program
@@ -33,11 +34,45 @@ internal static class Program
             var a = app.Documents.Add(); documents.Add(a);
             if (args.Contains("--visual-ghost"))
             {
-                GhostVisualChecks.Run(app, a);
+                // Standalone harness has no Office DPI policy. Match physical-pixel
+                // overlay coordinates for native visibility checks and screen capture.
+                using ((IDisposable)Activator.CreateInstance(typeof(WordCompletionContext).Assembly
+                    .GetType("UzbekOrfoAddIn.UI.DpiLayout+Context", true), true))
+                    GhostVisualChecks.Run(app, a);
                 return 0;
             }
             var b = app.Documents.Add(); documents.Add(b);
             a.Activate();
+            a.Content.Text = "Ўзбекистон ";
+            Require(PredictionCasing.Apply("Ўзбекистон ", "", "республикаси") == "Республикаси",
+                "Packaged prediction casing data capitalizes the official country name");
+            a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+            using (var previous = WordCompletionContext.Capture(app, false))
+            {
+                a.Range(a.Content.End - 1, a.Content.End - 1).InsertAfter("Ре");
+                a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+                using (var current = WordCompletionContext.Capture(app, false))
+                {
+                    string continued;
+                    Require(previous.TryContinueSuggestion(current, "Республикаси қонуни", out continued) && continued == "Республикаси қонуни",
+                        "Ghost continuation advances through matching letters without a new prediction");
+                }
+                a.Range(a.Content.End - 1, a.Content.End - 1).InsertAfter("спубликаси ");
+                a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+                using (var current = WordCompletionContext.Capture(app, false))
+                {
+                    string continued;
+                    Require(previous.TryContinueSuggestion(current, "Республикаси қонуни", out continued) && continued == "қонуни",
+                        "Stable ghost phrase continues across a completed word and space");
+                }
+                a.Range(0, 10).Text = "Қозоғистон";
+                a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+                using (var current = WordCompletionContext.Capture(app, false))
+                {
+                    string continued;
+                    Require(!previous.TryContinueSuggestion(current, "Республикаси қонуни", out continued), "Changed surrounding text invalidates retained ghost");
+                }
+            }
             a.Content.Text = "kit";
             a.Range(3, 3).Select();
             using (var completion = WordCompletionContext.Capture(app, false))
@@ -69,6 +104,32 @@ internal static class Program
             a.TrackRevisions = false;
             a.Range(0, 2).Select();
             Require(WordCompletionContext.Capture(app, false) == null, "MatnAi suppresses selected text");
+            a.Content.Text = "Суд томонидан ";
+            a.Range(14, 14).Select();
+            using (var phrase = WordCompletionContext.Capture(app, false))
+            {
+                Require(phrase != null && phrase.Prefix == "", "Phrase context can start after a space");
+                Require(phrase.TryInsert(app, "қарор қабул қилинди", false), "Explicit phrase acceptance inserts a complete continuation");
+                Require(a.Content.Text.TrimEnd('\r') == "Суд томонидан қарор қабул қилинди", "Phrase leaves preceding context intact");
+                a.Undo(); Require(a.Content.Text.TrimEnd('\r') == "Суд томонидан ", "Whole phrase undoes in one step");
+            }
+            a.Content.Text = "Sud tomonidan qa"; a.Range(16, 16).Select();
+            using (var stalePhrase = WordCompletionContext.Capture(app, false))
+            {
+                a.Range(0, 3).Text = "Kim"; a.Range(16, 16).Select();
+                Require(!stalePhrase.TryInsert(app, "qaror qabul qilindi", false), "Changed preceding context rejects a stale phrase even when prefix and caret match");
+            }
+            a.Content.Text = string.Concat(Enumerable.Repeat("kitob ", 100000)) + "qa";
+            a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+            var captureTimes = new List<double>();
+            for (int i = 0; i < 100; i++)
+            {
+                var timer = Stopwatch.StartNew();
+                using (var large = WordCompletionContext.Capture(app, false))
+                    Require(large != null && large.PrecedingContext.Length <= 512, "Large-document capture stays bounded");
+                captureTimes.Add(timer.Elapsed.TotalMilliseconds);
+            }
+            captureTimes.Sort(); Console.WriteLine("MEASURE: 100,000-word context capture p95=" + captureTimes[94].ToString("F2") + "ms");
             a.Content.Text = "x kiotb end";
             b.Content.Text = "x other end";
             var error = MakeError(a.Range(2, 7));
@@ -212,9 +273,16 @@ internal static class Program
             var completionSettings = new SettingsManager(Path.Combine(temporaryDirectory, "matnai-settings"));
             File.Copy(Path.Combine(dataDirectory, "uzbek_suffixes.json"), completionSettings.SuffixesPath);
             using (var completionAutoCorrect = new AutoCorrectService(spelling, dictionary))
-            using (var controller = new WordCompletionController(app, completionSettings, dictionary, completionAutoCorrect, morphology))
+            using (var controller = new WordCompletionController(app, completionSettings, dictionary, completionAutoCorrect, morphology,
+                new CollectionStore(Path.Combine(temporaryDirectory, "prediction-collections"))))
             {
                 completionAutoCorrect.Initialize(app);
+                a.Activate(); controller.SetActiveCollectionIds(new[] { "test-private" });
+                Require(controller.GetActiveCollectionIds().SequenceEqual(new[] { "test-private" }), "Collections enabled for current document session");
+                var isolation = app.Documents.Add(); documents.Add(isolation);
+                Require(controller.GetActiveCollectionIds().Length == 0, "New document does not inherit private collections");
+                a.Activate(); controller.ForgetDocument(a);
+                Require(controller.GetActiveCollectionIds().Length == 0, "Closing/resetting a document clears collection selection");
                 Require(!controller.IsEnabled && !completionSettings.MatnAiLearningConsent,
                     "MatnAi defaults off without learning consent");
                 controller.SetEnabled(true);

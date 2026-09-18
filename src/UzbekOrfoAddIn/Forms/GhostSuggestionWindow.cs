@@ -70,6 +70,9 @@ namespace UzbekOrfoAddIn.Forms
         private int _dpi;
         private bool _darkBackground;
         private float _textCellHeight;
+        private string _requestedTail;
+        private int _availableWidth;
+        internal int RenderCount { get; private set; }
 
         protected override bool ShowWithoutActivation => true;
         protected override CreateParams CreateParams
@@ -100,7 +103,9 @@ namespace UzbekOrfoAddIn.Forms
                 return false;
             }
 
-            bool sameVisual = Visible && string.Equals(tail, SuggestionTail, StringComparison.Ordinal) &&
+            int available = Math.Min(anchor.WorkArea.Right, anchor.TextRight) - anchor.CaretBounds.Right - ScreenGeometry.Scale(5, anchor.Dpi);
+            string requestedTail = tail;
+            bool sameVisual = Visible && available == _availableWidth && string.Equals(tail, _requestedTail, StringComparison.Ordinal) &&
                 string.Equals(anchor.FontName, _fontName, StringComparison.OrdinalIgnoreCase) &&
                 Math.Abs(anchor.FontSizePoints - _fontSizePoints) < 0.01f &&
                 anchor.FontStyle == _fontStyle && anchor.Dpi == _dpi &&
@@ -113,7 +118,7 @@ namespace UzbekOrfoAddIn.Forms
                     Hide();
                     return false;
                 }
-                OverlayPositioner.MovePhysical(this, moved, anchor.OwnerHandle);
+                if (moved != PresentationBounds) OverlayPositioner.MovePhysical(this, moved, anchor.OwnerHandle);
                 PresentationBounds = moved;
                 return true;
             }
@@ -125,6 +130,12 @@ namespace UzbekOrfoAddIn.Forms
             {
                 graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
                 format.FormatFlags |= StringFormatFlags.NoWrap | StringFormatFlags.MeasureTrailingSpaces;
+                while (graphics.MeasureString(tail, font, int.MaxValue, format).Width > available)
+                {
+                    int space = tail.LastIndexOf(' ');
+                    if (space <= 0) { Hide(); return false; }
+                    tail = tail.Substring(0, space);
+                }
                 SizeF measured = graphics.MeasureString(tail, font, int.MaxValue, format);
                 int width = Math.Max(2, (int)Math.Ceiling(measured.Width) + ScreenGeometry.Scale(5, anchor.Dpi));
                 float cellHeight = font.Size * (font.FontFamily.GetCellAscent(font.Style) +
@@ -141,10 +152,9 @@ namespace UzbekOrfoAddIn.Forms
                 using (new DpiLayout.Context(DpiLayout.WindowContext(anchor.OwnerHandle)))
                 {
                     if (!IsHandleCreated) { var unused = Handle; }
-                    if (!Visible)
-                    {
-                        if (owner == null) Show(); else Show(owner);
-                    }
+                    // WinForms can reset a layered surface while showing its HWND.
+                    // Show first, then publish pixels and position together below.
+                    if (!Visible) { if (owner == null) Show(); else Show(owner); }
                 }
 
                 Color color = anchor.DarkBackground
@@ -155,6 +165,10 @@ namespace UzbekOrfoAddIn.Forms
                     Hide();
                     return false;
                 }
+                RenderCount++;
+                OverlayPositioner.RaiseWithoutActivation(this, anchor.OwnerHandle);
+                _requestedTail = requestedTail;
+                _availableWidth = available;
                 SuggestionTail = tail;
                 PresentationBounds = bounds;
                 _fontName = anchor.FontName;

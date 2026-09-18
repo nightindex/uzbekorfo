@@ -64,11 +64,24 @@
     <CreateDesktopShortcut>false</CreateDesktopShortcut>
   </PropertyGroup>
   <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 (x86 and x64)</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.VSTORuntime.4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft Visual Studio 2010 Tools for Office Runtime %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="ScratchPad.NPOI.HWPF" Version="2.5.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <EmbeddedResource Include="Data\legal_prediction.collection.gz" />
+    <EmbeddedResource Include="Data\legal_prediction_latin.collection.gz" />
+    <EmbeddedResource Include="Data\prediction_casing.json" />
   </ItemGroup>
   <PropertyGroup>
     <!--
@@ -131,6 +144,9 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -267,6 +283,8 @@
     <Compile Include="Core\IExplanationProvider.cs" />
     <Compile Include="Core\IGrammarEngine.cs" />
     <Compile Include="Core\IPredictionEngine.cs" />
+    <Compile Include="Prediction\*.cs" />
+    <Compile Include="Forms\MatnAiCollectionsControl.cs"><SubType>UserControl</SubType></Compile>
     <Compile Include="Core\ISuggestionRanker.cs" />
     <!-- Models -->
     <Compile Include="Models\AutoCorrectDecision.cs" />
@@ -321,6 +339,7 @@
     <Compile Include="Services\SpecialCharactersWorkflowService.cs" />
     <Compile Include="Services\UzbekApostropheService.cs" />
     <Compile Include="Services\ExplanationProvider.cs" />
+    <Compile Include="Services\AppUpdateService.cs" />
     <Compile Include="Services\ExportService.cs" />
     <Compile Include="Services\UzbekSuffixParser.cs" />
     <Compile Include="Services\MorphologyRuleSetLoader.cs" />
