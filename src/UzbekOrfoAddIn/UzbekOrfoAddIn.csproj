@@ -509,6 +509,10 @@
   <!-- Include additional build rules for an Office application add-in. -->
   <Import Project="$(VSToolsPath)\OfficeTools\Microsoft.VisualStudio.Tools.Office.targets" Condition="'$(VSToolsPath)' != '' and Exists('$(VSToolsPath)\OfficeTools\Microsoft.VisualStudio.Tools.Office.targets')" />
   <PropertyGroup>
+    <!-- A direct Compile target must embed the ribbon and data resources too. -->
+    <CompileDependsOn>PrepareResources;$(CompileDependsOn)</CompileDependsOn>
+  </PropertyGroup>
+  <PropertyGroup>
     <!-- JSON is the canonical bundled dictionary. The DIC resource is generated from it. -->
     <DictionaryDataDirectory>$(MSBuildProjectDirectory)\Data</DictionaryDataDirectory>
     <DictionaryGenerator>$(MSBuildProjectDirectory)\..\..\eng\sync-dictionary-data.ps1</DictionaryGenerator>
