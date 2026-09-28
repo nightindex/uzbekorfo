@@ -56,7 +56,7 @@ Private data lives in `%LocalAppData%/UzbekOrfo/MatnAI`:
 
 - `<id>.private.gz.dpapi`: source references, hashes, derived vocabulary and phrase counts; no copied source documents. Recovery copies use `.bak`.
 - `acceptances-v2.bin`: encrypted collection-scoped accepted words/phrases and counts. The previous `%AppData%/UzbekOrfo/matnai_acceptances.tsv` preferences migrate when learning is enabled; reset removes that legacy file and its backup to prevent reimport.
-- `metrics-v1.tsv`: optional local session aggregate counts and latency buckets, with no document text. Nothing is transmitted. Keyboard-based immediate-Undo tracking covers Ctrl+Z within five seconds when the previous context is restored; it does not cover every Ribbon Undo path.
+- `metrics-v1.tsv`: optional local session aggregate counts and latency buckets, with no document text. Key-to-ghost buckets include the polling delay for observed editing keys; mouse, menu and some IME edits have no such sample. Nothing is transmitted. Keyboard-based immediate-Undo tracking covers Ctrl+Z within five seconds when the previous context is restored; it does not cover every Ribbon Undo path.
 
 Derived phrases can contain confidential information: encryption does not anonymize them. Import only documents the user is authorized to process. Windows user-bound encryption is not portable to another account/machine by copying the payload alone.
 

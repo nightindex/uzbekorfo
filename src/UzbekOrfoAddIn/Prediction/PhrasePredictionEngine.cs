@@ -9,6 +9,8 @@ using UzbekOrfoAddIn.Models;
 
 namespace UzbekOrfoAddIn.Prediction
 {
+    internal enum PredictionRankingPolicy { Current, AccuracyCandidate }
+
     /// <summary>
     /// A detached, immutable corpus snapshot. Replace the engine when collections change.
     /// Acceptance counts come from a detached request snapshot and are collection-scoped.
@@ -20,15 +22,27 @@ namespace UzbekOrfoAddIn.Prediction
         private readonly double _minimumProbability;
         private readonly double _minimumMargin;
         private readonly bool _selectiveNextWord;
+        private readonly PredictionRankingPolicy _rankingPolicy;
+        private readonly double _afterSpaceProbability;
+        private readonly double _afterSpaceMargin;
 
         // Phrase thresholds: corpus-report.json. Additional after-space pilot
         // selectivity policy and its coverage tradeoff: docs/prediction/pilot.md.
         public PhrasePredictionEngine(IEnumerable<PredictionCollection> collections, double minimumProbability = 0.4, double minimumMargin = 0.0,
             bool selectiveNextWord = true)
+            : this(collections, minimumProbability, minimumMargin, selectiveNextWord,
+                PredictionRankingPolicy.Current, 0.4, 0.1) { }
+
+        internal PhrasePredictionEngine(IEnumerable<PredictionCollection> collections, double minimumProbability,
+            double minimumMargin, bool selectiveNextWord, PredictionRankingPolicy rankingPolicy,
+            double afterSpaceProbability, double afterSpaceMargin)
         {
             _minimumProbability = minimumProbability;
             _minimumMargin = minimumMargin;
             _selectiveNextWord = selectiveNextWord;
+            _rankingPolicy = rankingPolicy;
+            _afterSpaceProbability = afterSpaceProbability;
+            _afterSpaceMargin = afterSpaceMargin;
             _collections = new Dictionary<string, Dictionary<string, Entry[]>>(StringComparer.Ordinal);
             // Local to this snapshot: never intern private text in the process-wide
             // string pool, where it could survive removal of a collection.
@@ -163,7 +177,8 @@ namespace UzbekOrfoAddIn.Prediction
                         string firstWord = item.Key.Split(' ')[0];
                         double firstSupport;
                         if (!nextWords.TryGetValue(firstWord, out firstSupport) || firstSupport < 2 ||
-                            firstSupport / total < 0.4 || (firstSupport - second) / total < 0.1) continue;
+                            firstSupport / total < _afterSpaceProbability ||
+                            (firstSupport - second) / total < _afterSpaceMargin) continue;
                     }
                     if (item.Value.WordCount > 1 && (support / total < _minimumProbability || (best - second) / total < _minimumMargin)) continue;
                     double boost = 0;
@@ -180,8 +195,19 @@ namespace UzbekOrfoAddIn.Prediction
                     if (request.Prefix.Count(char.IsLetter) > 1 && request.Prefix.Where(char.IsLetter).All(char.IsUpper)) tail = tail.ToUpperInvariant();
                     string display = PredictionCasing.Apply(request.PrecedingContext, request.Prefix, request.Prefix + tail);
                     tail = display.Substring(request.Prefix.Length);
-                    double score = size * 100 + Math.Min(20, Math.Log(1.0 + support) * 2)
-                        + item.Value.WordCount + boost;
+                    double probability = 0;
+                    if (_rankingPolicy == PredictionRankingPolicy.AccuracyCandidate)
+                    {
+                        double firstSupportForScore;
+                        nextWords.TryGetValue(item.Key.Split(' ')[0], out firstSupportForScore);
+                        probability = firstSupportForScore / total;
+                    }
+                    double score = _rankingPolicy == PredictionRankingPolicy.AccuracyCandidate
+                        ? (prefix.Length == 0 ? probability * 100 + size * 8 + Math.Log(1.0 + support) * 5
+                            : probability * 50 + size * 30 + Math.Log(1.0 + support) * 2)
+                            - (item.Value.WordCount - 1) * 3 + boost
+                        : size * 100 + Math.Min(20, Math.Log(1.0 + support) * 2)
+                            + item.Value.WordCount + boost;
                     candidates.Add(item.Key, new PredictionCandidate(tail, request.Prefix + tail, score, support, size, request.RequestId,
                         item.Value.Provenance.OrderBy(p => p.CollectionId, StringComparer.Ordinal)
                             .ThenBy(p => p.SourcePath, StringComparer.Ordinal)));

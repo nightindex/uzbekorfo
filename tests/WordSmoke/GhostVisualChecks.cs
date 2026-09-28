@@ -97,6 +97,7 @@ internal static class GhostVisualChecks
             document.Activate();
             WaitForVisibleWord(app);
             foreach (string font in new[] { "Arial", "Calibri", "Times New Roman" })
+            foreach (float pointSize in new[] { 9f, 14f, 24f })
             foreach (int zoom in new[] { 100, 150 })
             foreach (string prefix in new[] { "Сал", "Sal" })
             foreach (bool useFallback in new[] { false, true })
@@ -104,7 +105,7 @@ internal static class GhostVisualChecks
                 document.TrackRevisions = false;
                 document.Content.Text = prefix;
                 document.Content.Font.Name = font;
-                document.Content.Font.Size = 14;
+                document.Content.Font.Size = pointSize;
                 app.ActiveWindow.View.Zoom.Percentage = zoom;
                 document.Range(prefix.Length, prefix.Length).Select();
                 app.ActiveWindow.ScrollIntoView(app.Selection.Range);
@@ -134,7 +135,7 @@ internal static class GhostVisualChecks
                         app.ActiveWindow.GetPoint(out cx, out cy, out cw, out ch, document.Range(3, 3));
                         anchor = positioner.GetMethod("CreateAnchor", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null,
                             new object[] { new Rectangle(cx, py, 1, ph), new IntPtr(app.ActiveWindow.Hwnd),
-                                font, 14f * zoom / 100f, FontStyle.Regular });
+                                font, pointSize * zoom / 100f, FontStyle.Regular });
                         anchor = positioner.GetMethod("WithTextHeight", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null,
                             new[] { anchor });
                     }
@@ -149,7 +150,7 @@ internal static class GhostVisualChecks
                         "; visible=" + ghost.Visible + "; owner=" + GetWindow(ghost.Handle, 4) + "; Word=" + app.ActiveWindow.Hwnd +
                         "; dpi=" + GetDpiForWindow(ghost.Handle) + "; WordDpi=" + GetDpiForWindow(new IntPtr(app.ActiveWindow.Hwnd)));
                     var crop = new Rectangle(bounds.Left, bounds.Top - 40, bounds.Width + 16, bounds.Height + 80);
-                    string name = font.Replace(" ", "-") + "-" + zoom + "-" + (prefix == "Сал" ? "Cyrl" : "Latin") +
+                    string name = font.Replace(" ", "-") + "-" + pointSize + "pt-" + zoom + "-" + (prefix == "Сал" ? "Cyrl" : "Latin") +
                         (useFallback ? "-fallback" : "-caret");
                     int wordX, wordY, wordWidth, wordHeight;
                     app.ActiveWindow.GetPoint(out wordX, out wordY, out wordWidth, out wordHeight, document.Range(0, 3));
@@ -180,7 +181,29 @@ internal static class GhostVisualChecks
                 }
             }
         }
-        Console.WriteLine("PASS: ghost baseline and font size match accepted Word text in Latin/Cyrillic, three fonts, 100%/150% zoom.");
+        document.TrackRevisions = false;
+        document.Content.Text = "Sal";
+        document.Content.Font.Name = "Calibri";
+        document.Content.Font.Size = 14;
+        app.ActiveWindow.View.Zoom.Percentage = 100;
+        document.Range(3, 3).Select();
+        app.Selection.Font.Size = 24;
+        using (var context = WordCompletionContext.Capture(app, false))
+        {
+            if (context == null) throw new InvalidOperationException("Cannot capture changed insertion formatting.");
+            var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            object anchor = getAnchor.Invoke(context, new object[] { app });
+            float size = (float)anchor.GetType().GetProperty("FontSizePoints", flags).GetValue(anchor);
+            if (Math.Abs(size - 24f) > 0.01f)
+                throw new InvalidOperationException("Ghost font must use the current typing size after a caret-only format change.");
+            var matches = typeof(WordCompletionContext).GetMethod("MatchesPresentationFormatting", flags);
+            if (!(bool)matches.Invoke(context, new[] { app, anchor }))
+                throw new InvalidOperationException("Current typing format must match the displayed ghost.");
+            app.Selection.Font.Size = 18;
+            if ((bool)matches.Invoke(context, new[] { app, anchor }))
+                throw new InvalidOperationException("A caret-only font change must invalidate the displayed ghost font.");
+        }
+        Console.WriteLine("PASS: ghost baseline and font size match accepted Word text in Latin/Cyrillic, three fonts, three sizes, 100%/150% zoom.");
     }
 
     private static Bitmap Capture(Word.Application app, Rectangle crop)

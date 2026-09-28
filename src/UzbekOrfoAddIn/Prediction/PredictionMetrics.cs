@@ -25,6 +25,12 @@ namespace UzbekOrfoAddIn.Prediction
             Count(milliseconds <= 50 ? "latency_le_50ms" : milliseconds <= 100 ? "latency_le_100ms" :
                 milliseconds <= 150 ? "latency_le_150ms" : "latency_gt_150ms");
         }
+        public void KeyToGhostLatency(long milliseconds)
+        {
+            if (!Enabled) return;
+            Count(milliseconds <= 50 ? "key_to_ghost_le_50ms" : milliseconds <= 100 ? "key_to_ghost_le_100ms" :
+                milliseconds <= 150 ? "key_to_ghost_le_150ms" : "key_to_ghost_gt_150ms");
+        }
         public void Save()
         {
             if (!Enabled) return;

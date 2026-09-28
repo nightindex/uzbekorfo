@@ -111,7 +111,9 @@ Limitations:
 
 - Edits and caret moves are combined; they are not necessarily rejections.
 - Immediate Undo covers detected Ctrl+Z within five seconds, not all Undo paths.
-- Latency buckets begin at detected context change, excluding polling delay.
+- Legacy latency buckets begin at detected context change and exclude polling delay.
+- Key-to-ghost buckets begin at an observed editing key and include polling delay.
+  Mouse, menu and some IME edits have no key-to-ghost sample.
 - Counters alone cannot measure task time, legal correctness or cognitive load.
 - Older snapshots may contain dismissal counts from automatic cleanup; do not mix
   those with sessions collected by this version. Record the tested build separately.

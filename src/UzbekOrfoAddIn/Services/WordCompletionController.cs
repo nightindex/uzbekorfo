@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -10,6 +11,7 @@ using UzbekOrfoAddIn.Forms;
 using UzbekOrfoAddIn.Helpers;
 using UzbekOrfoAddIn.Prediction;
 using UzbekOrfoAddIn.Models;
+using UzbekOrfoAddIn.UI;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace UzbekOrfoAddIn.Services
@@ -25,6 +27,13 @@ namespace UzbekOrfoAddIn.Services
         private readonly PredictionMetrics _metrics;
         private readonly Stopwatch _latency = new Stopwatch();
         private long _lastAcceptTimestamp;
+        private long _lastPresentationTimestamp;
+        private long _lastContextSnapshotTimestamp;
+        private long _lastTextEditTimestamp;
+        private long _predictionKeyStart;
+        private Rectangle _lastCaretBounds;
+        private OverlayAnchor _lastPresentationAnchor;
+        private bool _inputSinceSnapshot;
         private bool _undoPending;
         private WordCompletionContext _beforeAcceptance;
         public CollectionStore Collections { get; }
@@ -36,7 +45,8 @@ namespace UzbekOrfoAddIn.Services
         private long _nextRequest;
         private string _displayedCompletion;
         private Dictionary<string, string> _provenance = new Dictionary<string, string>(StringComparer.Ordinal);
-        private readonly System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer { Interval = 40 };
+        // Poll for edits without monopolizing Word's UI thread while typing.
+        private readonly System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer { Interval = 100 };
         private readonly CompletionPopup _popup = new CompletionPopup();
         private readonly GhostSuggestionWindow _ghost = new GhostSuggestionWindow();
         private readonly Control _dispatcher = new Control();
@@ -53,10 +63,10 @@ namespace UzbekOrfoAddIn.Services
         public bool PopupVisible => !_disposed && _popup.Visible;
         public bool GhostVisible => !_disposed && _ghost.Visible;
         public bool SuggestionVisible => PopupVisible || GhostVisible;
-        public bool CanHandleKeys => SuggestionVisible && HasCurrentEditingFocus();
-        public bool CanAcceptSuggestion => SuggestionVisible && HasCurrentEditingFocus();
-        public bool CanOpenAlternatives => SuggestionVisible && _shown.Length > 0 && HasCurrentEditingFocus();
-        public bool CanNavigateAlternatives => PopupVisible && HasCurrentEditingFocus();
+        public bool CanHandleKeys => SuggestionVisible && !_inputSinceSnapshot && HasCurrentEditingFocus();
+        public bool CanAcceptSuggestion => SuggestionVisible && !_inputSinceSnapshot && HasCurrentEditingFocus();
+        public bool CanOpenAlternatives => SuggestionVisible && !_inputSinceSnapshot && _shown.Length > 0 && HasCurrentEditingFocus();
+        public bool CanNavigateAlternatives => PopupVisible && !_inputSinceSnapshot && HasCurrentEditingFocus();
         public bool IsReady => _engine != null;
         public bool IsEnabled => _settings.PredictionsEnabled;
 
@@ -111,11 +121,39 @@ namespace UzbekOrfoAddIn.Services
 
         private void OnKeyObserved(Keys key)
         {
+            // The keyboard hook runs before Word applies the key. A suggestion is
+            // unverified until the next Word snapshot, so Tab must pass through.
+            Keys code = key & Keys.KeyCode;
+            bool suggestionKey = SuggestionVisible &&
+                (key == Keys.Tab || key == Keys.Escape || key == Keys.Up || key == Keys.Down ||
+                 key == (Keys.Control | Keys.Alt | Keys.Right) ||
+                 key == (Keys.Control | Keys.Alt | Keys.Up) ||
+                 key == (Keys.Control | Keys.Alt | Keys.Down));
+            if (!suggestionKey && code != Keys.ControlKey && code != Keys.ShiftKey && code != Keys.Menu)
+                _inputSinceSnapshot = true;
+            if (_settings.MatnAiMetricsConsent && IsTextEditKey(key))
+                _lastTextEditTimestamp = Stopwatch.GetTimestamp();
+
             if (!_settings.MatnAiMetricsConsent || _beforeAcceptance == null ||
                 !WordCompletionContext.HasEditingFocus(_beforeAcceptance.WindowHandle)) return;
             if (key == (Keys.Control | Keys.Z) && Stopwatch.GetTimestamp() - _lastAcceptTimestamp < Stopwatch.Frequency * 5)
                 _undoPending = true;
             else { _lastAcceptTimestamp = 0; }
+        }
+
+        private static bool IsTextEditKey(Keys key)
+        {
+            Keys code = key & Keys.KeyCode;
+            Keys modifiers = key & Keys.Modifiers;
+            if ((modifiers & (Keys.Control | Keys.Alt)) != 0)
+                return modifiers == Keys.Control &&
+                    (code == Keys.V || code == Keys.X || code == Keys.Z || code == Keys.Y);
+            return (code >= Keys.A && code <= Keys.Z) ||
+                (code >= Keys.D0 && code <= Keys.D9) ||
+                (code >= Keys.NumPad0 && code <= Keys.NumPad9) ||
+                (code >= Keys.Oem1 && code <= Keys.Oem102) ||
+                code == Keys.Space || code == Keys.Back || code == Keys.Delete ||
+                code == Keys.Enter || code == Keys.Decimal;
         }
 
         private static long DocumentKey(Word.Document document)
@@ -223,6 +261,12 @@ namespace UzbekOrfoAddIn.Services
 
         private void HideSuggestion()
         {
+            _inputSinceSnapshot = false;
+            _lastTextEditTimestamp = 0;
+            _predictionKeyStart = 0;
+            _lastPresentationTimestamp = 0;
+            _lastCaretBounds = Rectangle.Empty;
+            _lastPresentationAnchor = null;
             _displayedCompletion = null;
             _continuedWord = null;
             _popup.Hide();
@@ -235,6 +279,12 @@ namespace UzbekOrfoAddIn.Services
 
         private void Clear()
         {
+            _inputSinceSnapshot = false;
+            _lastTextEditTimestamp = 0;
+            _predictionKeyStart = 0;
+            _lastPresentationTimestamp = 0;
+            _lastCaretBounds = Rectangle.Empty;
+            _lastPresentationAnchor = null;
             _displayedCompletion = null;
             _continuedWord = null;
             _popup.Hide();
@@ -249,6 +299,7 @@ namespace UzbekOrfoAddIn.Services
             if (_disposed) return;
             try
             {
+                bool contextChanged = false;
                 if (_collectionBuild != null && _collectionBuild.IsCompleted)
                 {
                     var ready = _collectionBuild; _collectionBuild = null;
@@ -266,9 +317,31 @@ namespace UzbekOrfoAddIn.Services
                     if (completed.Status == TaskStatus.RanToCompletion) _engine = completed.Result;
                     else { Logger.Warn("MatnAI индекси тайёр эмас."); _timer.Stop(); return; }
                 }
-                if (!WordCompletionContext.HasEditingFocus(_app)) { Clear(); return; }
+                if (_current != null
+                    ? !WordCompletionContext.HasEditingFocus(_current.WindowHandle)
+                    : !WordCompletionContext.HasEditingFocus(_app)) { Clear(); return; }
+
+                // When no suggestion is visible, a quick caret-position check avoids
+                // an expensive snapshot on every idle tick. A visible suggestion
+                // needs a full check each tick to catch edits at the same position.
+                long now = Stopwatch.GetTimestamp();
+                if (_current != null && _query == null && _requested == _current && !_undoPending &&
+                    !_inputSinceSnapshot && !SuggestionVisible &&
+                    now - _lastContextSnapshotTimestamp < Stopwatch.Frequency / 2)
+                {
+                    var selection = _app.Selection;
+                    if (selection.Start == _current.End && selection.End == _current.End)
+                    {
+                        UpdatePresentationPosition(false);
+                        return;
+                    }
+                }
+                _lastContextSnapshotTimestamp = now;
                 using (var latest = WordCompletionContext.Capture(_app))
                 {
+                    long textEditTimestamp = _lastTextEditTimestamp;
+                    _lastTextEditTimestamp = 0;
+                    _inputSinceSnapshot = false;
                     if (_undoPending)
                     {
                         _undoPending = false;
@@ -278,6 +351,7 @@ namespace UzbekOrfoAddIn.Services
                     if (latest == null) { Clear(); return; }
                     if (_current == null || !_current.SameAs(latest))
                     {
+                        contextChanged = true;
                         string retained;
                         if (_ghost.Visible && _current != null &&
                             _current.TryContinueSuggestion(latest, _displayedCompletion, out retained))
@@ -319,12 +393,12 @@ namespace UzbekOrfoAddIn.Services
                             _continuedWord = continued;
                             _current = WordCompletionContext.Capture(_app);
                             _latency.Restart();
+                            _predictionKeyStart = textEditTimestamp;
                             if (_current == null) return;
                         }
                     }
                 }
-                if (SuggestionVisible && _current != null)
-                    PositionPresentation();
+                UpdatePresentationPosition(contextChanged);
                 if (_query != null)
                 {
                     if (!_query.IsCompleted) return; // At most one active query.
@@ -344,8 +418,9 @@ namespace UzbekOrfoAddIn.Services
                         foreach (var candidate in finished.Result.Phrases)
                             if (WordCompletionContext.IsSafeCompletion(candidate.FullCompletion) && candidate.Provenance.Count > 0)
                                 _provenance[candidate.FullCompletion] = candidate.Provenance[0].CollectionId;
-                        _shown = finished.Result.Phrases.Select(p => p.FullCompletion).Where(_provenance.ContainsKey)
-                            .Concat(lexical).Distinct(StringComparer.Ordinal).Take(_settings.MaxPredictions).ToArray();
+                        _shown = SuggestionOrdering.Merge(_current.Prefix,
+                            finished.Result.Phrases.Where(p => _provenance.ContainsKey(p.FullCompletion)),
+                            lexical, _settings.MaxPredictions, PredictionRankingPolicy.Current);
                         if (_shown.Length > 0) PresentPrimarySuggestion();
                         else { _metrics.Count("no_candidate"); HideSuggestion(); }
                     }
@@ -407,10 +482,20 @@ namespace UzbekOrfoAddIn.Services
             try
             {
                 var anchor = _current.GetCaretAnchor(_app);
+                _lastCaretBounds = anchor.CaretBounds;
+                _lastPresentationAnchor = anchor;
                 if (_ghost.Present(tail, anchor, new WindowOwner(_current.WindowHandle)))
                 {
+                    _lastPresentationTimestamp = Stopwatch.GetTimestamp();
                     _displayedCompletion = _current.Prefix + _ghost.SuggestionTail;
                     _metrics.Count("shown"); _metrics.Latency(_latency.ElapsedMilliseconds);
+                    if (_predictionKeyStart != 0)
+                    {
+                        long elapsed = Stopwatch.GetTimestamp() - _predictionKeyStart;
+                        if (elapsed >= 0)
+                            _metrics.KeyToGhostLatency((long)(elapsed * 1000.0 / Stopwatch.Frequency));
+                        _predictionKeyStart = 0;
+                    }
                 }
                 else _metrics.Count("not_displayed");
             }
@@ -422,6 +507,8 @@ namespace UzbekOrfoAddIn.Services
             try
             {
                 var anchor = _current.GetCaretAnchor(_app);
+                _lastCaretBounds = anchor.CaretBounds;
+                _lastPresentationAnchor = anchor;
                 var owner = new WindowOwner(_current.WindowHandle);
                 if (_popup.Visible) _popup.Present(_shown, anchor, owner);
                 else if (_ghost.Visible)
@@ -438,6 +525,26 @@ namespace UzbekOrfoAddIn.Services
             }
         }
 
+        private void UpdatePresentationPosition(bool contextChanged)
+        {
+            // Check native caret, typing format, and display metrics without
+            // querying Word geometry. They can change while the caret stays still.
+            if (!SuggestionVisible || _current == null) return;
+            long now = Stopwatch.GetTimestamp();
+            if (!contextChanged && _lastPresentationTimestamp != 0 &&
+                now - _lastPresentationTimestamp < Stopwatch.Frequency / 2) return;
+            Rectangle caret;
+            if (!contextChanged && OverlayPositioner.TryGetNativeCaret(new IntPtr(_current.WindowHandle), out caret) &&
+                caret == _lastCaretBounds && _current.MatchesPresentationFormatting(_app, _lastPresentationAnchor) &&
+                OverlayPositioner.MatchesDisplayMetrics(_lastPresentationAnchor))
+            {
+                _lastPresentationTimestamp = now;
+                return;
+            }
+            PositionPresentation();
+            _lastPresentationTimestamp = now;
+        }
+
         private string GetTail(string candidate)
         {
             if (_current == null || candidate == null || candidate.Length <= _current.Prefix.Length ||
@@ -452,7 +559,10 @@ namespace UzbekOrfoAddIn.Services
             {
                 _ghost.Hide();
                 var anchor = _current.GetCaretAnchor(_app);
+                _lastCaretBounds = anchor.CaretBounds;
+                _lastPresentationAnchor = anchor;
                 _popup.Present(_shown, anchor, new WindowOwner(_current.WindowHandle));
+                _lastPresentationTimestamp = Stopwatch.GetTimestamp();
                 if (_popup.Visible) _metrics.Count("alternatives_opened");
             }
             catch (System.Runtime.InteropServices.COMException) { _popup.Hide(); }

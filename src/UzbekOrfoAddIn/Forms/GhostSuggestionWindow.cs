@@ -149,12 +149,13 @@ namespace UzbekOrfoAddIn.Forms
                     return false;
                 }
 
+                bool newlyShown = !Visible;
                 using (new DpiLayout.Context(DpiLayout.WindowContext(anchor.OwnerHandle)))
                 {
                     if (!IsHandleCreated) { var unused = Handle; }
                     // WinForms can reset a layered surface while showing its HWND.
                     // Show first, then publish pixels and position together below.
-                    if (!Visible) { if (owner == null) Show(); else Show(owner); }
+                    if (newlyShown) { if (owner == null) Show(); else Show(owner); }
                 }
 
                 Color color = anchor.DarkBackground
@@ -166,7 +167,9 @@ namespace UzbekOrfoAddIn.Forms
                     return false;
                 }
                 RenderCount++;
-                OverlayPositioner.RaiseWithoutActivation(this, anchor.OwnerHandle);
+                // Reordering an already visible overlay after every typed letter
+                // can make Word repaint its caret. It only needs raising on show.
+                if (newlyShown) OverlayPositioner.RaiseWithoutActivation(this, anchor.OwnerHandle);
                 _requestedTail = requestedTail;
                 _availableWidth = available;
                 SuggestionTail = tail;

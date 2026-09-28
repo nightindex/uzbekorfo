@@ -60,10 +60,16 @@ namespace UzbekOrfoAddIn.Services
                 var document = app.ActiveDocument;
                 if (selection.Start != selection.End || selection.StoryType != Word.WdStoryType.wdMainTextStory ||
                     document.ReadOnly || document.ProtectionType != Word.WdProtectionType.wdNoProtection ||
-                    document.TrackRevisions || document.ContentControls.Count != 0 ||
+                    document.TrackRevisions ||
                     (bool)selection.get_Information(Word.WdInformation.wdWithInTable) ||
                     (bool)selection.get_Information(Word.WdInformation.wdInFieldCode) ||
                     (bool)selection.get_Information(Word.WdInformation.wdInFieldResult)) return null;
+                Word.ContentControl parentControl = selection.ParentContentControl;
+                if (parentControl != null)
+                {
+                    Marshal.ReleaseComObject(parentControl);
+                    return null;
+                }
                 int end = selection.End;
                 if (end < 2) return null;
                 range = selection.Range.Duplicate;
@@ -79,7 +85,19 @@ namespace UzbekOrfoAddIn.Services
                 var following = range.Text;
                 if (!string.IsNullOrEmpty(following) && WordCompletionEngine.IsTokenCharacter(following[0])) return null;
                 range.SetRange(end - prefix.Length, end);
-                if (range.Fields.Count != 0) return null;
+                Word.Fields fields = null;
+                Word.ContentControls controls = null;
+                try
+                {
+                    fields = range.Fields;
+                    controls = range.ContentControls;
+                    if (fields.Count != 0 || controls.Count != 0) return null;
+                }
+                finally
+                {
+                    if (controls != null) Marshal.ReleaseComObject(controls);
+                    if (fields != null) Marshal.ReleaseComObject(fields);
+                }
                 var result = new WordCompletionContext {
                     _range = range, Prefix = prefix, PrecedingContext = context,
                     Start = range.Start, End = end, WindowHandle = app.ActiveWindow.Hwnd
@@ -171,17 +189,84 @@ namespace UzbekOrfoAddIn.Services
             return GetCaretAnchor(app).CaretBounds;
         }
 
+        private static bool TryGetTypingFont(Word.Application app, int end,
+            out string name, out float size, out FontStyle style)
+        {
+            name = null;
+            size = 0;
+            style = FontStyle.Regular;
+            Word.Selection selection = null;
+            Word.Font font = null;
+            try
+            {
+                selection = app.Selection;
+                if (selection.Start != end || selection.End != end) return false;
+                font = selection.Font;
+                string currentName = font.Name;
+                float currentSize = font.Size;
+                if (string.IsNullOrWhiteSpace(currentName) || currentSize < 6f || currentSize > 96f)
+                    return false;
+                name = currentName;
+                size = currentSize;
+                if (font.Bold == -1) style |= FontStyle.Bold;
+                if (font.Italic == -1) style |= FontStyle.Italic;
+                return true;
+            }
+            catch (COMException) { return false; }
+            finally
+            {
+                if (font != null) Marshal.ReleaseComObject(font);
+                if (selection != null) Marshal.ReleaseComObject(selection);
+            }
+        }
+
+        private static int GetZoomPercentage(Word.Window window)
+        {
+            Word.View view = null;
+            Word.Zoom zoom = null;
+            try
+            {
+                view = window.View;
+                zoom = view.Zoom;
+                int percentage = zoom.Percentage;
+                return percentage >= 10 && percentage <= 500 ? percentage : 100;
+            }
+            catch (COMException) { return 100; }
+            finally
+            {
+                if (zoom != null) Marshal.ReleaseComObject(zoom);
+                if (view != null) Marshal.ReleaseComObject(view);
+            }
+        }
+
+        internal bool MatchesPresentationFormatting(Word.Application app, OverlayAnchor anchor)
+        {
+            if (anchor == null || _range == null) return false;
+            string name;
+            float size;
+            FontStyle style;
+            if (!TryGetTypingFont(app, End, out name, out size, out style)) return false;
+            Word.Window window = null;
+            try
+            {
+                window = app.ActiveWindow;
+                float effectiveSize = size * GetZoomPercentage(window) / 100f;
+                return string.Equals(name, anchor.FontName, StringComparison.OrdinalIgnoreCase) &&
+                    Math.Abs(effectiveSize - anchor.FontSizePoints) < 0.01f &&
+                    style == anchor.FontStyle;
+            }
+            catch (COMException) { return false; }
+            finally { if (window != null) Marshal.ReleaseComObject(window); }
+        }
+
         internal OverlayAnchor GetCaretAnchor(Word.Application app)
         {
             Word.Range caret = _range.Duplicate;
             Word.Font wordFont = null;
             Word.Window window = null;
-            Word.View view = null;
-            Word.Zoom zoom = null;
             try
             {
                 caret.SetRange(End, End);
-                int x, y, width, height;
                 string fontName = "Segoe UI";
                 float fontSize = 11f;
                 int zoomPercentage = 100;
@@ -190,11 +275,12 @@ namespace UzbekOrfoAddIn.Services
                 using (new DpiLayout.Context(DpiLayout.WindowContext(owner)))
                 {
                     window = app.ActiveWindow;
-                    window.GetPoint(out x, out y, out width, out height, caret);
                     Rectangle caretBounds;
                     bool nativeCaret = OverlayPositioner.TryGetNativeCaret(owner, out caretBounds);
                     if (!nativeCaret)
                     {
+                        int x, y, width, height;
+                        window.GetPoint(out x, out y, out width, out height, caret);
                         // A collapsed range can describe the paragraph end, whose
                         // height/format differs from the text the user just typed.
                         caret.SetRange(End - 1, End);
@@ -202,26 +288,34 @@ namespace UzbekOrfoAddIn.Services
                         window.GetPoint(out textX, out textY, out textWidth, out textHeight, caret);
                         caretBounds = new Rectangle(x, textY, 1, Math.Max(1, textHeight));
                     }
-                    // Read formatting from the last typed character, not the paragraph mark.
-                    caret.SetRange(End - 1, End);
-                    try
+                    // The collapsed selection carries the formatting of the next
+                    // character. It may differ from the preceding character after
+                    // a font-size or style change at the caret.
+                    string typingFontName;
+                    float typingFontSize;
+                    FontStyle typingFontStyle;
+                    if (TryGetTypingFont(app, End, out typingFontName, out typingFontSize, out typingFontStyle))
                     {
-                        wordFont = caret.Font;
-                        if (!string.IsNullOrWhiteSpace(wordFont.Name)) fontName = wordFont.Name;
-                        if (wordFont.Size >= 6f && wordFont.Size <= 96f) fontSize = wordFont.Size;
-                        if (wordFont.Bold == -1) fontStyle |= FontStyle.Bold;
-                        if (wordFont.Italic == -1) fontStyle |= FontStyle.Italic;
+                        fontName = typingFontName;
+                        fontSize = typingFontSize;
+                        fontStyle = typingFontStyle;
                     }
-                    catch (COMException) { /* Use safe font defaults. */ }
-                    try
+                    else
                     {
-                        view = window.View;
-                        zoom = view.Zoom;
-                        int percentage = zoom.Percentage;
-                        if (percentage >= 10 && percentage <= 500)
-                            zoomPercentage = percentage;
+                        // Retain the last character as a fallback when Word cannot
+                        // report insertion formatting for this selection.
+                        caret.SetRange(End - 1, End);
+                        try
+                        {
+                            wordFont = caret.Font;
+                            if (!string.IsNullOrWhiteSpace(wordFont.Name)) fontName = wordFont.Name;
+                            if (wordFont.Size >= 6f && wordFont.Size <= 96f) fontSize = wordFont.Size;
+                            if (wordFont.Bold == -1) fontStyle |= FontStyle.Bold;
+                            if (wordFont.Italic == -1) fontStyle |= FontStyle.Italic;
+                        }
+                        catch (COMException) { /* Use safe font defaults. */ }
                     }
-                    catch (COMException) { /* Use 100% when Word cannot report zoom. */ }
+                    zoomPercentage = GetZoomPercentage(window);
                     // Word reports the document font size, not its zoomed screen size.
                     // Scale it so the ghost continuation visually joins the typed text.
                     fontSize *= zoomPercentage / 100f;
@@ -257,8 +351,6 @@ namespace UzbekOrfoAddIn.Services
             }
             finally
             {
-                if (zoom != null) Marshal.ReleaseComObject(zoom);
-                if (view != null) Marshal.ReleaseComObject(view);
                 if (wordFont != null) Marshal.ReleaseComObject(wordFont);
                 if (window != null) Marshal.ReleaseComObject(window);
                 Marshal.ReleaseComObject(caret);

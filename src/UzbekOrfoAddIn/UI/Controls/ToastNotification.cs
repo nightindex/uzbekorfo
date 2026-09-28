@@ -68,8 +68,16 @@ namespace UzbekOrfoAddIn.UI.Controls
             {
                 _dismissTimer.Stop();
                 _progressTimer?.Stop();
-                await AnimationHelper.FadeOut(this, 200);
-                Close();
+                try
+                {
+                    await AnimationHelper.FadeOut(this, 200);
+                    BeginInvoke((MethodInvoker)(() =>
+                    {
+                        if (!IsDisposed) Close();
+                    }));
+                }
+                catch (ObjectDisposedException) { }
+                catch (InvalidOperationException) { }
             };
 
             // Progress bar animation

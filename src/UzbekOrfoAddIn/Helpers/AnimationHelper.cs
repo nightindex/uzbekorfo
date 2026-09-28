@@ -8,7 +8,7 @@ namespace UzbekOrfoAddIn.Helpers
     /// <summary>
     /// Provides animation utilities for WinForms controls вЂ” fade, slide, scale.
     /// Used to give the modern UI a polished, responsive feel.
-    /// All animations stay on the UI thread using WinForms Timer to avoid cross-thread issues.
+    /// Form properties must be updated from the thread that owns the control.
     /// </summary>
     public static class AnimationHelper
     {
@@ -52,211 +52,177 @@ namespace UzbekOrfoAddIn.Helpers
         }
 
         /// <summary>
-        /// UI-thread-safe delay using System.Windows.Forms.Timer.
-        /// Unlike Task.Delay, this guarantees continuation on the UI thread.
+        /// Runs animation frames on the control's WinForms message thread.
+        /// The returned task can complete on another thread, so callers should
+        /// marshal any UI work they do after awaiting it.
         /// </summary>
-        private static Task UIDelay(int milliseconds)
+        private static Task Animate(Control control, int durationMs, int steps,
+            Action initialize, Action<int> render, Action finish)
         {
-            var tcs = new TaskCompletionSource<bool>();
-            var timer = new Timer { Interval = Math.Max(1, milliseconds) };
-            timer.Tick += (s, e) =>
+            return InvokeOnUiThreadAsync(control, () =>
             {
-                timer.Stop();
-                timer.Dispose();
-                tcs.TrySetResult(true);
-            };
-            timer.Start();
-            return tcs.Task;
+                if (control.IsDisposed) return Task.CompletedTask;
+
+                var completion = new TaskCompletionSource<bool>(
+                    TaskCreationOptions.RunContinuationsAsynchronously);
+                Timer timer = null;
+                try
+                {
+                    initialize?.Invoke();
+                    int frame = 0;
+                    timer = new Timer { Interval = Math.Max(1, durationMs / steps) };
+                    timer.Tick += (sender, args) =>
+                    {
+                        try
+                        {
+                            if (control.IsDisposed)
+                            {
+                                timer.Stop();
+                                timer.Dispose();
+                                completion.TrySetResult(true);
+                                return;
+                            }
+
+                            render(++frame);
+                            if (frame < steps) return;
+
+                            timer.Stop();
+                            timer.Dispose();
+                            finish?.Invoke();
+                            completion.TrySetResult(true);
+                        }
+                        catch (Exception ex)
+                        {
+                            try { timer.Stop(); timer.Dispose(); } catch { }
+                            completion.TrySetException(ex);
+                        }
+                    };
+                    timer.Start();
+                }
+                catch (Exception ex)
+                {
+                    try { timer?.Dispose(); } catch { }
+                    completion.TrySetException(ex);
+                }
+                return completion.Task;
+            });
         }
-        /// <summary>
-        /// Fades a form in from fully transparent to fully opaque.
-        /// </summary>
+
+        /// <summary>Fades a form in from transparent to opaque.</summary>
         public static Task FadeIn(Form form, int durationMs = 200)
         {
-            return InvokeOnUiThreadAsync(form, () => FadeInCore(form, durationMs));
+            const int steps = 20;
+            return Animate(form, durationMs, steps,
+                () => { form.Opacity = 0; form.Show(); },
+                frame => form.Opacity = (double)frame / steps,
+                () => form.Opacity = 1.0);
         }
 
-        private static async Task FadeInCore(Form form, int durationMs)
-        {
-            if (form == null || form.IsDisposed) return;
-
-            form.Opacity = 0;
-            form.Show();
-            int steps = 20;
-            int stepDelay = Math.Max(1, durationMs / steps);
-
-            for (int i = 1; i <= steps; i++)
-            {
-                if (form.IsDisposed) return;
-                form.Opacity = (double)i / steps;
-                await UIDelay(stepDelay);
-            }
-
-            form.Opacity = 1.0;
-        }
-
-        /// <summary>
-        /// Fades a form out from fully opaque to fully transparent, then hides it.
-        /// </summary>
+        /// <summary>Fades a form out, then hides it.</summary>
         public static Task FadeOut(Form form, int durationMs = 150)
         {
-            return InvokeOnUiThreadAsync(form, () => FadeOutCore(form, durationMs));
+            const int steps = 15;
+            return Animate(form, durationMs, steps,
+                null,
+                frame => form.Opacity = (double)(steps - frame) / steps,
+                () => form.Hide());
         }
 
-        private static async Task FadeOutCore(Form form, int durationMs)
-        {
-            if (form == null || form.IsDisposed) return;
-
-            int steps = 15;
-            int stepDelay = Math.Max(1, durationMs / steps);
-
-            for (int i = steps - 1; i >= 0; i--)
-            {
-                if (form.IsDisposed) return;
-                form.Opacity = (double)i / steps;
-                await UIDelay(stepDelay);
-            }
-
-            form.Opacity = 0;
-            form.Hide();
-        }
-
-        /// <summary>
-        /// Slides a control into position from a given horizontal offset.
-        /// </summary>
+        /// <summary>Slides a control horizontally into position.</summary>
         public static Task SlideIn(Control control, int fromXOffset, int durationMs = 300)
         {
-            return InvokeOnUiThreadAsync(control, () => SlideInCore(control, fromXOffset, durationMs));
+            const int steps = 20;
+            int targetX = 0;
+            int startX = 0;
+            return Animate(control, durationMs, steps,
+                () =>
+                {
+                    targetX = control.Left;
+                    startX = targetX + fromXOffset;
+                    control.Left = startX;
+                    control.Visible = true;
+                },
+                frame =>
+                {
+                    double progress = EaseOut((double)frame / steps);
+                    control.Left = startX + (int)((targetX - startX) * progress);
+                },
+                () => control.Left = targetX);
         }
 
-        private static async Task SlideInCore(Control control, int fromXOffset, int durationMs)
-        {
-            if (control == null || control.IsDisposed) return;
-
-            int targetX = control.Left;
-            int startX = targetX + fromXOffset;
-            int steps = 20;
-            int stepDelay = Math.Max(1, durationMs / steps);
-
-            control.Left = startX;
-            control.Visible = true;
-
-            for (int i = 1; i <= steps; i++)
-            {
-                if (control.IsDisposed) return;
-                double progress = EaseOut((double)i / steps);
-                control.Left = startX + (int)((targetX - startX) * progress);
-                await UIDelay(stepDelay);
-            }
-
-            control.Left = targetX;
-        }
-
-        /// <summary>
-        /// Slides a control vertically into position from a given offset.
-        /// </summary>
+        /// <summary>Slides a control vertically into position.</summary>
         public static Task SlideInVertical(Control control, int fromYOffset, int durationMs = 250)
         {
-            return InvokeOnUiThreadAsync(control, () => SlideInVerticalCore(control, fromYOffset, durationMs));
+            const int steps = 18;
+            int targetY = 0;
+            int startY = 0;
+            return Animate(control, durationMs, steps,
+                () =>
+                {
+                    targetY = control.Top;
+                    startY = targetY + fromYOffset;
+                    control.Top = startY;
+                    control.Visible = true;
+                },
+                frame =>
+                {
+                    double progress = EaseOut((double)frame / steps);
+                    control.Top = startY + (int)((targetY - startY) * progress);
+                },
+                () => control.Top = targetY);
         }
 
-        private static async Task SlideInVerticalCore(Control control, int fromYOffset, int durationMs)
-        {
-            if (control == null || control.IsDisposed) return;
-
-            int targetY = control.Top;
-            int startY = targetY + fromYOffset;
-            int steps = 18;
-            int stepDelay = Math.Max(1, durationMs / steps);
-
-            control.Top = startY;
-            control.Visible = true;
-
-            for (int i = 1; i <= steps; i++)
-            {
-                if (control.IsDisposed) return;
-                double progress = EaseOut((double)i / steps);
-                control.Top = startY + (int)((targetY - startY) * progress);
-                await UIDelay(stepDelay);
-            }
-
-            control.Top = targetY;
-        }
-
-        /// <summary>
-        /// Applies a subtle scale bounce effect (scale up briefly then back to normal).
-        /// Simulated via size change since WinForms doesn't natively support transforms.
-        /// </summary>
+        /// <summary>Applies a subtle scale bounce effect.</summary>
         public static Task ScaleBounce(Control control, int durationMs = 300)
         {
-            return InvokeOnUiThreadAsync(control, () => ScaleBounceCore(control, durationMs));
+            const int steps = 15;
+            Size originalSize = Size.Empty;
+            Point originalLocation = Point.Empty;
+            return Animate(control, durationMs, steps,
+                () =>
+                {
+                    originalSize = control.Size;
+                    originalLocation = control.Location;
+                },
+                frame =>
+                {
+                    double t = (double)(frame - 1) / steps;
+                    double scale = t < 0.4
+                        ? 1.0 + 0.1 * (t / 0.4)
+                        : 1.1 - 0.1 * ((t - 0.4) / 0.6);
+                    int newW = (int)(originalSize.Width * scale);
+                    int newH = (int)(originalSize.Height * scale);
+                    int offsetX = (originalSize.Width - newW) / 2;
+                    int offsetY = (originalSize.Height - newH) / 2;
+                    control.Size = new Size(newW, newH);
+                    control.Location = new Point(originalLocation.X + offsetX, originalLocation.Y + offsetY);
+                },
+                () =>
+                {
+                    control.Size = originalSize;
+                    control.Location = originalLocation;
+                });
         }
 
-        private static async Task ScaleBounceCore(Control control, int durationMs)
+        /// <summary>Smoothly transitions a control's background color.</summary>
+        public static Task ColorTransition(Control control, Color fromColor, Color toColor,
+            int durationMs = 200)
         {
-            if (control == null || control.IsDisposed) return;
-
-            var originalSize = control.Size;
-            var originalLocation = control.Location;
-            int steps = 15;
-            int stepDelay = Math.Max(1, durationMs / steps);
-
-            for (int i = 0; i < steps; i++)
-            {
-                if (control.IsDisposed) return;
-                double t = (double)i / steps;
-                double scale;
-
-                if (t < 0.4)
-                    scale = 1.0 + 0.1 * (t / 0.4); // grow to 1.1
-                else
-                    scale = 1.1 - 0.1 * ((t - 0.4) / 0.6); // shrink back to 1.0
-
-                int newW = (int)(originalSize.Width * scale);
-                int newH = (int)(originalSize.Height * scale);
-                int offsetX = (originalSize.Width - newW) / 2;
-                int offsetY = (originalSize.Height - newH) / 2;
-
-                control.Size = new Size(newW, newH);
-                control.Location = new Point(originalLocation.X + offsetX, originalLocation.Y + offsetY);
-
-                await UIDelay(stepDelay);
-            }
-
-            control.Size = originalSize;
-            control.Location = originalLocation;
-        }
-
-        /// <summary>
-        /// Smoothly transitions the background color of a control.
-        /// </summary>
-        public static Task ColorTransition(Control control, Color fromColor, Color toColor, int durationMs = 200)
-        {
-            return InvokeOnUiThreadAsync(control, () => ColorTransitionCore(control, fromColor, toColor, durationMs));
-        }
-
-        private static async Task ColorTransitionCore(Control control, Color fromColor, Color toColor, int durationMs)
-        {
-            if (control == null || control.IsDisposed) return;
-
-            int steps = 15;
-            int stepDelay = Math.Max(1, durationMs / steps);
-
-            for (int i = 1; i <= steps; i++)
-            {
-                if (control.IsDisposed) return;
-                double t = (double)i / steps;
-                int r = (int)(fromColor.R + (toColor.R - fromColor.R) * t);
-                int g = (int)(fromColor.G + (toColor.G - fromColor.G) * t);
-                int b = (int)(fromColor.B + (toColor.B - fromColor.B) * t);
-                control.BackColor = Color.FromArgb(
-                    Math.Max(0, Math.Min(255, r)),
-                    Math.Max(0, Math.Min(255, g)),
-                    Math.Max(0, Math.Min(255, b)));
-                await UIDelay(stepDelay);
-            }
-
-            control.BackColor = toColor;
+            const int steps = 15;
+            return Animate(control, durationMs, steps,
+                null,
+                frame =>
+                {
+                    double t = (double)frame / steps;
+                    int r = (int)(fromColor.R + (toColor.R - fromColor.R) * t);
+                    int g = (int)(fromColor.G + (toColor.G - fromColor.G) * t);
+                    int b = (int)(fromColor.B + (toColor.B - fromColor.B) * t);
+                    control.BackColor = Color.FromArgb(
+                        Math.Max(0, Math.Min(255, r)),
+                        Math.Max(0, Math.Min(255, g)),
+                        Math.Max(0, Math.Min(255, b)));
+                },
+                () => control.BackColor = toColor);
         }
 
         // --- Easing Functions ---

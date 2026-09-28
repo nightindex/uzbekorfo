@@ -11,7 +11,8 @@ $counts = [ordered]@{}
 $allowed = @('queries', 'shown', 'accepted', 'dismissed', 'typed_past_or_caret_moved',
     'no_candidate', 'not_displayed', 'alternatives_opened', 'insertion_rejected',
     'immediate_keyboard_undo', 'latency_le_50ms', 'latency_le_100ms',
-    'latency_le_150ms', 'latency_gt_150ms')
+    'latency_le_150ms', 'latency_gt_150ms', 'key_to_ghost_le_50ms',
+    'key_to_ghost_le_100ms', 'key_to_ghost_le_150ms', 'key_to_ghost_gt_150ms')
 foreach ($name in $allowed) { $counts[$name] = [long]0 }
 $seen = @{}
 foreach ($line in ($lines | Select-Object -Skip 1)) {
@@ -35,9 +36,12 @@ function Ratio([long]$numerator, [long]$denominator) {
     acceptancePerShown = (Ratio $counts.accepted $counts.shown)
     explicitDismissalPerShown = (Ratio $counts.dismissed $counts.shown)
     immediateKeyboardUndoPerAcceptance = (Ratio $counts.immediate_keyboard_undo $counts.accepted)
+    keyToGhostLatencySamples = ($counts.key_to_ghost_le_50ms + $counts.key_to_ghost_le_100ms +
+        $counts.key_to_ghost_le_150ms + $counts.key_to_ghost_gt_150ms)
     limitations = @('Not a longitudinal study; export each session before another overwrites the snapshot.',
         'Typing past and caret movement are combined, not an explicit rejection.',
         'Undo counts only detected Ctrl+Z within five seconds, not every Undo path.',
-        'Latency starts at detected context change, excluding polling delay; not full typing-to-ghost latency.',
+        'Legacy latency buckets start at detected context change and exclude polling delay.',
+        'Key-to-ghost buckets include polling delay for observed editing keys; mouse, menu and some IME edits have no sample.',
         'Counters do not measure time saved or legal correctness.')
 } | ConvertTo-Json -Depth 4

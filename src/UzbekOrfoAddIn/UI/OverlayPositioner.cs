@@ -112,6 +112,24 @@ namespace UzbekOrfoAddIn.UI
         internal static OverlayAnchor CreateAnchor(Rectangle caret, IntPtr ownerHandle,
             string fontName, float fontSizePoints, FontStyle fontStyle)
         {
+            Rectangle area = GetVisibleEditorArea(caret, ownerHandle);
+            return new OverlayAnchor(caret, area, ownerHandle,
+                GetOwnerDpi(ownerHandle), fontName, fontSizePoints, fontStyle,
+                IsDarkAtCaret(caret));
+        }
+
+        internal static bool MatchesDisplayMetrics(OverlayAnchor anchor)
+        {
+            if (anchor == null || anchor.OwnerHandle == IntPtr.Zero) return false;
+            // Read the same physical coordinates used when the anchor was created.
+            // A resize, monitor move, or scaling change can leave the caret still.
+            using (new DpiLayout.Context(DpiLayout.WindowContext(anchor.OwnerHandle)))
+                return GetOwnerDpi(anchor.OwnerHandle) == anchor.Dpi &&
+                    GetVisibleEditorArea(anchor.CaretBounds, anchor.OwnerHandle) == anchor.WorkArea;
+        }
+
+        private static Rectangle GetVisibleEditorArea(Rectangle caret, IntPtr ownerHandle)
+        {
             Rectangle area = GetWorkArea(caret);
             var info = new GuiThreadInfo { Size = Marshal.SizeOf(typeof(GuiThreadInfo)) };
             NativeRect client;
@@ -121,9 +139,7 @@ namespace UzbekOrfoAddIn.UI
                 MapWindowPoints(info.Focus, IntPtr.Zero, ref client, 2);
                 area = Rectangle.Intersect(area, Rectangle.FromLTRB(client.Left, client.Top, client.Right, client.Bottom));
             }
-            return new OverlayAnchor(caret, area, ownerHandle,
-                GetOwnerDpi(ownerHandle), fontName, fontSizePoints, fontStyle,
-                IsDarkAtCaret(caret));
+            return area;
         }
 
         internal static Rectangle PlacePopup(OverlayAnchor anchor, Size size)

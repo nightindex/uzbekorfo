@@ -22,6 +22,7 @@ internal static class Program
     private sealed class Evaluation
     {
         public int Cases, Offered, Top1, Top3, SavedCharacters, RemainingCharacters;
+        public double QueryP95Ms;
         public double Top1Rate => Cases == 0 ? 0 : (double)Top1 / Cases;
         public double Top3Rate => Cases == 0 ? 0 : (double)Top3 / Cases;
         public double Coverage => Cases == 0 ? 0 : (double)Offered / Cases;
@@ -36,10 +37,13 @@ internal static class Program
     private static async Task<int> Main(string[] args)
     {
         if (args.Length < 1 || args.Length > 4 || (args.Length >= 2 && args[1] != "latin" && args[1] != "cyrillic") ||
-            args.Skip(2).Any(a => a != "--pilot-evaluation" && a != "--include-court"))
-        { Console.Error.WriteLine("Usage: MatnAi.Corpus <repository-root> [latin|cyrillic] [--pilot-evaluation] [--include-court]"); return 2; }
+            args.Skip(2).Any(a => a != "--pilot-evaluation" && a != "--include-court" && a != "--accuracy-evaluation") ||
+            (args.Contains("--accuracy-evaluation") &&
+                (args.Contains("--pilot-evaluation") || args.Contains("--include-court"))))
+        { Console.Error.WriteLine("Usage: MatnAi.Corpus <repository-root> [latin|cyrillic] [--pilot-evaluation|--accuracy-evaluation] [--include-court]"); return 2; }
         latin = args.Length >= 2 && args[1] == "latin";
         bool pilotEvaluation = args.Contains("--pilot-evaluation");
+        bool accuracyEvaluation = args.Contains("--accuracy-evaluation");
         bool includeCourt = args.Contains("--include-court");
         string root = Path.GetFullPath(args[0]);
         string raw = Path.Combine(root, "corpus", latin ? "raw-latin" : "raw_cyrillic");
@@ -183,6 +187,97 @@ internal static class Program
             string pilotPath = Path.Combine(reports, "pilot-report.json");
             File.WriteAllText(pilotPath, JsonConvert.SerializeObject(pilot, Formatting.Indented), new UTF8Encoding(false));
             Console.WriteLine("Pilot evaluation: " + pilotPath);
+            return 0;
+        }
+        if (accuracyEvaluation)
+        {
+            var afterValidation = validation.Where(c => c.Prefix.Length == 0).ToList();
+            var prefixValidation = validation.Where(c => c.Prefix.Length > 0).ToList();
+            var afterTest = test.Where(c => c.Prefix.Length == 0).ToList();
+            var prefixTest = test.Where(c => c.Prefix.Length > 0).ToList();
+            var current = new PhrasePredictionEngine(new[] { train });
+            var baselineValidationAfter = await Evaluate(current, afterValidation, lexical, false);
+            var baselineValidationPrefix = await Evaluate(current, prefixValidation, lexical, false);
+            var trials = new List<(double Probability, double Margin, Evaluation Result)>();
+            foreach (double probability in new[] { 0.3, 0.4, 0.5 })
+            foreach (double margin in new[] { 0.05, 0.1 })
+            {
+                var trial = new PhrasePredictionEngine(new[] { train }, 0.4, 0, true,
+                    PredictionRankingPolicy.AccuracyCandidate, probability, margin);
+                trials.Add((probability, margin, await Evaluate(trial, afterValidation, lexical, false,
+                    PredictionRankingPolicy.AccuracyCandidate)));
+            }
+            // Select on validation only. Prefer a balanced candidate; otherwise
+            // retain the best diagnostic candidate without enabling it in Word.
+            var eligible = trials.Where(t => t.Result.Top1WhenOffered >= baselineValidationAfter.Top1WhenOffered &&
+                t.Result.Coverage >= baselineValidationAfter.Coverage - 0.05 &&
+                t.Result.SimulatedKeystrokesSaved >= baselineValidationAfter.SimulatedKeystrokesSaved).ToList();
+            var selected = (eligible.Count > 0 ? eligible : trials)
+                .OrderByDescending(t => t.Result.Top1WhenOffered)
+                .ThenByDescending(t => t.Result.SimulatedKeystrokesSaved)
+                .ThenByDescending(t => t.Result.Coverage)
+                .ThenByDescending(t => t.Probability).ThenByDescending(t => t.Margin).First();
+            var candidate = new PhrasePredictionEngine(new[] { train }, 0.4, 0, true,
+                PredictionRankingPolicy.AccuracyCandidate, selected.Probability, selected.Margin);
+            var candidateValidationPrefix = await Evaluate(candidate, prefixValidation, lexical, false,
+                PredictionRankingPolicy.AccuracyCandidate);
+            // The test split is queried only after selection has been frozen.
+            var baselineTestAfter = await Evaluate(current, afterTest, lexical, false);
+            var candidateTestAfter = await Evaluate(candidate, afterTest, lexical, false,
+                PredictionRankingPolicy.AccuracyCandidate);
+            var baselineTestPrefix = await Evaluate(current, prefixTest, lexical, false);
+            var candidateTestPrefix = await Evaluate(candidate, prefixTest, lexical, false,
+                PredictionRankingPolicy.AccuracyCandidate);
+            var baselineTestAll = await Evaluate(current, test, lexical, false);
+            var candidateTestAll = await Evaluate(candidate, test, lexical, false,
+                PredictionRankingPolicy.AccuracyCandidate);
+            bool automaticGate = eligible.Count > 0 &&
+                candidateTestAll.Top1WhenOffered >= baselineTestAll.Top1WhenOffered + 0.03 &&
+                candidateTestAll.Coverage >= baselineTestAll.Coverage - 0.05 &&
+                candidateTestAll.SimulatedKeystrokesSaved >= baselineTestAll.SimulatedKeystrokesSaved &&
+                candidateTestAll.QueryP95Ms <= baselineTestAll.QueryP95Ms + 2;
+            var accuracyReport = new {
+                schema = "matnai-accuracy-evaluation-v1", generatedUtc = DateTime.UtcNow,
+                script = latin ? "Latin" : "Cyrillic", split = "grouped source/version; duplicate sentences excluded",
+                selectedThresholds = new { probability = selected.Probability, margin = selected.Margin,
+                    validationBalancedCandidateFound = eligible.Count > 0 },
+                validationGateTrials = trials.Select(t => new { probability = t.Probability,
+                    margin = t.Margin, evaluation = t.Result }),
+                validationAfterSpace = new { current = baselineValidationAfter, candidate = selected.Result },
+                validationPrefix = new { current = baselineValidationPrefix, candidate = candidateValidationPrefix },
+                validationWrongExamples = new {
+                    afterSpace = await WrongExamples(current, afterValidation, lexical, PredictionRankingPolicy.Current),
+                    prefix = await WrongExamples(current, prefixValidation, lexical, PredictionRankingPolicy.Current)
+                },
+                testAfterSpace = new { current = baselineTestAfter, candidate = candidateTestAfter },
+                testPrefix = new { current = baselineTestPrefix, candidate = candidateTestPrefix },
+                testCombined = new { current = baselineTestAll, candidate = candidateTestAll },
+                automaticGate, independentReviewPassed = false,
+                notes = "Ordering is shared with Word. Replay lacks Word morphology validation, personal preferences and end-to-end UI latency. Human review is required before activation."
+            };
+            string path = Path.Combine(root, "TestResults", "MatnAiAccuracy-implementation",
+                latin ? "latin.json" : "cyrillic.json");
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllText(path, JsonConvert.SerializeObject(accuracyReport, Formatting.Indented), new UTF8Encoding(false));
+            var reviewTemplate = Newtonsoft.Json.Linq.JArray.Parse(File.ReadAllText(
+                Path.Combine(reports, "review-contexts.json")));
+            var reviewPacket = new List<object>();
+            foreach (var entry in reviewTemplate)
+            {
+                var sample = new Case { Source = (string)entry["Source"], Context = (string)entry["Context"],
+                    Prefix = (string)entry["Prefix"], Expected = (string)entry["Expected"] };
+                reviewPacket.Add(new { id = (int)entry["id"], sample.Source, sample.Context, sample.Prefix,
+                    sample.Expected,
+                    current = await Suggestions(current, sample, lexical, false, PredictionRankingPolicy.Current),
+                    candidate = await Suggestions(candidate, sample, lexical, false, PredictionRankingPolicy.AccuracyCandidate),
+                    reviewer = "", sourceAuthorized = "pending", usefulness = "pending",
+                    misleading = "pending", scriptAndCasing = "pending", plausibleAlternatives = "", notes = "" });
+            }
+            string packetPath = Path.Combine(Path.GetDirectoryName(path),
+                latin ? "latin-review-packet.json" : "cyrillic-review-packet.json");
+            File.WriteAllText(packetPath, JsonConvert.SerializeObject(reviewPacket, Formatting.Indented), new UTF8Encoding(false));
+            Console.WriteLine("Accuracy evaluation: " + path);
+            Console.WriteLine("Reviewer packet: " + packetPath);
             return 0;
         }
         var calibration = new List<object>(); double selectedProbability = 0.25, selectedMargin = 0.05, best = -1;
@@ -364,17 +459,40 @@ internal static class Program
         return result;
     }
     private static PredictionRequest Request(Case sample) => new PredictionRequest(sample.Context, sample.Prefix,
-        latin ? ScriptType.Latin : ScriptType.Cyrillic, new[] { CollectionId }, 1, 3);
-    private static async Task<Evaluation> Evaluate(PhrasePredictionEngine engine, List<Case> cases, WordCompletionEngine lexical, bool baseline)
+        latin ? ScriptType.Latin : ScriptType.Cyrillic, new[] { CollectionId }, 1, 10);
+    private static async Task<string[]> Suggestions(PhrasePredictionEngine engine, Case sample,
+        WordCompletionEngine lexical, bool baseline, PredictionRankingPolicy policy)
     {
-        var result = new Evaluation();
+        var phrases = baseline ? new PredictionCandidate[0] : await engine.PredictAsync(Request(sample));
+        var words = SuggestionOrdering.Merge(sample.Prefix, phrases, lexical.Complete(sample.Prefix, 10), 3, policy);
+        // Comparison uses the same apostrophe/case normalization as matching;
+        // insertions still preserve display spelling in the actual engine.
+        return words.Select(w => string.Join(" ", TextHelper.Tokenize(w).Select(t => t.Normalized))).ToArray();
+    }
+    private static async Task<object[]> WrongExamples(PhrasePredictionEngine engine, List<Case> cases,
+        WordCompletionEngine lexical, PredictionRankingPolicy policy)
+    {
+        var errors = new List<(string Key, object Row)>();
         foreach (var sample in cases)
         {
-            var words = baseline ? lexical.Complete(sample.Prefix, 3) :
-                (await engine.PredictAsync(Request(sample))).Select(p => p.FullCompletion).Concat(lexical.Complete(sample.Prefix, 3)).Distinct().Take(3).ToArray();
-            // Comparison uses the same apostrophe/case normalization as matching;
-            // insertions still preserve display spelling in the actual engine.
-            words = words.Select(w => string.Join(" ", TextHelper.Tokenize(w).Select(t => t.Normalized))).ToArray();
+            var words = await Suggestions(engine, sample, lexical, false, policy);
+            if (words.Length > 0 && words[0].Split(' ')[0] == sample.Expected) continue;
+            errors.Add((CollectionImporter.Hash(sample.Source + "|" + sample.Context + "|" + sample.Prefix),
+                new { sample.Source, sample.Context, sample.Prefix, sample.Expected,
+                    offered = words.Take(3).ToArray() }));
+        }
+        return errors.OrderBy(e => e.Key, StringComparer.Ordinal).Take(25).Select(e => e.Row).ToArray();
+    }
+    private static async Task<Evaluation> Evaluate(PhrasePredictionEngine engine, List<Case> cases,
+        WordCompletionEngine lexical, bool baseline, PredictionRankingPolicy policy = PredictionRankingPolicy.Current)
+    {
+        var result = new Evaluation();
+        var queryTimes = new List<double>(cases.Count);
+        foreach (var sample in cases)
+        {
+            var watch = Stopwatch.StartNew();
+            var words = await Suggestions(engine, sample, lexical, baseline, policy);
+            queryTimes.Add(watch.Elapsed.TotalMilliseconds);
             result.Cases++; result.RemainingCharacters += sample.Expected.Length - sample.Prefix.Length;
             if (words.Length == 0) continue;
             result.Offered++;
@@ -384,6 +502,8 @@ internal static class Program
             if (sample.ExpectedTail == tail || sample.ExpectedTail.StartsWith(tail + " ", StringComparison.Ordinal))
                 result.SavedCharacters += Math.Max(0, Math.Min(tail.Length, sample.Expected.Length - sample.Prefix.Length) - 1);
         }
+        queryTimes.Sort();
+        result.QueryP95Ms = queryTimes.Count == 0 ? 0 : queryTimes[(int)Math.Floor((queryTimes.Count - 1) * .95)];
         return result;
     }
 }
