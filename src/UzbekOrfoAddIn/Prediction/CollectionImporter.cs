@@ -64,10 +64,8 @@ namespace UzbekOrfoAddIn.Prediction
         private CollectionImportResult Import(PredictionCollection original, string[] paths,
             IProgress<CollectionImportProgress> progress, CancellationToken token)
         {
-            var next = new PredictionCollection { Id = original.Id, Name = original.Name, BuiltIn = original.BuiltIn,
-                Sources = original.Sources.Select(Clone).ToList(), UpdatedUtc = DateTime.UtcNow,
-                ImportLocations = new Dictionary<string, bool>(original.ImportLocations, StringComparer.OrdinalIgnoreCase),
-                ExcludedSources = new List<string>(original.ExcludedSources) };
+            var next = CloneCollection(original);
+            next.UpdatedUtc = DateTime.UtcNow;
             var report = new CollectionImportResult { Collection = next };
             int expectedSources = next.Sources.Select(s => s.Path).Concat(paths).Distinct(StringComparer.OrdinalIgnoreCase).Count();
             if (expectedSources > MaxFiles) throw new InvalidDataException("Тўпламда 1000 тагача файл бўлиши мумкин.");
@@ -77,6 +75,7 @@ namespace UzbekOrfoAddIn.Prediction
             {
                 token.ThrowIfCancellationRequested();
                 string path = paths[index];
+                progress?.Report(new CollectionImportProgress { Path = path, CompletedFiles = index, TotalFiles = paths.Length, ProcessedBytes = bytes });
                 var item = new CollectionImportFileReport { Path = path };
                 try
                 {
@@ -100,8 +99,8 @@ namespace UzbekOrfoAddIn.Prediction
                 }
                 catch (OperationCanceledException) { throw; }
                 catch (NotSupportedException ex) { item.Status = CollectionImportStatus.Unsupported; item.Message = ex.Message; }
-                catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is ArgumentException ||
-                    ex is System.Xml.XmlException || ex.GetType().Namespace.StartsWith("NPOI", StringComparison.Ordinal))
+                catch (Exception ex) when (ex is IOException || ex is InvalidDataException || ex is UnauthorizedAccessException || ex is ArgumentException ||
+                    ex is System.Xml.XmlException || (ex.GetType().Namespace ?? "").StartsWith("NPOI", StringComparison.Ordinal))
                 { item.Status = CollectionImportStatus.Failed; item.Message = "Ўқиб бўлмади. Аввалги маълумот сақланди: " + ex.Message; }
                 report.Files.Add(item);
                 progress?.Report(new CollectionImportProgress { Path = path, CompletedFiles = index + 1, TotalFiles = paths.Length, ProcessedBytes = bytes });
@@ -122,6 +121,7 @@ namespace UzbekOrfoAddIn.Prediction
             var seen = new HashSet<string>(StringComparer.Ordinal);
             // Source identity includes all unique normalized sentences, even if the compact index prunes some.
             var allHashes = new List<string>();
+            int retainedRecords = 0;
             foreach (string paragraph in paragraphs)
             foreach (string sentence in Regex.Split(paragraph, @"[.!?;:\r\n\t\a\d()\[\]«»]+"))
             {
@@ -136,6 +136,7 @@ namespace UzbekOrfoAddIn.Prediction
                 var passage = new PredictionPassage { Hash = hash, WordCount = words.Length };
                 for (int i = 0; i < words.Length; i++)
                 {
+                    if ((i & 511) == 0) cancellation.ThrowIfCancellationRequested();
                     if (!source.DisplayWords.ContainsKey(words[i].Normalized)) source.DisplayWords[words[i].Normalized] = words[i].Original;
                     var sequence = new StringBuilder();
                     for (int n = 0; n < 7 && i + n < words.Length; n++)
@@ -147,8 +148,13 @@ namespace UzbekOrfoAddIn.Prediction
                     }
                 }
                 source.Passages.Add(passage);
+                retainedRecords += passage.Sequences.Count;
                 // Bound transient memory even for a document near the extraction limit.
-                if (source.Passages.Sum(p => p.Sequences.Count) > 150000) Compact(source, Math.Max(recordBudget, 30000));
+                if (retainedRecords > 150000)
+                {
+                    Compact(source, Math.Max(recordBudget, 30000));
+                    retainedRecords = source.Passages.Sum(p => p.Sequences.Count);
+                }
             }
             source.Hash = Hash(string.Join("\n", allHashes.OrderBy(h => h, StringComparer.Ordinal)));
             Compact(source, recordBudget);
@@ -196,6 +202,14 @@ namespace UzbekOrfoAddIn.Prediction
             source.DisplayWords = source.DisplayWords.Where(p => keep.Contains(p.Key)).ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal);
             source.Sequences = counts.Where(p => keep.Contains(p.Key)).ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal);
         }
+        internal static PredictionCollection CloneCollection(PredictionCollection original) => new PredictionCollection
+        {
+            Id = original.Id, Name = original.Name, BuiltIn = original.BuiltIn, UpdatedUtc = original.UpdatedUtc,
+            Sources = original.Sources.Select(Clone).ToList(),
+            ImportLocations = new Dictionary<string, bool>(original.ImportLocations, StringComparer.OrdinalIgnoreCase),
+            ExcludedSources = new List<string>(original.ExcludedSources)
+        };
+
         private static PredictionSource Clone(PredictionSource source) => new PredictionSource
         {
             Path = source.Path, Hash = source.Hash, SourceUrl = source.SourceUrl, WordCount = source.WordCount,

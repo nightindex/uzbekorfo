@@ -221,7 +221,7 @@ namespace UzbekOrfoAddIn.Prediction
         }
         private static bool IsReadError(Exception error)
         {
-            return error is IOException || error is UnauthorizedAccessException || error is CryptographicException ||
+            return error is IOException || error is InvalidDataException || error is UnauthorizedAccessException || error is CryptographicException ||
                 error is JsonException || error is ArgumentException || error is NotSupportedException;
         }
 

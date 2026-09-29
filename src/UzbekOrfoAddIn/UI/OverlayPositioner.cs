@@ -177,9 +177,13 @@ namespace UzbekOrfoAddIn.UI
             if (anchor == null || size.Width <= 0 || size.Height <= 0) return Rectangle.Empty;
             Rectangle area = anchor.WorkArea;
             int x = anchor.CaretBounds.Right;
-            int y = textCellHeight > 0f
-                ? (int)Math.Round(anchor.CaretBounds.Bottom - textCellHeight)
-                : anchor.CaretBounds.Top;
+            // Word's native caret can be taller than the text cell when the
+            // paragraph has extra line spacing. Bottom-aligning the cell in
+            // that caret pushes the rendered continuation below the word.
+            // Only use its bottom when the caret is shorter than the text cell.
+            int y = anchor.CaretBounds.Top;
+            if (textCellHeight > anchor.CaretBounds.Height)
+                y = (int)Math.Round(anchor.CaretBounds.Bottom - textCellHeight);
             if (x < area.Left || x + size.Width > Math.Min(area.Right, anchor.TextRight) || y < area.Top || y + size.Height > area.Bottom)
                 return Rectangle.Empty; // A ghost must remain inline; never move it to a misleading position.
             return new Rectangle(x, y, size.Width, size.Height);

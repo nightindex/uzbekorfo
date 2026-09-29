@@ -353,9 +353,9 @@ namespace UzbekOrfoAddIn.Forms
             ModernScrollBar.AttachTo(flow, InfoScrollBarWidth);
 
             page.Controls.Add(flow);
-            // Explicitly measure wrapped labels after font/DPI and text changes.
-            // AutoSize labels in a vertical FlowLayoutPanel can retain a narrow
-            // preferred width while a previously measured height clips the text.
+            // Keep each label as wide as the page and let WinForms calculate its
+            // wrapped height. A separately measured fixed height can be one line
+            // too short after a DPI or update-status text change.
             bool arranging = false;
             Action arrange = () => {
                 if (arranging || flow.IsDisposed) return;
@@ -369,11 +369,10 @@ namespace UzbekOrfoAddIn.Forms
                         var label = child as Label;
                         if (label == null) continue;
                         int width = Math.Max(1, available - label.Margin.Horizontal);
-                        label.AutoSize = false;
-                        label.MaximumSize = Size.Empty;
                         label.MinimumSize = Size.Empty;
-                        label.Size = new Size(width, TextRenderer.MeasureText(label.Text, label.Font,
-                            new Size(width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height + Px(4));
+                        label.MaximumSize = new Size(width, 0);
+                        label.MinimumSize = new Size(width, 0);
+                        label.AutoSize = true;
                     }
                 }
                 finally { flow.ResumeLayout(true); arranging = false; }

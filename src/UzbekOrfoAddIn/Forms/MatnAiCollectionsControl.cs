@@ -164,9 +164,11 @@ namespace UzbekOrfoAddIn.Forms
             _cancellation?.Cancel();
             try { await _work; } catch (OperationCanceledException) { } catch { }
         }
-        private async Task Reload()
+        private Task Reload() => Reload(null);
+
+        private async Task Reload(string preferredId)
         {
-            string selected = Selected?.Id;
+            string selected = preferredId ?? Selected?.Id;
             var rows = await Task.Run(() => _store.LoadAll().Select(collection =>
             {
                 int words = collection.Sources.Sum(s => s.WordCount);
@@ -229,6 +231,7 @@ namespace UzbekOrfoAddIn.Forms
             if (Selected?.BuiltIn == true) { _collections.ClearSelected(); _name.Text = ""; }
             bool recursive = _recursive.Checked;
             var token = _cancellation.Token;
+            _status.Text = "Файллар қидирилмоқда…";
             var found = await Task.Run(() => CollectionImporter.Discover(paths, recursive, token));
             foreach (string path in paths) _pendingLocations[Path.GetFullPath(path)] = recursive;
             if (Selected != null) found = found.Where(p => !Selected.ExcludedSources.Contains(p, StringComparer.OrdinalIgnoreCase) || paths.Contains(p, StringComparer.OrdinalIgnoreCase)).ToArray();
@@ -247,6 +250,7 @@ namespace UzbekOrfoAddIn.Forms
         private async Task RefreshCollection()
         {
             var collection = Editable(); var token = _cancellation.Token;
+            _status.Text = "Манбалар текширилмоқда…";
             var discovered = await Task.Run(() => collection.ImportLocations.Where(p => Directory.Exists(p.Key))
                 .SelectMany(p => CollectionImporter.Discover(new[] { p.Key }, p.Value, token)).ToArray(), token);
             await Import(collection, collection.Sources.Select(s => s.Path).Concat(discovered)
@@ -254,6 +258,8 @@ namespace UzbekOrfoAddIn.Forms
         }
         private async Task Import(PredictionCollection collection, string[] paths)
         {
+            _progress.Value = 0;
+            _status.Text = "Файллар ўрганилмоқда…";
             var progress = new Progress<CollectionImportProgress>(p =>
             {
                 if (IsDisposed) return;
@@ -271,7 +277,7 @@ namespace UzbekOrfoAddIn.Forms
                 _status.Text = "Ҳеч бир файл ўрганилмади. Аввалги тўплам сақланди."; return;
             }
             await Task.Run(() => _store.Save(result.Collection, cancellation: token));
-            _changed(); await Reload();
+            _changed(); await Reload(result.Collection.Id);
             _files.Items.Clear(); _files.Items.AddRange(result.Files.Select(f => f.Path + " — " + f.Message).ToArray());
             _status.Text = "Ўрганилди: " + result.Files.Count(f => f.Status == CollectionImportStatus.Imported) +
                 "; такрор: " + result.Files.Count(f => f.Status == CollectionImportStatus.Duplicate) +
@@ -285,21 +291,38 @@ namespace UzbekOrfoAddIn.Forms
         }
         private async Task Rename()
         {
-            var collection = Editable();
+            var original = Editable();
             if (string.IsNullOrWhiteSpace(_name.Text)) throw new InvalidOperationException("Тўплам номини киритинг.");
-            collection.Name = _name.Text.Trim(); await Task.Run(() => _store.Save(collection)); _changed(); await Reload();
+            string name = _name.Text.Trim();
+            var token = _cancellation.Token;
+            await Task.Run(() =>
+            {
+                token.ThrowIfCancellationRequested();
+                var collection = CollectionImporter.CloneCollection(original);
+                collection.Name = name;
+                _store.Save(collection, cancellation: token);
+            }, token);
+            _changed(); await Reload();
         }
         private async Task RemoveSources()
         {
-            var collection = Editable();
+            var original = Editable();
             var labels = _files.SelectedItems.Cast<string>().ToArray();
-            var paths = collection.Sources.Where(s => labels.Any(label => label == s.Path || label.StartsWith(s.Path + " — ", StringComparison.Ordinal)))
+            var paths = original.Sources.Where(s => labels.Any(label => label == s.Path || label.StartsWith(s.Path + " — ", StringComparison.Ordinal)))
                 .Select(s => s.Path).ToArray();
             if (paths.Length == 0) return;
             if (!ModernMessageBox.Confirm("Танланган манбалардан ўрганилган маълумотлар олиб ташлансинми? Асл файллар ўчирилмайди.", "MatnAI", "Олиб ташлаш", "Бекор қилиш")) return;
-            collection.Sources.RemoveAll(s => paths.Contains(s.Path)); CollectionImporter.Recount(collection);
-            collection.ExcludedSources.AddRange(paths.Except(collection.ExcludedSources, StringComparer.OrdinalIgnoreCase));
-            await Task.Run(() => _store.Save(collection, discardPrevious: true)); _forgetLearning?.Invoke(collection.Id); _changed(); await Reload();
+            var token = _cancellation.Token;
+            await Task.Run(() =>
+            {
+                token.ThrowIfCancellationRequested();
+                var collection = CollectionImporter.CloneCollection(original);
+                collection.Sources.RemoveAll(s => paths.Contains(s.Path));
+                CollectionImporter.Recount(collection);
+                collection.ExcludedSources.AddRange(paths.Except(collection.ExcludedSources, StringComparer.OrdinalIgnoreCase));
+                _store.Save(collection, discardPrevious: true, cancellation: token);
+            }, token);
+            _forgetLearning?.Invoke(original.Id); _changed(); await Reload();
         }
         private async Task DeleteCollection()
         {
