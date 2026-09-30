@@ -66,6 +66,15 @@ namespace UzbekOrfoAddIn.UI
             }
         }
 
+        protected override void OnLayout(LayoutEventArgs e)
+        {
+            base.OnLayout(e);
+            // A live window can be capped to the monitor's maximum tracking size.
+            // Recalculate after docking has assigned the viewports their real size;
+            // otherwise a scrollbar from the previous layout can remain visible.
+            LayoutViewports();
+        }
+
         protected virtual int GetMinimumActionBarWidth()
         {
             var buttons = ActionBar.Controls.Cast<Control>().OfType<ModernButton>().ToArray();
