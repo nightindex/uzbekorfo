@@ -1,6 +1,10 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Web.Script.Serialization;
 
 namespace UzbekOrfoAddIn.Services
 {
@@ -32,8 +36,8 @@ namespace UzbekOrfoAddIn.Services
         }
 
         /// <summary>
-        /// Makes the compact generated built-in metadata index available when
-        /// a definition lookup needs it. It is deliberately not read at startup.
+        /// Makes the compact generated built-in metadata index available for
+        /// startup lexeme loading and lazy definition lookup.
         /// </summary>
         public static void SeedDictionaryMetadata(string dictionaryMetadataPath)
         {
@@ -95,12 +99,52 @@ namespace UzbekOrfoAddIn.Services
             try
             {
                 SeedIfMissing(suffixesPath, "uzbek_suffixes.json", "UzbekOrfoAddIn.Data.uzbek_suffixes.json");
+                MigrateCompatibleSuffixes(suffixesPath);
                 SeedIfMissing(grammarRulesPath, "grammar_rules.json", "UzbekOrfoAddIn.Data.grammar_rules.json");
                 SeedIfMissing(properNounsPath, "proper_nouns.json", "UzbekOrfoAddIn.Data.proper_nouns.json");
             }
             catch (Exception ex)
             {
                 Helpers.Logger.Error("Failed to seed grammar files", ex);
+            }
+        }
+
+        private static void MigrateCompatibleSuffixes(string targetPath)
+        {
+            if (string.IsNullOrWhiteSpace(targetPath) || !File.Exists(targetPath)) return;
+            var serializer = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+            var current = serializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(targetPath, Encoding.UTF8));
+            if (current.ContainsKey("compatibleSuffixMigration")) return;
+            // Verify the user's existing grammar before adding anything to it.
+            MorphologyRuleSetLoader.Load(targetPath);
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("UzbekOrfoAddIn.Data.uzbek_suffixes.json"))
+            {
+                if (stream == null) return;
+                Dictionary<string, object> shipped;
+                using (var reader = new StreamReader(stream, Encoding.UTF8))
+                    shipped = serializer.Deserialize<Dictionary<string, object>>(reader.ReadToEnd());
+                foreach (string section in new[] { "families", "suffixes" })
+                {
+                    var local = ((System.Collections.IEnumerable)current[section]).Cast<Dictionary<string, object>>().ToList();
+                    var ids = new HashSet<string>(local.Select(row => (string)row["id"]), StringComparer.Ordinal);
+                    foreach (var row in ((System.Collections.IEnumerable)shipped[section]).Cast<Dictionary<string, object>>())
+                    {
+                        string id = (string)row["id"];
+                        if ((section == "families" ? id == "imported" : id.StartsWith("IMPORTED_", StringComparison.Ordinal)) && ids.Add(id))
+                            local.Add(row);
+                    }
+                    current[section] = local.ToArray();
+                }
+                current["compatibleSuffixMigration"] = "v1";
+                string json = serializer.Serialize(current);
+                string temporary = targetPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+                try
+                {
+                    File.WriteAllText(temporary, json, new UTF8Encoding(false));
+                    MorphologyRuleSetLoader.Load(temporary);
+                    Helpers.AtomicFile.WriteAllLines(targetPath, new[] { json });
+                }
+                finally { if (File.Exists(temporary)) File.Delete(temporary); }
             }
         }
 

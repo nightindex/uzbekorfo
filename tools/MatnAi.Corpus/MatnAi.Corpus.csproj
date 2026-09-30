@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>disable</Nullable></PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../src/UzbekOrfoAddIn/Data/prediction_casing.json" LogicalName="UzbekOrfoAddIn.Data.prediction_casing.json" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="ScratchPad.NPOI.HWPF" Version="2.5.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <Compile Include="../../src/UzbekOrfoAddIn/Prediction/*.cs" Exclude="../../src/UzbekOrfoAddIn/Prediction/AcceptanceStore.cs;../../src/UzbekOrfoAddIn/Prediction/PredictionMetrics.cs" Link="Prediction/%(Filename)%(Extension)" />
+    <Compile Include="../../src/UzbekOrfoAddIn/Core/IPredictionEngine.cs" Link="Core/IPredictionEngine.cs" />
+    <Compile Include="../../src/UzbekOrfoAddIn/Models/Enums.cs" Link="Models/Enums.cs" />
+    <Compile Include="../../src/UzbekOrfoAddIn/Helpers/TextHelper.cs" Link="Helpers/TextHelper.cs" />
+    <Compile Include="../../src/UzbekOrfoAddIn/Helpers/ImportTextReader.cs" Link="Helpers/ImportTextReader.cs" />
+    <Compile Include="../../src/UzbekOrfoAddIn/Services/WordCompletionEngine.cs" Link="Services/WordCompletionEngine.cs" />
+  </ItemGroup>
+</Project>

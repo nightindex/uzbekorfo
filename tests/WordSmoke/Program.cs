@@ -1,30 +1,135 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using UzbekOrfoAddIn.Helpers;
 using UzbekOrfoAddIn.Models;
 using UzbekOrfoAddIn.Services;
+using UzbekOrfoAddIn.Prediction;
 using Word = Microsoft.Office.Interop.Word;
 
 internal static class Program
 {
     [STAThread]
-    private static int Main()
+    private static int Main(string[] args)
     {
         Word.Application app = null;
         var documents = new List<Word.Document>();
         bool ownsApplication = false;
+        string temporaryDirectory = null;
         try
         {
             app = new Word.Application();
             // Never close or alter an application that already has a user's documents.
             if (app.Documents.Count != 0) throw new InvalidOperationException("Expected a new empty Word instance.");
             ownsApplication = true;
+            Console.WriteLine("ENVIRONMENT: Word version=" + app.Version + "; build=" + app.Build +
+                "; harness=" + (Environment.Is64BitProcess ? "x64" : "x86") +
+                ". Harness bitness is not proof of Office bitness. This is not an installation test.");
             app.Visible = false;
             app.DisplayAlerts = Word.WdAlertLevel.wdAlertsNone;
             var a = app.Documents.Add(); documents.Add(a);
+            if (args.Contains("--visual-ghost"))
+            {
+                // Standalone harness has no Office DPI policy. Match physical-pixel
+                // overlay coordinates for native visibility checks and screen capture.
+                using ((IDisposable)Activator.CreateInstance(typeof(WordCompletionContext).Assembly
+                    .GetType("UzbekOrfoAddIn.UI.DpiLayout+Context", true), true))
+                    GhostVisualChecks.Run(app, a);
+                return 0;
+            }
             var b = app.Documents.Add(); documents.Add(b);
+            a.Activate();
+            a.Content.Text = "Ўзбекистон ";
+            Require(PredictionCasing.Apply("Ўзбекистон ", "", "республикаси") == "Республикаси",
+                "Packaged prediction casing data capitalizes the official country name");
+            a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+            using (var previous = WordCompletionContext.Capture(app, false))
+            {
+                a.Range(a.Content.End - 1, a.Content.End - 1).InsertAfter("Ре");
+                a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+                using (var current = WordCompletionContext.Capture(app, false))
+                {
+                    string continued;
+                    Require(previous.TryContinueSuggestion(current, "Республикаси қонуни", out continued) && continued == "Республикаси қонуни",
+                        "Ghost continuation advances through matching letters without a new prediction");
+                }
+                a.Range(a.Content.End - 1, a.Content.End - 1).InsertAfter("спубликаси ");
+                a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+                using (var current = WordCompletionContext.Capture(app, false))
+                {
+                    string continued;
+                    Require(previous.TryContinueSuggestion(current, "Республикаси қонуни", out continued) && continued == "қонуни",
+                        "Stable ghost phrase continues across a completed word and space");
+                }
+                a.Range(0, 10).Text = "Қозоғистон";
+                a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+                using (var current = WordCompletionContext.Capture(app, false))
+                {
+                    string continued;
+                    Require(!previous.TryContinueSuggestion(current, "Республикаси қонуни", out continued), "Changed surrounding text invalidates retained ghost");
+                }
+            }
+            a.Content.Text = "kit";
+            a.Range(3, 3).Select();
+            using (var completion = WordCompletionContext.Capture(app, false))
+            {
+                Require(completion != null && completion.Prefix == "kit", "MatnAi captures only current prefix");
+                Require(completion.TryInsert(app, "kitob", false), "MatnAi explicit acceptance inserts tail");
+                Require(a.Content.Text.TrimEnd('\r') == "kitob", "MatnAi does not replace surrounding text");
+                a.Undo();
+                Require(a.Content.Text.TrimEnd('\r') == "kit", "MatnAi acceptance undoes in one step");
+            }
+            a.Range(3, 3).Select();
+            using (var staleCompletion = WordCompletionContext.Capture(app, false))
+            {
+                a.Range(3, 3).InsertAfter("a");
+                a.Range(4, 4).Select();
+                Require(!staleCompletion.TryInsert(app, "kitob", false), "MatnAi rejects edited prefix");
+            }
+            a.Content.Text = "kit";
+            a.Range(3, 3).Select();
+            using (var otherDocument = WordCompletionContext.Capture(app, false))
+            {
+                b.Content.Text = "kit";
+                b.Activate(); b.Range(3, 3).Select();
+                Require(!otherDocument.TryInsert(app, "kitob", false), "MatnAi rejects another document with identical prefix");
+            }
+            a.Activate(); a.Range(3, 3).Select();
+            a.TrackRevisions = true;
+            Require(WordCompletionContext.Capture(app, false) == null, "MatnAi suppresses tracked changes");
+            a.TrackRevisions = false;
+            a.Range(0, 2).Select();
+            Require(WordCompletionContext.Capture(app, false) == null, "MatnAi suppresses selected text");
+            a.Content.Text = "Суд томонидан ";
+            a.Range(14, 14).Select();
+            using (var phrase = WordCompletionContext.Capture(app, false))
+            {
+                Require(phrase != null && phrase.Prefix == "", "Phrase context can start after a space");
+                Require(phrase.TryInsert(app, "қарор қабул қилинди", false), "Explicit phrase acceptance inserts a complete continuation");
+                Require(a.Content.Text.TrimEnd('\r') == "Суд томонидан қарор қабул қилинди", "Phrase leaves preceding context intact");
+                a.Undo(); Require(a.Content.Text.TrimEnd('\r') == "Суд томонидан ", "Whole phrase undoes in one step");
+            }
+            a.Content.Text = "Sud tomonidan qa"; a.Range(16, 16).Select();
+            using (var stalePhrase = WordCompletionContext.Capture(app, false))
+            {
+                a.Range(0, 3).Text = "Kim"; a.Range(16, 16).Select();
+                Require(!stalePhrase.TryInsert(app, "qaror qabul qilindi", false), "Changed preceding context rejects a stale phrase even when prefix and caret match");
+            }
+            a.Content.Text = string.Concat(Enumerable.Repeat("kitob ", 100000)) + "qa";
+            a.Range(a.Content.End - 1, a.Content.End - 1).Select();
+            var captureTimes = new List<double>();
+            for (int i = 0; i < 100; i++)
+            {
+                var timer = Stopwatch.StartNew();
+                using (var large = WordCompletionContext.Capture(app, false))
+                    Require(large != null && large.PrecedingContext.Length <= 512, "Large-document capture stays bounded");
+                captureTimes.Add(timer.Elapsed.TotalMilliseconds);
+            }
+            captureTimes.Sort(); Console.WriteLine("MEASURE: 100,000-word context capture p95=" + captureTimes[94].ToString("F2") + "ms");
             a.Content.Text = "x kiotb end";
             b.Content.Text = "x other end";
             var error = MakeError(a.Range(2, 7));
@@ -71,6 +176,152 @@ internal static class Program
             b.Close(Word.WdSaveOptions.wdDoNotSaveChanges);
             documents.Remove(b);
             Require(!DocumentHelper.TryReplaceError(closed, a, "kitob"), "Closed document range rejected");
+
+            string dataDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+            temporaryDirectory = Path.Combine(Path.GetTempPath(), "UzbekOrfoWordSmoke", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(temporaryDirectory);
+            var dictionary = new DictionaryService(
+                Path.Combine(dataDirectory, "uzbek_main.dic"),
+                Path.Combine(temporaryDirectory, "user_custom.dic"),
+                Path.Combine(dataDirectory, "uzbek_dictionary_metadata.json"));
+            dictionary.Load();
+            var transliterator = new TransliterationService(Path.Combine(dataDirectory, "translit_exceptions.json"));
+            dictionary.SetTransliterator(transliterator);
+            var completionBuild = Stopwatch.StartNew();
+            var completionIndex = new WordCompletionEngine(dictionary.GetCompletionSnapshot());
+            completionBuild.Stop();
+            var completionTimings = new List<double>();
+            foreach (var prefix in new[] { "ki", "kit", "kitob", "sa", "sal", "bo", "bor", "o'z", "кит", "кито", "са", "бор" })
+                completionIndex.Complete(prefix);
+            for (int run = 0; run < 100; run++)
+                foreach (var prefix in new[] { "ki", "kit", "kitob", "sa", "sal", "bo", "bor", "o'z", "кит", "кито", "са", "бор" })
+                {
+                    var queryTime = Stopwatch.StartNew();
+                    completionIndex.Complete(prefix);
+                    queryTime.Stop(); completionTimings.Add(queryTime.Elapsed.TotalMilliseconds);
+                }
+            completionTimings.Sort();
+            double completionP95 = completionTimings[(int)(completionTimings.Count * .95) - 1];
+            Require(completionP95 < 15, "MatnAi warm lexical engine p95 stays below 15 ms");
+            Console.WriteLine("MATNAI: index build=" + completionBuild.Elapsed.TotalMilliseconds.ToString("F0") +
+                " ms; 1200 warm lexical queries p95=" + completionP95.ToString("F3") + " ms (not keystroke-to-popup latency)");
+            var morphology = new UzbekMorphAnalyzer(dictionary, transliterator);
+            morphology.LoadSuffixes(Path.Combine(dataDirectory, "uzbek_suffixes.json"));
+            var completionRules = MorphologyRuleSetLoader.Load(Path.Combine(dataDirectory, "uzbek_suffixes.json"));
+            var suffixCompletion = new WordCompletionEngine(new[] { "kitob", "китоб" },
+                completionRules.Suffixes.Where(s => s.Productive).SelectMany(s => new[] { s.Latin, s.Cyrillic }));
+            foreach (var prefix in new[] { "kitobl", "китобл" })
+            {
+                var proposals = suffixCompletion.Complete(prefix, 10, default(System.Threading.CancellationToken), true);
+                var accepted = WordCompletionEngine.ValidateCandidates(proposals,
+                    candidate => morphology.Analyze(candidate).IsValidInflectedForm, 3);
+                Require(accepted.Length > 0 && accepted.All(candidate => morphology.Analyze(candidate).IsValidInflectedForm),
+                    "MatnAi suffix proposals pass the existing morphology engine: " + prefix);
+            }
+            Require(WordCompletionEngine.ValidateCandidates(new[] { "kitoblar-alar" },
+                candidate => morphology.Analyze(candidate).IsValidInflectedForm, 3).Length == 0,
+                "MatnAi rejects invalid standalone suffix chaining before display");
+            Require(morphology.LoadedSuffixCount >= 50, "Versioned morphology rules loaded");
+            var loadedRules = MorphologyRuleSetLoader.Load(Path.Combine(dataDirectory, "uzbek_suffixes.json"));
+            Require(loadedRules.Suffixes.Count(s => s.StandaloneOnly && !string.IsNullOrEmpty(s.RequiredRootFlags)) == 2333,
+                "Runtime JSON loader preserves imported rule restrictions");
+            var serializer = new System.Web.Script.Serialization.JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+            string cleanSuffixPath = Path.Combine(temporaryDirectory, "clean-suffixes.json");
+            DataSeedService.SeedGrammarFiles(cleanSuffixPath, Path.Combine(temporaryDirectory, "clean-grammar.json"),
+                Path.Combine(temporaryDirectory, "clean-proper.json"));
+            Require(MorphologyRuleSetLoader.Load(cleanSuffixPath).Suffixes.Count == loadedRules.Suffixes.Count,
+                "Fresh data seeding includes all bundled suffixes (not a clean installer test)");
+            var legacy = serializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(Path.Combine(dataDirectory, "uzbek_suffixes.json")));
+            foreach (string section in new[] { "suffixes", "families" })
+                legacy[section] = ((System.Collections.IEnumerable)legacy[section]).Cast<Dictionary<string, object>>()
+                    .Where(row => !((string)row["id"]).StartsWith("IMPORTED_", StringComparison.Ordinal) && (string)row["id"] != "imported").ToArray();
+            legacy["localNote"] = "preserve-me";
+            string upgradePath = Path.Combine(temporaryDirectory, "suffixes-upgrade.json");
+            File.WriteAllText(upgradePath, serializer.Serialize(legacy));
+            DataSeedService.SeedGrammarFiles(upgradePath, Path.Combine(temporaryDirectory, "grammar.json"), Path.Combine(temporaryDirectory, "proper.json"));
+            Require(MorphologyRuleSetLoader.Load(upgradePath).Suffixes.Count == loadedRules.Suffixes.Count &&
+                File.ReadAllText(upgradePath).Contains("preserve-me") && File.Exists(upgradePath + ".bak"),
+                "Existing suffix file receives compatible rules while retaining custom data and backup");
+            string upgraded = File.ReadAllText(upgradePath);
+            DataSeedService.SeedGrammarFiles(upgradePath, Path.Combine(temporaryDirectory, "grammar.json"), Path.Combine(temporaryDirectory, "proper.json"));
+            Require(File.ReadAllText(upgradePath) == upgraded, "Suffix upgrade is idempotent");
+            LexemeMetadata kitobLexeme;
+            Require(dictionary.TryGetLexeme("китоб", out kitobLexeme) &&
+                kitobLexeme.Lemma == "китоб" && kitobLexeme.PartOfSpeech == "noun",
+                "Bundled lemma and part-of-speech metadata loaded");
+            Require(morphology.Analyze("китобларимиздан").IsValidInflectedForm,
+                "Productive suffix chain works against bundled data");
+            Require(morphology.Analyze("kitoblarimizdan").IsValidInflectedForm,
+                "Productive suffix chain works in Latin script");
+            Require(!morphology.Analyze("китобаман").IsValidInflectedForm,
+                "Part-of-speech metadata blocks a noun with a verb chain");
+            Require(!morphology.Analyze("бормоқлар").IsValidInflectedForm,
+                "Infinitive cannot be followed by finite agreement");
+            Require(morphology.Analyze("отам").IsValidInflectedForm &&
+                !morphology.Analyze("отаим").IsValidInflectedForm,
+                "Vowel-final possessive allomorph is enforced");
+            Require(morphology.Analyze("мактабда").IsValidInflectedForm &&
+                !morphology.Analyze("мактабта").IsValidInflectedForm,
+                "Written locative uses invariant -да");
+            Require(morphology.Analyze("дарахтдан").IsValidInflectedForm &&
+                !morphology.Analyze("дарахттан").IsValidInflectedForm,
+                "Written ablative uses invariant -дан");
+
+            var unknownWords = new UnknownWordReportService(
+                Path.Combine(temporaryDirectory, "unknown_words.tsv"));
+            var spelling = new SpellingEngine(dictionary, morphology, unknownWords);
+            var completionSettings = new SettingsManager(Path.Combine(temporaryDirectory, "matnai-settings"));
+            File.Copy(Path.Combine(dataDirectory, "uzbek_suffixes.json"), completionSettings.SuffixesPath);
+            using (var completionAutoCorrect = new AutoCorrectService(spelling, dictionary))
+            using (var controller = new WordCompletionController(app, completionSettings, dictionary, completionAutoCorrect, morphology,
+                new CollectionStore(Path.Combine(temporaryDirectory, "prediction-collections"))))
+            {
+                completionAutoCorrect.Initialize(app);
+                a.Activate(); controller.SetActiveCollectionIds(new[] { "test-private" });
+                Require(controller.GetActiveCollectionIds().SequenceEqual(new[] { "test-private" }), "Collections enabled for current document session");
+                var isolation = app.Documents.Add(); documents.Add(isolation);
+                Require(controller.GetActiveCollectionIds().Length == 0, "New document does not inherit private collections");
+                a.Activate(); controller.ForgetDocument(a);
+                Require(controller.GetActiveCollectionIds().Length == 0, "Closing/resetting a document clears collection selection");
+                Require(!controller.IsEnabled && !completionSettings.MatnAiLearningConsent,
+                    "MatnAi defaults off without learning consent");
+                controller.SetEnabled(true);
+                controller.Rebuild(); // Cancel an obsolete index build.
+                var deadline = Stopwatch.StartNew();
+                while (!controller.IsReady && deadline.Elapsed < TimeSpan.FromSeconds(10))
+                {
+                    System.Windows.Forms.Application.DoEvents();
+                    System.Threading.Thread.Sleep(10);
+                }
+                Require(controller.IsReady, "MatnAi cancelled/rebuilt index becomes ready");
+                controller.SetEnabled(false);
+                Require(!controller.PopupVisible, "MatnAi disable hides popup");
+                controller.Dispose(); // Idempotent shutdown; queued callbacks must not revive the popup.
+            }
+            a.Content.Text = "китоп китоб";
+            Require(spelling.Check(a.Content).Count == 1, "Unknown word is detected in Word");
+            Require(unknownWords.GetSnapshot().Count == 1 &&
+                unknownWords.GetSnapshot()[0].Word == "китоп",
+                "Unknown word is aggregated into the local review report");
+            const int largeDocumentWordCount = 50000;
+            a.Content.Text = "kitoblarimizdan китобларимиздан";
+            var importedErrors = spelling.Check(a.Content);
+            Require(importedErrors.Count == 0, "Existing morphology engine handles both scripts");
+            Require(morphology.Analyze("китоблар-а").IsValidInflectedForm,
+                "Compatible imported suffix uses the existing parser and root flags");
+            Require(spelling.IsCorrect("kitoblar-a"), "Imported complete suffix works in Latin");
+            Require(!spelling.IsCorrect("kitoblar-alar"), "Imported complete suffix cannot be chained");
+            dictionary.RebuildSearchIndexBackground();
+            Require(spelling.GetSuggestions("kitb", 5).Any(), "Existing suggestions are available");
+            a.Content.Text = string.Join(" ", Enumerable.Repeat("китоб", largeDocumentWordCount));
+            var stopwatch = Stopwatch.StartNew();
+            List<ErrorEntry> largeDocumentErrors = spelling.Check(a.Content);
+            stopwatch.Stop();
+            Require(largeDocumentErrors.Count == 0, "Large known-word document has no spelling errors");
+            Require(stopwatch.Elapsed < TimeSpan.FromSeconds(30),
+                "Large-document check stays under the 30-second release ceiling; actual=" + stopwatch.Elapsed);
+            Console.WriteLine("PERF: " + largeDocumentWordCount + " Word tokens checked in " +
+                stopwatch.Elapsed.TotalMilliseconds.ToString("F0") + " ms");
             Console.WriteLine("PASS: real Word document ownership, live ranges, stale corrections, underline restoration, and exact replacement");
             return 0;
         }
@@ -82,6 +333,8 @@ internal static class Program
             if (ownsApplication)
                 try { app.Quit(Word.WdSaveOptions.wdDoNotSaveChanges); } catch { }
             if (app != null) try { Marshal.ReleaseComObject(app); } catch { }
+            if (!string.IsNullOrWhiteSpace(temporaryDirectory))
+                try { Directory.Delete(temporaryDirectory, true); } catch { }
         }
     }
 

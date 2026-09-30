@@ -12,6 +12,30 @@ The `Publish` target refuses an unsigned Release publish. A normal local Debug b
 
 ## Update channels
 
+### In-app GitHub check
+
+`Маълумот → Дастур ҳақида → Янгиланишни текшириш` explicitly requests
+`https://api.github.com/repos/nightindex/uzbekorfo/releases/latest`.
+No startup polling, document content, credentials, or automatic installer
+downloads are involved. GitHub receives ordinary network request metadata.
+The request times out after 15 seconds. Failure leaves the browser link available.
+
+Publish stable releases with tags `vMAJOR.MINOR.PATCH` or
+`vMAJOR.MINOR.PATCH.REVISION`, matching the ClickOnce `ApplicationVersion`.
+The installed ClickOnce version is preferred; development builds use the assembly
+version. Drafts, prereleases, and unsupported tag formats are not offered.
+Release notes are shown as plain text, never executed or rendered as HTML.
+The latest-release API contract is documented in
+[GitHub's release API documentation](https://docs.github.com/en/rest/releases/releases#get-the-latest-release).
+
+`Юклаб олиш саҳифаси` opens the fixed official repository's release page.
+Users download the complete signed installer ZIP (not GitHub's source-code ZIP),
+extract it, save documents and close Word before installing. The same package
+can be transferred to an offline PC; .NET Framework and VSTO prerequisites must
+already be installed or supplied separately. Preserve ClickOnce application and
+signing identity between versions and test settings/collection retention during
+upgrade. This feature does not build or publish a release by itself.
+
 `Offline` is the default channel. Each release produces a signed package that users install manually; updates are distributed by publishing the next package.
 
 `Web` enables ClickOnce foreground updates. It requires a stable HTTPS URL that you control, such as `https://downloads.example.com/uzbekorfo/`. Keep every published deployment manifest and application-files directory reachable at that URL for existing users. Do not enable this channel until the download hosting and retention policy are ready.
@@ -45,6 +69,11 @@ For a hosted update channel:
 The command runs repository preflight, UI compatibility tests, the complete unit-test suite, a signed Release publish, and `eng\test-word.ps1`. The Word step creates an isolated, hidden Word instance and closes all of its temporary documents without saving.
 
 ## Manual release record
+
+Complete the six-target clean installation and upgrade matrix in
+[production validation](production-validation.md). A Word smoke pass is not proof of
+installation or upgrade compatibility. Independent linguistic approval must match the
+exact dictionary, suffix rules and corpus hashes.
 
 Before shipping, record the version, commit SHA, certificate publisher, channel URL (if any), Windows version, and pass/fail result for each supported Word version. On physical target devices, verify the DPI/accessibility checks in [display compatibility](display-compatibility.md), including keyboard navigation and Narrator labels at the intended display scales.
 

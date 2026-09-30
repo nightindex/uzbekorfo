@@ -46,6 +46,140 @@ internal static class Program
     private static extern bool RegisterHotKey(IntPtr window, int id, uint modifiers, uint key);
     [DllImport("user32.dll")]
     private static extern bool UnregisterHotKey(IntPtr window, int id);
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+
+    private static void CheckMatnAiPopup()
+    {
+        using (var owner = new Form { Opacity = 0, ShowInTaskbar = false })
+        using (var popup = new CompletionPopup { Opacity = 0 })
+        {
+            owner.Show();
+            Application.DoEvents();
+            IntPtr foreground = GetForegroundWindow();
+            string accepted = null;
+            popup.Accepted += word => accepted = word;
+            popup.Present(new[] { "kitob", "kitoblar", "kitobcha" }, new Rectangle(100, 100, 2, 20), owner);
+            Application.DoEvents();
+            Require(GetForegroundWindow() == foreground, "MatnAi popup does not activate or steal focus");
+            Require(popup.Height == ScreenGeometry.Scale(38, popup.PresentationDpi) * 3 + 2,
+                "MatnAi alternatives use a compact row-only layout");
+            Require(popup.Width >= ScreenGeometry.Scale(236, popup.PresentationDpi) &&
+                    popup.Width <= ScreenGeometry.Scale(360, popup.PresentationDpi),
+                "MatnAi alternatives use a bounded compact width");
+            Require(popup.AccessibilityObject.Role == AccessibleRole.List && popup.AccessibilityObject.GetChildCount() == 3,
+                "MatnAi exposes an accessible suggestion list");
+            popup.MoveSelection(1);
+            Require(popup.Selected == "kitoblar", "MatnAi keyboard selection moves to next suggestion");
+            var item = popup.AccessibilityObject.GetChild(1);
+            Require(item.Name == "kitoblar" && (item.State & AccessibleStates.Selected) != 0,
+                "MatnAi exposes the selected word to assistive technology");
+            item.DoDefaultAction();
+            Application.DoEvents();
+            Require(accepted == "kitoblar", "MatnAi accessible acceptance is explicit");
+            using (var bitmap = new Bitmap(popup.Width, popup.Height))
+            {
+                popup.DrawToBitmap(bitmap, popup.ClientRectangle);
+                bitmap.Save(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MatnAi-Popup.png"));
+            }
+            accepted = null;
+            popup.Present(new[] { "salom" }, new Rectangle(100, 100, 2, 20), owner);
+            item.DoDefaultAction();
+            Application.DoEvents();
+            Require(accepted == null, "Stale accessibility item cannot accept a replaced suggestion");
+            popup.Hide();
+        }
+        Console.WriteLine("PASS: MatnAi popup focus, selection, accessibility and stale-action safety");
+    }
+
+    private static void CheckCompletionOverlayGeometry()
+    {
+        var leftMonitor = new Rectangle(-1920, 0, 1920, 1040);
+        var bottomAnchor = new OverlayAnchor(new Rectangle(-110, 1010, 2, 24), leftMonitor,
+            IntPtr.Zero, 192, "Segoe UI", 11f, FontStyle.Regular, false);
+        Rectangle popup = OverlayPositioner.PlacePopup(bottomAnchor, new Size(500, 230));
+        Require(leftMonitor.Contains(popup), "Alternatives stay on a negative-coordinate monitor");
+        Require(popup.Bottom <= bottomAnchor.CaretBounds.Top,
+            "Alternatives move above the caret when there is no room below");
+
+        var rightMonitor = new Rectangle(1920, -200, 2560, 1400);
+        var inlineAnchor = new OverlayAnchor(new Rectangle(2400, 300, 2, 30), rightMonitor,
+            IntPtr.Zero, 144, "Segoe UI", 11f, FontStyle.Regular, true);
+        Rectangle ghost = OverlayPositioner.PlaceGhost(inlineAnchor, new Size(180, 32));
+        Require(!ghost.IsEmpty && rightMonitor.Contains(ghost),
+            "Ghost text stays inline on a differently scaled monitor");
+        Require(ghost.Left == inlineAnchor.CaretBounds.Right,
+            "Ghost text starts immediately after the physical caret");
+        Rectangle aligned = OverlayPositioner.PlaceGhost(inlineAnchor, new Size(180, 42), 30f);
+        Require(aligned.Top == inlineAnchor.CaretBounds.Top,
+            "Bitmap padding does not move the ghost baseline below the typed text");
+        var fallbackAnchor = OverlayPositioner.WithTextHeight(inlineAnchor);
+        Require(fallbackAnchor.CaretBounds.Top == inlineAnchor.CaretBounds.Top,
+            "Fallback positioning must not add a DPI-scaled vertical nudge to Word's text top");
+        var topAnchor = new OverlayAnchor(new Rectangle(2400, rightMonitor.Top, 2, 10), rightMonitor,
+            IntPtr.Zero, 144, "Segoe UI", 11f, FontStyle.Regular, false);
+        Require(OverlayPositioner.PlaceGhost(topAnchor, new Size(180, 42), 30f).IsEmpty,
+            "Clipped ghost text is hidden instead of shifting its baseline");
+
+        var edgeAnchor = new OverlayAnchor(new Rectangle(rightMonitor.Right - 12, 300, 2, 30), rightMonitor,
+            IntPtr.Zero, 144, "Segoe UI", 11f, FontStyle.Regular, false);
+        Require(OverlayPositioner.PlaceGhost(edgeAnchor, new Size(180, 32)).IsEmpty,
+            "Ghost text is suppressed instead of jumping away from a right-edge caret");
+        Console.WriteLine("PASS: mixed-DPI completion overlay placement");
+    }
+
+    private static void CheckGhostSuggestionWindow()
+    {
+        using (var owner = new Form
+        {
+            Opacity = 0,
+            ShowInTaskbar = false,
+            StartPosition = FormStartPosition.Manual,
+            Location = new Point(120, 120),
+            Size = new Size(320, 200)
+        })
+        using (var ghost = new GhostSuggestionWindow())
+        {
+            owner.Show();
+            Application.DoEvents();
+            Rectangle workArea = Screen.FromHandle(owner.Handle).WorkingArea;
+            int dpi = DpiLayout.WindowDpi(owner);
+            var caret = new Rectangle(workArea.Left + 160, workArea.Top + 160,
+                Math.Max(1, ScreenGeometry.Scale(2, dpi)), ScreenGeometry.Scale(22, dpi));
+            var anchor = new OverlayAnchor(caret, workArea, owner.Handle, dpi,
+                "Segoe UI", 11f, FontStyle.Regular, false);
+            IntPtr foreground = GetForegroundWindow();
+            Require(ghost.Present("oblar", anchor, owner), "Ghost suggestion can render as a layered window");
+            Application.DoEvents();
+            Require(ghost.Visible && ghost.SuggestionTail == "oblar",
+                "Ghost suggestion exposes only the untyped continuation");
+            Require(ghost.AccessibilityObject.Name.Contains("oblar"),
+                "Ghost suggestion exposes its continuation to assistive technology");
+            Require(workArea.Contains(ghost.PresentationBounds), "Ghost suggestion stays in the current work area");
+            Require(GetForegroundWindow() == foreground, "Ghost suggestion does not activate or steal focus");
+            int normalWidth = ghost.PresentationBounds.Width;
+            int renders = ghost.RenderCount;
+            int visibilityChanges = 0;
+            ghost.VisibleChanged += (s, e) => visibilityChanges++;
+            for (int tick = 0; tick < 20; tick++) Require(ghost.Present("oblar", anchor, owner), "Idle ghost remains visible");
+            Require(ghost.RenderCount == renders && visibilityChanges == 0, "Idle polling neither repaints nor hides the ghost");
+            var clipped = new OverlayAnchor(caret, workArea, owner.Handle, dpi, "Segoe UI", 11f, FontStyle.Regular, false)
+                { TextRight = caret.Right + normalWidth + ScreenGeometry.Scale(5, dpi) };
+            Require(ghost.Present("oblar bilan birga", clipped, owner) && ghost.SuggestionTail == "oblar", "Ghost clips only at a complete word");
+            renders = ghost.RenderCount;
+            for (int tick = 0; tick < 20; tick++) Require(ghost.Present("oblar bilan birga", clipped, owner), "Clipped ghost stays visible");
+            Require(ghost.RenderCount == renders, "Clipped phrases reuse their rendered surface during idle polling");
+            Require(ghost.Present("blar", anchor, owner) && visibilityChanges == 0, "Matching typing updates the surface without hiding it");
+            var zoomedAnchor = new OverlayAnchor(
+                new Rectangle(caret.X, caret.Y, caret.Width, ScreenGeometry.Scale(33, dpi)),
+                workArea, owner.Handle, dpi, "Segoe UI", 16.5f, FontStyle.Regular, false);
+            Require(ghost.Present("oblar", zoomedAnchor, owner) &&
+                    ghost.PresentationBounds.Width > normalWidth,
+                "Ghost suggestion follows Word's effective 150% zoomed font size");
+            ghost.Hide();
+        }
+        Console.WriteLine("PASS: non-activating ghost suggestion window");
+    }
 
     private static void CheckShortcutsDoNotReserveGlobalKeys()
     {
@@ -90,8 +224,12 @@ internal static class Program
         try
         {
             Application.EnableVisualStyles();
+            CheckCompletionOverlayGeometry();
+            CheckGhostSuggestionWindow();
+            CheckMatnAiPopup();
             CheckKeyboardAccessibility();
             CheckShortcutsDoNotReserveGlobalKeys();
+            CheckMatnAiDarkTheme();
             CheckExceptionFonts();
             CheckInitialGridWindow();
             CheckDeferredErrorSuggestions();
@@ -101,6 +239,8 @@ internal static class Program
                 var factories = new Func<ModernForm>[]
                 {
                     () => new AddNewWordsForm(), () => new AppInfoForm(), () => new ImportProgressForm(),
+                    () => new MatnAiSettingsForm(2, 3, false, (minimum, count, learning) => { }, () => { }, () => { }),
+                    () => new MatnAiHelpForm(),
                     () => new TranslitExceptionsForm(
                         () => Enumerable.Range(1, 39).Select(i => new TranslitException("Example " + i, "Мисол " + i)).ToList(),
                         item => { throw new InvalidOperationException("Unexpected add"); },
@@ -141,6 +281,17 @@ internal static class Program
                         form.Size = new Size(ScreenGeometry.Scale(preferred.Width, dpi), ScreenGeometry.Scale(preferred.Height, dpi));
                         form.PerformLayout();
                         var bodyHost = (ScrollableControl)form.ContentPanel.Parent;
+                        if (form is MatnAiSettingsForm || form is MatnAiHelpForm)
+                            CheckMatnAiCardLayout(form, dpi);
+                        if (dpi == 96 && (form is MatnAiSettingsForm || form is MatnAiHelpForm))
+                        {
+                            using (var screenshot = new Bitmap(form.Width, form.Height))
+                            {
+                                form.DrawToBitmap(screenshot, form.ClientRectangle);
+                                screenshot.Save(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                                    form.GetType().Name + "-Preferred.png"));
+                            }
+                        }
                         if (dpi == 120 && form is TranslitExceptionsForm)
                         {
                             using (var screenshot = new Bitmap(form.Width, form.Height))
@@ -186,6 +337,9 @@ internal static class Program
                         form.Size = new Size(800, 560);
                         form.PerformLayout();
                         ResetScroll(form);
+                        if (form is MatnAiSettingsForm || form is MatnAiHelpForm)
+                            Require(((ScrollableControl)form.ContentPanel.Parent).VerticalScroll.Visible,
+                                "Compact MatnAI dialogs expose vertical scrolling: " + form.GetType().Name);
                         foreach (var button in Descendants(form).OfType<ModernButton>())
                             Require(button.Width >= ScreenGeometry.Scale(40, dpi),
                                 "Button is not collapsed: " + form.GetType().Name + " / " + button.Text);
@@ -396,6 +550,66 @@ internal static class Program
     {
         if (root is ScrollableControl viewport) viewport.AutoScrollPosition = Point.Empty;
         foreach (Control child in root.Controls) ResetScroll(child);
+    }
+
+    private static void CheckMatnAiDarkTheme()
+    {
+        var darkTheme = typeof(ThemeManager).GetField("_isDarkTheme",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        object previous = darkTheme.GetValue(null);
+        darkTheme.SetValue(null, true);
+        try
+        {
+            var factories = new Func<ModernForm>[]
+            {
+                () => new MatnAiSettingsForm(2, 3, true,
+                    (minimum, count, learning) => { }, () => { }, () => { }),
+                () => new MatnAiHelpForm()
+            };
+            foreach (var factory in factories)
+            using (var form = factory())
+            {
+                form.Opacity = 0;
+                form.ShowInTaskbar = false;
+                form.Show();
+                Application.DoEvents();
+                form.PerformLayout();
+                CheckMatnAiCardLayout(form, form.LayoutDpi);
+                using (var screenshot = new Bitmap(form.Width, form.Height))
+                {
+                    form.DrawToBitmap(screenshot, form.ClientRectangle);
+                    screenshot.Save(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                        form.GetType().Name + "-Dark.png"));
+                }
+            }
+        }
+        finally { darkTheme.SetValue(null, previous); }
+        Console.WriteLine("PASS: MatnAI dark-theme card, control and action layouts");
+    }
+
+    private static void CheckMatnAiCardLayout(ModernForm form, int dpi)
+    {
+        foreach (var card in Descendants(form).OfType<ModernCard>())
+        {
+            Require(card.Region != null && !card.Region.IsVisible(0, 0) &&
+                    card.Region.IsVisible(card.Width / 2, card.Height / 2),
+                "Card surface is clipped to rounded corners: " + form.GetType().Name);
+            var bounds = new Rectangle(Point.Empty, card.ClientSize);
+            var children = card.Controls.Cast<Control>().Where(child => child.Visible).ToArray();
+            foreach (var child in children)
+                Require(bounds.Contains(child.Bounds),
+                    "Card child is clipped: " + form.GetType().Name + " / " + child.Text + " at " + dpi + " DPI");
+            for (int first = 0; first < children.Length; first++)
+                for (int second = first + 1; second < children.Length; second++)
+                    Require(!children[first].Bounds.IntersectsWith(children[second].Bounds),
+                        "Card children overlap: " + form.GetType().Name + " / " +
+                        children[first].Text + " / " + children[second].Text + " at " + dpi + " DPI");
+        }
+
+        var actionBounds = new Rectangle(Point.Empty, form.ActionBar.ClientSize);
+        foreach (Control action in form.ActionBar.Controls)
+            Require(actionBounds.Contains(action.Bounds),
+                "Action button is clipped: " + form.GetType().Name + " / " + action.Text + " at " + dpi + " DPI");
     }
 
     private static System.Collections.Generic.IEnumerable<Control> Descendants(Control root)

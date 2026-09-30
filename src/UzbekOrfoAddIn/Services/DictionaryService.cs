@@ -26,13 +26,17 @@ namespace UzbekOrfoAddIn.Services
     /// The Contains() method still falls back to transliteration for words that
     /// were stored before this dual-storage was introduced.
     /// </summary>
-    public class DictionaryService : IDictionaryService
+    public class DictionaryService : IDictionaryService, ILexemeMetadataProvider
     {
+        public event Action VocabularySaved;
         private readonly HashSet<string> _mainDictionary = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _userDictionary = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, LexemeMetadata> _lexemeMetadata =
+            new Dictionary<string, LexemeMetadata>(StringComparer.OrdinalIgnoreCase);
 
         private readonly string _mainDictPath;
         private readonly string _userDictPath;
+        private readonly string _metadataPath;
 
         /// <summary>
         /// Transliterator for Latin РІвЂ вЂќ Cyrillic conversion.
@@ -79,10 +83,11 @@ namespace UzbekOrfoAddIn.Services
             public Dictionary<string, string> LatinToCyrillicMap { get; set; }
         }
 
-        public DictionaryService(string mainDictPath, string userDictPath)
+        public DictionaryService(string mainDictPath, string userDictPath, string metadataPath = null)
         {
             _mainDictPath = mainDictPath;
             _userDictPath = userDictPath;
+            _metadataPath = metadataPath;
         }
 
         /// <summary>
@@ -107,8 +112,77 @@ namespace UzbekOrfoAddIn.Services
         {
             LoadMainDictionary();
             LoadUserDictionary();
+            LoadLexemeMetadata();
             Logger.Info($"Р вЂєРЎС“РўвЂњР В°РЎвЂљ РЎР‹Р С”Р В»Р В°Р Р…Р Т‘Р С‘: Р В°РЎРѓР С•РЎРѓР С‘Р в„–={_mainDictionary.Count}, РЎв‚¬Р В°РЎвЂ¦РЎРѓР С‘Р в„–={_userDictionary.Count}");
             // Search indexes built on background thread via RebuildSearchIndexBackground()
+        }
+
+        private void LoadLexemeMetadata()
+        {
+            _lexemeMetadata.Clear();
+            if (string.IsNullOrWhiteSpace(_metadataPath) || !File.Exists(_metadataPath))
+                return;
+
+            try
+            {
+                string json = File.ReadAllText(_metadataPath, Encoding.UTF8);
+                var serializer = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+                var payload = serializer.Deserialize<Dictionary<string, object>>(json);
+                if (payload == null || !payload.TryGetValue("Entries", out object entriesValue))
+                    return;
+
+                var entries = entriesValue as System.Collections.IEnumerable;
+                if (entries == null) return;
+
+                foreach (object item in entries)
+                {
+                    var entry = item as Dictionary<string, object>;
+                    if (entry == null) continue;
+
+                    string word = GetMetadataString(entry, "Word");
+                    string lemma = GetMetadataString(entry, "Lemma");
+                    string partOfSpeech = GetMetadataString(entry, "PartOfSpeech");
+                    string hunspellFlags = GetMetadataString(entry, "HunspellFlags");
+                    if (string.IsNullOrWhiteSpace(word) ||
+                        (string.IsNullOrWhiteSpace(lemma) &&
+                         string.IsNullOrWhiteSpace(partOfSpeech) &&
+                         string.IsNullOrWhiteSpace(hunspellFlags)))
+                        continue;
+
+                    string normalized = TextHelper.NormalizeWord(word);
+                    var incoming = new LexemeMetadata
+                    {
+                        Word = normalized,
+                        Lemma = string.IsNullOrWhiteSpace(lemma)
+                            ? normalized
+                            : TextHelper.NormalizeWord(lemma),
+                        PartOfSpeech = string.IsNullOrWhiteSpace(partOfSpeech)
+                            ? "unknown"
+                            : partOfSpeech.Trim().ToLowerInvariant(),
+                        HunspellFlags = string.IsNullOrWhiteSpace(hunspellFlags)
+                            ? null
+                            : hunspellFlags.Trim()
+                    };
+                    if (_lexemeMetadata.TryGetValue(normalized, out LexemeMetadata existing))
+                        existing.MergeFrom(incoming);
+                    else
+                        _lexemeMetadata[normalized] = incoming;
+                }
+
+                Logger.Info($"Lexeme metadata loaded: {_lexemeMetadata.Count}");
+            }
+            catch (Exception ex)
+            {
+                _lexemeMetadata.Clear();
+                Logger.Error("Failed to load lexeme metadata", ex);
+            }
+        }
+
+        private static string GetMetadataString(Dictionary<string, object> entry, string key)
+        {
+            return entry.TryGetValue(key, out object value) && value != null
+                ? value.ToString()
+                : null;
         }
 
         private void LoadMainDictionary()
@@ -168,6 +242,7 @@ namespace UzbekOrfoAddIn.Services
             {
                 EnsureUserWordsCache();
                 File.WriteAllLines(_userDictPath, _userWordsSortedCache);
+                VocabularySaved?.Invoke();
                 Logger.Info($"Р РЃР В°РЎвЂ¦РЎРѓР С‘Р в„– Р В»РЎС“РўвЂњР В°РЎвЂљ РЎРѓР В°РўвЂєР В»Р В°Р Р…Р Т‘Р С‘: {_userWordsSortedCache.Count} РЎРѓРЎС›Р В·");
             }
             catch (Exception ex)
@@ -185,6 +260,8 @@ namespace UzbekOrfoAddIn.Services
         /// Script-aware lookup: if the word is Latin and not found directly,
         /// it is transliterated to Cyrillic and checked again (and vice versa).
         /// </remarks>
+        public bool ContainsUserWord(string word) => _userDictionary.Contains(TextHelper.NormalizeWord(word));
+
         public bool Contains(string word)
         {
             if (string.IsNullOrWhiteSpace(word)) return false;
@@ -203,6 +280,27 @@ namespace UzbekOrfoAddIn.Services
                     if (_mainDictionary.Contains(converted) || _userDictionary.Contains(converted))
                         return true;
                 }
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc/>
+        public bool TryGetLexeme(string word, out LexemeMetadata lexeme)
+        {
+            lexeme = null;
+            if (string.IsNullOrWhiteSpace(word)) return false;
+
+            string normalized = TextHelper.NormalizeWord(word);
+            if (_lexemeMetadata.TryGetValue(normalized, out lexeme))
+                return true;
+
+            if (_transliterator != null)
+            {
+                string converted = ConvertToOtherScript(normalized);
+                if (!string.IsNullOrEmpty(converted) &&
+                    _lexemeMetadata.TryGetValue(converted, out lexeme))
+                    return true;
             }
 
             return false;
@@ -286,6 +384,12 @@ namespace UzbekOrfoAddIn.Services
         }
 
         /// <inheritdoc/>
+        /// <summary>Unsorted snapshot for background completion indexing; call on the owning UI thread.</summary>
+        public string[] GetCompletionSnapshot()
+        {
+            return _mainDictionary.Concat(_userDictionary).ToArray();
+        }
+
         public List<string> GetUserWords()
         {
             EnsureUserWordsCache();

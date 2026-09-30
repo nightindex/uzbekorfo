@@ -17,6 +17,21 @@ namespace UzbekOrfoAddIn.Models
         /// <summary>Functional category (e.g. "case_dative", "plural", "possessive").</summary>
         public string Category { get; set; }
 
+        /// <summary>Morphological family configured by the JSON rule set.</summary>
+        public string Family { get; set; }
+
+        /// <summary>Whether spelling may accept this suffix productively.</summary>
+        public bool Productive { get; set; }
+
+        /// <summary>Accept only as one complete suffix, never combined with other rules.</summary>
+        public bool StandaloneOnly { get; set; }
+
+        /// <summary>At least one of these case-sensitive root flags must be present.</summary>
+        public string RequiredRootFlags { get; set; }
+
+        /// <summary>Optional ID of a configured root-mutation rule.</summary>
+        public string RootMutation { get; set; }
+
         /// <summary>What part of speech this suffix attaches to.</summary>
         public string AttachesTo { get; set; }
 

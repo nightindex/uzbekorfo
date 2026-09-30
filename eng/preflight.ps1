@@ -31,7 +31,10 @@ $requiredData = @(
     "grammar_rules.json",
     "proper_nouns.json",
     "uzbek_dictionary.json",
-    "uzbek_dictionary_metadata.json"
+    "uzbek_dictionary_metadata.json",
+    "legal_prediction.collection.gz",
+    "legal_prediction_latin.collection.gz",
+    "prediction_casing.json"
 )
 
 foreach ($f in $requiredData) {
@@ -90,6 +93,16 @@ if (Test-Path -LiteralPath $dictionaryValidator) {
     }
     catch {
         $failures.Add("Generated DIC is stale or invalid: $($_.Exception.Message)")
+    }
+}
+$linguistValidator = Join-Path $PSScriptRoot "validate-linguist-review.ps1"
+if (Test-Path -LiteralPath $linguistValidator) {
+    try {
+        & $linguistValidator
+        if ($LASTEXITCODE -ne 0) { throw "Linguist review validator returned exit code $LASTEXITCODE." }
+    }
+    catch {
+        $failures.Add("Morphology review metadata is invalid: $($_.Exception.Message)")
     }
 }
 foreach ($root in $vsToolsSearchRoots) {

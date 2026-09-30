@@ -1,4 +1,4 @@
-﻿using Microsoft.Office.Tools.Ribbon;
+using Microsoft.Office.Tools.Ribbon;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -29,6 +29,7 @@ namespace UzbekOrfoAddIn
 
         private void UzbekOrfoRibbon_Load(object sender, RibbonUIEventArgs e)
         {
+            matnaiEnabled.Checked = ThisAddIn.Settings?.PredictionsEnabled ?? false;
             Logger.Info("UzbekOrfoRibbon loaded.");
 
             // Keep toggle UI aligned with persisted runtime state.
@@ -477,7 +478,9 @@ namespace UzbekOrfoAddIn
             {
                 var workflow = new EditDictionaryWorkflowService(
                     ThisAddIn.DictionaryService,
-                    ThisAddIn.ExplanationProvider);
+                    ThisAddIn.ExplanationProvider,
+                    ThisAddIn.MorphAnalyzer,
+                    ThisAddIn.Transliterator);
 
                 var result = workflow.Execute(btnEditDictionary.Image);
                 if (result.Status == EditDictionaryWorkflowStatus.ServiceUnavailable)
@@ -795,7 +798,10 @@ namespace UzbekOrfoAddIn
         {
             SafeExecutor.Execute(() =>
             {
-                var workflow = new DefinitionsWorkflowService(ThisAddIn.ExplanationProvider);
+                var workflow = new DefinitionsWorkflowService(
+                    ThisAddIn.ExplanationProvider,
+                    ThisAddIn.MorphAnalyzer,
+                    ThisAddIn.Transliterator);
                 var result = workflow.Execute(ResolveDefinitionsTitleIcon());
                 if (result.Status == DefinitionsWorkflowStatus.ProviderUnavailable)
                 {
@@ -1041,6 +1047,23 @@ namespace UzbekOrfoAddIn
 
                 HotkeyManager.Register(new[]
                 {
+                    new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Tab,
+                        () => ThisAddIn.Completion?.AcceptSelected(), "MatnAI кулранг таклифини қабул қилиш",
+                        () => ThisAddIn.Completion?.CanAcceptSuggestion == true),
+                    new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Down,
+                        () => ThisAddIn.Completion?.MoveSelection(1), "MatnAI таклифларини очиш",
+                        () => ThisAddIn.Completion?.CanOpenAlternatives == true),
+                    new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Up,
+                        () => ThisAddIn.Completion?.MoveSelection(-1), "MatnAI олдинги таклифи",
+                        () => ThisAddIn.Completion?.CanNavigateAlternatives == true),
+                    new HotkeyManager.HotkeyDef(CA, Keys.Right, () => ThisAddIn.Completion?.AcceptSelected(),
+                        "MatnAI қабул қилиш", () => ThisAddIn.Completion?.CanAcceptSuggestion == true),
+                    new HotkeyManager.HotkeyDef(CA, Keys.Down, () => ThisAddIn.Completion?.MoveSelection(1),
+                        "MatnAI кейинги таклиф", () => ThisAddIn.Completion?.CanOpenAlternatives == true),
+                    new HotkeyManager.HotkeyDef(CA, Keys.Up, () => ThisAddIn.Completion?.MoveSelection(-1),
+                        "MatnAI олдинги таклиф", () => ThisAddIn.Completion?.CanOpenAlternatives == true),
+                    new HotkeyManager.HotkeyDef(HotkeyManager.Modifiers.None, Keys.Escape,
+                        () => ThisAddIn.Completion?.Dismiss(), "MatnAI ёпиш", () => ThisAddIn.Completion?.CanHandleKeys == true),
                     // ── Текшириш ────────────────────────────────────────
                     new HotkeyManager.HotkeyDef(CA,        Keys.Q,      TriggerCheckSpelling,    "Ctrl+Alt+Q"),
                     new HotkeyManager.HotkeyDef(CA,        Keys.E,      TriggerViewErrors,       "Ctrl+Alt+E"),

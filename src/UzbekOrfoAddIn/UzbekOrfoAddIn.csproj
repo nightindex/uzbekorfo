@@ -64,11 +64,24 @@
     <CreateDesktopShortcut>false</CreateDesktopShortcut>
   </PropertyGroup>
   <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 (x86 and x64)</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.VSTORuntime.4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft Visual Studio 2010 Tools for Office Runtime %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="ScratchPad.NPOI.HWPF" Version="2.5.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <EmbeddedResource Include="Data\legal_prediction.collection.gz" />
+    <EmbeddedResource Include="Data\legal_prediction_latin.collection.gz" />
+    <EmbeddedResource Include="Data\prediction_casing.json" />
   </ItemGroup>
   <PropertyGroup>
     <!--
@@ -131,6 +144,9 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -221,11 +237,22 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\WordCompletionEngine.cs" />
+    <Compile Include="Services\CompletionPreferences.cs" />
+    <Compile Include="Services\WordCompletionContext.cs" />
+    <Compile Include="Services\WordCompletionController.cs" />
+    <Compile Include="Forms\CompletionPopup.cs" />
+    <Compile Include="Forms\GhostSuggestionWindow.cs" />
     <Compile Include="UzbekOrfoRibbon.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UzbekOrfoRibbon.Designer.cs">
       <DependentUpon>UzbekOrfoRibbon.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UzbekOrfoRibbon.MatnAi.cs">
+      <DependentUpon>UzbekOrfoRibbon.cs</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -250,11 +277,14 @@
     <!-- Core Interfaces -->
     <Compile Include="Core\ISpellingEngine.cs" />
     <Compile Include="Core\IDictionaryService.cs" />
+    <Compile Include="Core\ILexemeMetadataProvider.cs" />
     <Compile Include="Core\ITransliterator.cs" />
     <Compile Include="Core\IErrorStore.cs" />
     <Compile Include="Core\IExplanationProvider.cs" />
     <Compile Include="Core\IGrammarEngine.cs" />
     <Compile Include="Core\IPredictionEngine.cs" />
+    <Compile Include="Prediction\*.cs" />
+    <Compile Include="Forms\MatnAiCollectionsControl.cs"><SubType>UserControl</SubType></Compile>
     <Compile Include="Core\ISuggestionRanker.cs" />
     <!-- Models -->
     <Compile Include="Models\AutoCorrectDecision.cs" />
@@ -267,6 +297,9 @@
     <Compile Include="Models\ExplanationEntry.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\MorphAnalysis.cs" />
+    <Compile Include="Models\LexemeMetadata.cs" />
+    <Compile Include="Models\MorphologyRuleSet.cs" />
+    <Compile Include="Models\UnknownWordStat.cs" />
     <Compile Include="Models\GrammarRule.cs" />
     <Compile Include="Models\SuffixEntry.cs" />
     <!-- Helpers -->
@@ -306,7 +339,11 @@
     <Compile Include="Services\SpecialCharactersWorkflowService.cs" />
     <Compile Include="Services\UzbekApostropheService.cs" />
     <Compile Include="Services\ExplanationProvider.cs" />
+    <Compile Include="Services\AppUpdateService.cs" />
     <Compile Include="Services\ExportService.cs" />
+    <Compile Include="Services\UzbekSuffixParser.cs" />
+    <Compile Include="Services\MorphologyRuleSetLoader.cs" />
+    <Compile Include="Services\UnknownWordReportService.cs" />
     <Compile Include="Services\UzbekMorphAnalyzer.cs" />
     <Compile Include="Services\GrammarEngine.cs" />
     <!-- Helpers (Phase 1) -->
@@ -344,10 +381,17 @@
     <Compile Include="Forms\AppInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\MatnAiSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MatnAiHelpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <!-- UI -->
     <Compile Include="UI\ThemeManager.cs" />
     <Compile Include="UI\ScreenGeometry.cs" />
     <Compile Include="UI\DpiLayout.cs" />
+    <Compile Include="UI\OverlayPositioner.cs" />
     <Compile Include="UI\DpiForm.cs" />
     <Compile Include="UI\ModernForm.cs">
       <SubType>Form</SubType>
@@ -464,6 +508,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- Include additional build rules for an Office application add-in. -->
   <Import Project="$(VSToolsPath)\OfficeTools\Microsoft.VisualStudio.Tools.Office.targets" Condition="'$(VSToolsPath)' != '' and Exists('$(VSToolsPath)\OfficeTools\Microsoft.VisualStudio.Tools.Office.targets')" />
+  <PropertyGroup>
+    <!-- A direct Compile target must embed the ribbon and data resources too. -->
+    <CompileDependsOn>PrepareResources;$(CompileDependsOn)</CompileDependsOn>
+  </PropertyGroup>
   <PropertyGroup>
     <!-- JSON is the canonical bundled dictionary. The DIC resource is generated from it. -->
     <DictionaryDataDirectory>$(MSBuildProjectDirectory)\Data</DictionaryDataDirectory>

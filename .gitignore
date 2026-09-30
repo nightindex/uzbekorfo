@@ -35,6 +35,15 @@ Directory.Build.props
 *_top.txt
 ~$*
 
+# Downloaded legal corpus files are local training inputs, not application assets.
+corpus/raw/
+corpus/raw_cyrillic/
+corpus/raw-latin/
+corpus/candidates/
+
+# Local recovery copies from repository cleanup; never application inputs.
+.local-archive/
+
 # Test results and coverage reports
 TestResults/
 coverage/

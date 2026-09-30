@@ -22,9 +22,13 @@ namespace UzbekOrfoAddIn.UI
         [DllImport("user32.dll")]
         private static extern IntPtr GetWindowDpiAwarenessContext(IntPtr handle);
 
-        internal static IntPtr WindowContext(Control control)
+        internal static IntPtr WindowContext(Control control) =>
+            control == null ? IntPtr.Zero : WindowContext(control.Handle);
+
+        internal static IntPtr WindowContext(IntPtr handle)
         {
-            try { return GetWindowDpiAwarenessContext(control.Handle); }
+            if (handle == IntPtr.Zero) return IntPtr.Zero;
+            try { return GetWindowDpiAwarenessContext(handle); }
             catch (EntryPointNotFoundException) { return IntPtr.Zero; }
         }
 

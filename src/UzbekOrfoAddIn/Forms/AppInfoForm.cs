@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Reflection;
+using System.Deployment.Application;
+using CancellationTokenSource = System.Threading.CancellationTokenSource;
+using UzbekOrfoAddIn.Services;
 using System.Windows.Forms;
 using UzbekOrfoAddIn.UI;
 using UzbekOrfoAddIn.UI.Controls;
@@ -235,6 +238,63 @@ namespace UzbekOrfoAddIn.Forms
         //  TAB 1: ДАСТУР ҲАҚИДА (About)
         // =================================================================
 
+        private void AddUpdateControls(FlowLayoutPanel flow, Version installedVersion)
+        {
+            var lifetime = new CancellationTokenSource();
+            Disposed += (s, e) => { lifetime.Cancel(); lifetime.Dispose(); };
+            string pageUrl = AppUpdateService.ReleasesUrl;
+            var status = CreateParagraph("Текшириш фақат тугма босилганда GitHub орқали бажарилади. Ҳужжат матни юборилмайди.");
+            var check = new ModernButton { Text = "Янгиланишни текшириш", Width = 260, Height = 44,
+                AccessibleName = "Янгиланишни текшириш", Style = ModernButton.ButtonStyle.Primary };
+            var download = new ModernButton { Text = "Юклаб олиш саҳифаси", Width = 260, Height = 44,
+                AccessibleName = "GitHub юклаб олиш саҳифаси", Style = ModernButton.ButtonStyle.Secondary };
+            var notes = new TextBox { Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical,
+                Width = 400, Height = 150, Visible = false, AccessibleName = "Версиядаги ўзгаришлар",
+                BackColor = ThemeManager.Surface, ForeColor = ThemeManager.TextPrimary };
+            check.Click += async (s, e) => {
+                check.Enabled = false; notes.Visible = false;
+                pageUrl = AppUpdateService.ReleasesUrl;
+                status.Text = "Янгиланиш текширилмоқда…";
+                try
+                {
+                    var release = await new AppUpdateService().CheckAsync(lifetime.Token);
+                    if (IsDisposed || Disposing) return;
+                    if (release == null) status.Text = "Очиқ барқарор версия топилмади. GitHub саҳифасини текширинг.";
+                    else
+                    {
+                        bool newer = release.Version > AppUpdateService.Normalize(installedVersion);
+                        status.Text = "GitHub версияси: " + release.Version + "\n" +
+                            (newer ? "Янги версия мавжуд." : release.Version < AppUpdateService.Normalize(installedVersion)
+                            ? "Маҳаллий версия GitHub'даги версиядан янги. Visual Studio йиғилмаси ҳали эълон қилинмаган бўлиши мумкин."
+                            : "Сизда энг сўнгги барқарор версия ўрнатилган.");
+                        pageUrl = release.PageUrl;
+                        notes.Text = release.Notes; notes.Visible = notes.Text.Length > 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (!IsDisposed && !Disposing)
+                        status.Text = "GitHub версиясини текшириб бўлмади. " +
+                            (ex is System.Threading.Tasks.TaskCanceledException ? "Сўров вақти тугади." :
+                            ex is System.IO.InvalidDataException || ex is Newtonsoft.Json.JsonException ? "Версия маълумоти формати нотўғри." :
+                            "Тармоқ ёки GitHub сўрови бажарилмади.") +
+                            " Юклаб олиш саҳифасини очишингиз мумкин.";
+                }
+                finally { if (!IsDisposed && !Disposing) check.Enabled = true; }
+            };
+            download.Click += (s, e) => {
+                try { Process.Start(new ProcessStartInfo(pageUrl) { UseShellExecute = true }); }
+                catch { status.Text = "Браузерни очиб бўлмади: " + AppUpdateService.ReleasesUrl; }
+            };
+            flow.Controls.Add(check); flow.Controls.Add(download); flow.Controls.Add(status); flow.Controls.Add(notes);
+            flow.Controls.Add(CreateParagraph("Офлайн ўрнатиш: тўлиқ ўрнатиш архивини юклаб олинг ва очинг. Ҳужжатларни сақлаб, Word'ни ёпинг, сўнг ўрнатгични ишга туширинг. Автоматик юклаш ёки ўрнатиш бажарилмайди. Интернетсиз ўрнатиш учун .NET ва VSTO талаблари аввал ўрнатилган бўлиши керак."));
+            flow.SizeChanged += (s, e) => {
+                int width = Math.Max(1, flow.ClientSize.Width - flow.Padding.Horizontal - Px(24));
+                notes.Width = width;
+                check.Width = download.Width = Math.Min(Px(260), width);
+            };
+        }
+
         private Panel BuildAboutPage()
         {
             var page = new Panel { BackColor = ThemeManager.Background };
@@ -250,17 +310,18 @@ namespace UzbekOrfoAddIn.Forms
             };
 
             // App name + version
-            string version = "1.0.0";
+            Version installedVersion = Assembly.GetExecutingAssembly().GetName().Version;
             try
             {
-                var asm = Assembly.GetExecutingAssembly();
-                var ver = asm.GetName().Version;
-                if (ver != null) version = $"{ver.Major}.{ver.Minor}.{ver.Build}";
+                if (ApplicationDeployment.IsNetworkDeployed)
+                    installedVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion;
             }
             catch { }
+            string version = AppUpdateService.Normalize(installedVersion).ToString();
 
             flow.Controls.Add(CreateSection("Ўзбек Орфо", 18f, FontStyle.Bold, ThemeManager.Primary));
-            flow.Controls.Add(CreateSection($"Версия: {version}", 11f, FontStyle.Regular, ThemeManager.TextSecondary));
+            flow.Controls.Add(CreateSection($"Маҳаллий версия: {version}", 11f, FontStyle.Regular, ThemeManager.TextSecondary));
+            AddUpdateControls(flow, installedVersion);
             flow.Controls.Add(CreateSpacer(12));
             flow.Controls.Add(CreateParagraph(
                 "Ўзбек Орфо — Microsoft Word учун мўлжалланган ўзбек тилида имло ва " +
@@ -292,12 +353,38 @@ namespace UzbekOrfoAddIn.Forms
             ModernScrollBar.AttachTo(flow, InfoScrollBarWidth);
 
             page.Controls.Add(flow);
-            flow.SizeChanged += (s, e) =>
-            {
-                int available = Math.Max(1, flow.ClientSize.Width - flow.Padding.Horizontal - Px(24));
-                foreach (Control child in flow.Controls)
-                    if (child is Label) child.MaximumSize = new Size(available, 0);
+            // Keep each label as wide as the page and let WinForms calculate its
+            // wrapped height. A separately measured fixed height can be one line
+            // too short after a DPI or update-status text change.
+            bool arranging = false;
+            Action arrange = () => {
+                if (arranging || flow.IsDisposed) return;
+                arranging = true;
+                flow.SuspendLayout();
+                try
+                {
+                    int available = Math.Max(1, flow.ClientSize.Width - flow.Padding.Horizontal - Px(24));
+                    foreach (Control child in flow.Controls)
+                    {
+                        var label = child as Label;
+                        if (label == null) continue;
+                        int width = Math.Max(1, available - label.Margin.Horizontal);
+                        label.MinimumSize = Size.Empty;
+                        label.MaximumSize = new Size(width, 0);
+                        label.MinimumSize = new Size(width, 0);
+                        label.AutoSize = true;
+                    }
+                }
+                finally { flow.ResumeLayout(true); arranging = false; }
             };
+            flow.Layout += (s, e) => arrange();
+            foreach (Control child in flow.Controls)
+            {
+                if (!(child is Label)) continue;
+                child.TextChanged += (s, e) => arrange();
+                child.FontChanged += (s, e) => arrange();
+            }
+            Shown += (s, e) => arrange();
             return page;
         }
 
@@ -605,9 +692,9 @@ namespace UzbekOrfoAddIn.Forms
             flow.Controls.Add(CreateSection("Маълумотлар йиғилмайди", 12f, FontStyle.Bold, ThemeManager.TextPrimary));
             flow.Controls.Add(CreateSpacer(4));
             flow.Controls.Add(CreateParagraph(
-                "Ўзбек Орфо дастури ҳеч қандай шахсий маълумот йиғмайди ва " +
-                "ташқи серверларга юбормайди. Дастур тўлиқ офлайн режимда ишлайди — " +
-                "интернет уланишини талаб қилмайди."));
+                "Имло текшируви ва таклифлар офлайн ишлайди. Ҳужжат матни ташқи серверларга юборилмайди. " +
+                "Янгиланишни текшириш тугмаси босилганда GitHub'га сўров юборилади; GitHub IP манзил каби одатий тармоқ маълумотларини олади. " +
+                "Юклаб олиш саҳифаси браузерда очилади."));
             flow.Controls.Add(CreateSpacer(12));
 
             flow.Controls.Add(CreateSection("Маҳаллий сақлаш", 12f, FontStyle.Bold, ThemeManager.TextPrimary));
@@ -623,9 +710,7 @@ namespace UzbekOrfoAddIn.Forms
             flow.Controls.Add(CreateSection("Телеметрия йўқ", 12f, FontStyle.Bold, ThemeManager.TextPrimary));
             flow.Controls.Add(CreateSpacer(4));
             flow.Controls.Add(CreateParagraph(
-                "Дастурда телеметрия, аналитика ёки фойдаланишни кузатиш " +
-                "воситалари мавжуд эмас. Ҳеч қандай маълумот интернет орқали " +
-                "юборилмайди."));
+                "Дастур фойдаланиш ҳисоботларини серверга юбормайди. Янгиланиш текшируви ихтиёрий; автоматик текшириш ёки ўрнатиш йўқ."));
             flow.Controls.Add(CreateSpacer(12));
 
             flow.Controls.Add(CreateSection("Журнал файли", 12f, FontStyle.Bold, ThemeManager.TextPrimary));

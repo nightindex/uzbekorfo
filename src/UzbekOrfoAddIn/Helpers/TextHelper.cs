@@ -22,7 +22,7 @@ namespace UzbekOrfoAddIn.Helpers
 
         // Characters that are considered word characters in Uzbek
         private static readonly Regex WordPattern = new Regex(
-            @"[\p{L}'\u02BB\u02BC\u2018\u2019]+", RegexOptions.Compiled);
+            @"[\p{L}'\u02BB\u02BC\u2018\u2019]+(?:-[\p{L}'\u02BB\u02BC\u2018\u2019]+)*", RegexOptions.Compiled);
 
         // Common Uzbek confusable pairs (for phonetic similarity)
         private static readonly Dictionary<char, char> PhoneticMap = new Dictionary<char, char>

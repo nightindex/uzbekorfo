@@ -19,6 +19,8 @@ namespace UzbekOrfoAddIn.Services
         public ExplanationProvider ExplanationProvider { get; private set; }
         public UzbekMorphAnalyzer MorphAnalyzer { get; private set; }
         public GrammarEngine GrammarEngine { get; private set; }
+        public UnknownWordReportService UnknownWordReport { get; private set; }
+        public WordCompletionController Completion { get; private set; }
 
         private AddInRuntime() { }
 
@@ -33,18 +35,14 @@ namespace UzbekOrfoAddIn.Services
             };
 
             DataSeedService.SeedDictionary(runtime.Settings.MainDictionaryPath);
+            DataSeedService.SeedDictionaryMetadata(runtime.Settings.DictionaryMetadataPath);
 
             runtime.DictionaryService = new DictionaryService(
                 runtime.Settings.MainDictionaryPath,
-                runtime.Settings.UserDictionaryPath);
+                runtime.Settings.UserDictionaryPath,
+                runtime.Settings.DictionaryMetadataPath);
             runtime.DictionaryService.Load();
             Logger.Info($"Луғат юкланди: {runtime.DictionaryService.TotalWordCount} сўз");
-
-            runtime.SpellingEngine = new SpellingEngine(runtime.DictionaryService);
-
-            runtime.AutoCorrectService = new AutoCorrectService(runtime.SpellingEngine, runtime.DictionaryService);
-            runtime.AutoCorrectService.Initialize(application);
-            runtime.AutoCorrectService.IsEnabled = runtime.Settings.AutoCorrectEnabled;
 
             runtime.Transliterator = new TransliterationService(runtime.Settings.ExceptionsPath);
             DataSeedService.SeedTranslitExceptions(runtime.Settings.ExceptionsPath, runtime.Transliterator);
@@ -67,6 +65,18 @@ namespace UzbekOrfoAddIn.Services
                 runtime.Settings.ProperNounsPath);
             runtime.MorphAnalyzer.LoadSuffixes(runtime.Settings.SuffixesPath);
             Logger.Info("Морфологик анализатор юкланди");
+
+            runtime.UnknownWordReport = new UnknownWordReportService(runtime.Settings.UnknownWordsReportPath);
+            runtime.SpellingEngine = new SpellingEngine(
+                runtime.DictionaryService,
+                runtime.MorphAnalyzer,
+                runtime.UnknownWordReport);
+
+            runtime.AutoCorrectService = new AutoCorrectService(runtime.SpellingEngine, runtime.DictionaryService);
+            runtime.AutoCorrectService.Initialize(application);
+            runtime.AutoCorrectService.IsEnabled = runtime.Settings.AutoCorrectEnabled;
+            runtime.Completion = new WordCompletionController(application, runtime.Settings,
+                runtime.DictionaryService, runtime.AutoCorrectService, runtime.MorphAnalyzer);
 
             runtime.GrammarEngine = new GrammarEngine(
                 runtime.DictionaryService,
@@ -94,6 +104,8 @@ namespace UzbekOrfoAddIn.Services
 
         public void Shutdown()
         {
+            try { Completion?.Dispose(); }
+            catch (Exception ex) { Logger.Warn("Completion dispose error: " + ex.Message); }
             try { AutoCorrectService?.Dispose(); }
             catch (Exception ex) { Logger.Warn($"AutoCorrect dispose error: {ex.Message}"); }
 

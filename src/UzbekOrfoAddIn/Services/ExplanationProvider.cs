@@ -89,8 +89,9 @@ namespace UzbekOrfoAddIn.Services
         }
 
         /// <summary>
-        /// Returns the explanation for a word. Tries exact match first,
-        /// then normalized (lowercase, trimmed), then stem-based fuzzy match.
+        /// Returns the explanation for an exact normalized word. Inflected-form
+        /// resolution is handled by DefinitionsWorkflowService through the
+        /// validated morphological analyzer.
         /// </summary>
         public ExplanationEntry GetExplanation(string word)
         {
@@ -99,26 +100,21 @@ namespace UzbekOrfoAddIn.Services
             string normalized = TextHelper.NormalizeWord(word);
 
             // 1. Local explanations override the bundled dataset.
-            ExplanationEntry entry = FindExactOrStem(_entries, normalized);
-            if (entry != null) return entry;
+            ExplanationEntry entry;
+            if (_entries.TryGetValue(normalized, out entry))
+                return entry;
 
-            // 2. Keep the existing fuzzy behavior for the small editable
-            // local store. A fuzzy scan of the full bundled dataset would be
-            // unnecessarily expensive on the UI thread.
-            foreach (var kvp in _entries)
-            {
-                if (TextHelper.EditDistance(normalized, kvp.Key) <= 1)
-                    return kvp.Value;
-            }
-
-            // 3. The generated metadata index contains built-in metadata. It is
+            // 2. The generated metadata index contains built-in metadata. It is
             // intentionally loaded only after the local store cannot answer.
             EnsureBundledEntriesLoaded();
-            return FindExactOrStem(_bundledEntries, normalized);
+            if (_bundledEntries.TryGetValue(normalized, out entry))
+                return entry;
+
+            return null;
         }
 
         /// <summary>
-        /// Checks if an explanation exists (exact or stem match).
+        /// Checks if an exact normalized explanation exists.
         /// </summary>
         public bool HasExplanation(string word)
         {
@@ -266,26 +262,6 @@ namespace UzbekOrfoAddIn.Services
             }
         }
 
-        private static ExplanationEntry FindExactOrStem(
-            Dictionary<string, ExplanationEntry> entries,
-            string normalizedWord)
-        {
-            if (entries == null || string.IsNullOrWhiteSpace(normalizedWord)) return null;
-
-            ExplanationEntry entry;
-            if (entries.TryGetValue(normalizedWord, out entry))
-                return entry;
-
-            string stemmed = RemoveCommonSuffixes(normalizedWord);
-            if (!string.IsNullOrEmpty(stemmed) && stemmed != normalizedWord &&
-                entries.TryGetValue(stemmed, out entry))
-            {
-                return entry;
-            }
-
-            return null;
-        }
-
         private void EnsureBundledEntriesLoaded()
         {
             if (_bundledEntriesLoaded) return;
@@ -365,43 +341,6 @@ namespace UzbekOrfoAddIn.Services
                     .Replace("\n", "\\n")
                     .Replace("\r", "\\r")
                     .Replace("\t", "\\t");
-        }
-
-        // =====================================================================
-        //  BASIC UZBEK STEMMING
-        // =====================================================================
-
-        /// <summary>
-        /// Removes common Uzbek suffixes to find the root word.
-        /// Not linguistically perfect, but good enough for dictionary lookup.
-        /// </summary>
-        private static string RemoveCommonSuffixes(string word)
-        {
-            if (string.IsNullOrEmpty(word) || word.Length < 4) return word;
-
-            // Ordered from longest to shortest for greedy matching
-            string[] suffixes = new[]
-            {
-                // Verb suffixes
-                "Р»Р°СЂРёРЅРё", "Р»Р°СЂРёРіР°", "Р»Р°СЂРёРЅРё", "Р»Р°СЂРґР°РЅ",
-                "РјРѕТ›РґР°", "Р№Р°РїС‚Рё", "РіР°РЅРґР°", "РјР°РіР°РЅ",
-                "Р»Р°СЂРё", "РЅРёРЅРі", "РґР°РіРё", "РґР°Р»Рё",
-                "Р»РёРіРё", "Р»Р°СЂРё", "СѓС‡СѓРЅ",
-                "Р»Р°СЂ", "РЅРёРЅРі", "РґР°РЅ", "РіР°С‡Р°", "Р±РёР»Р°РЅ",
-                "РіР°РЅ", "РЅРёР№", "РІРёР№", "РёР№",
-                "С‡Рё", "Р»Рё", "РЅРё", "РґР°", "РіР°",
-                "СЃРё", "РёРј", "РёРЅРі",
-            };
-
-            foreach (var suffix in suffixes)
-            {
-                if (word.Length > suffix.Length + 2 && word.EndsWith(suffix))
-                {
-                    return word.Substring(0, word.Length - suffix.Length);
-                }
-            }
-
-            return word;
         }
 
         // =====================================================================

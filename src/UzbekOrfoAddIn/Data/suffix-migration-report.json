@@ -1,0 +1,12 @@
+{
+    "Counts":  {
+                   "SourceRules":  22895,
+                   "NeedsStrippingOrConditionOrContinuation":  19460,
+                   "MissingLatinCounterpart":  8,
+                   "ExistingSurface":  69,
+                   "MappedSourceRows":  3358
+               },
+    "ImportedSuffixes":  2333,
+    "OriginalSuffixes":  51,
+    "TotalSuffixes":  2384
+}

@@ -662,6 +662,13 @@ namespace UzbekOrfoAddIn.Services
                     replace = exc.Original;
                 }
 
+                // Document transliteration converts one token at a time. Most tokens
+                // cannot contain any exception, so avoid building and running a
+                // regular expression for each of those cases.
+                if (text.Length < find.Length ||
+                    text.IndexOf(find, StringComparison.CurrentCultureIgnoreCase) < 0)
+                    continue;
+
                 // Case-insensitive whole-word replacement
                 string pattern = @"\b" + Regex.Escape(find) + @"\b";
                 text = Regex.Replace(text, pattern, match =>

@@ -1,6 +1,12 @@
 # Uzbek Orfo qoʻshimchasi
 
+> Oʻzbek tili imlo tekshiruvchisi va Microsoft Word uchun grammatika tekshiruvchi qoʻshimcha. Lotin va kirill yozuvlarini qoʻllab-quvvatlaydi.
+
 Uzbek Orfo — Microsoft Word uchun oʻzbekcha imlo va grammatika tekshiruvi, lugʻat boshqaruvi hamda yozuvlar orasida oʻgirish imkoniyatini beruvchi VSTO qoʻshimchasidir.
+
+![Uzbek Orfo ribbon in Microsoft Word](docs/images/image_2026-09-11_16-47-47.png)
+
+*Uzbek Orfo ribbon inside Microsoft Word.*
 
 ## Imkoniyatlari
 
@@ -29,6 +35,8 @@ Toʻliq yigʻish va debugging jarayoni uchun VSTO workload hamda kompyuterga mos
 
 ## Loyiha tuzilmasi
 
+Hujjatlar va ma'lumotlarni saqlash tartibi: [hujjatlar indeksi](docs/README.md).
+
 - `src/UzbekOrfoAddIn/` — VSTO host va ilova manba kodi
 - `eng/` — repozitoriy tekshiruvlari va muhandislik skriptlari
 - `tests/` — hostga bogʻliq boʻlmagan mantiq uchun avtomatlashtirilgan testlar
@@ -54,6 +62,8 @@ Repozitoriy ildizida quyidagi tekshiruvlarni ishga tushiring:
 .\eng\preflight.ps1
 .\eng\test-ui.ps1
 .\eng\test-unit.ps1
+.\eng\test-word.ps1
+.\eng\validate-linguist-review.ps1
 ```
 
 Test loyihasi helper mantiqini, sozlamalarni atomik yozishni hamda xatoni tuzatish va belgilash xavfsizligini xotiradagi Word double orqali tekshiradi. U Wordʼni talab qilmaydi va COM integratsiyasi testlarining oʻrnini bosmaydi. VSTO buildʼini tekshirish uchun Office development workload oʻrnatilgan Windows kompyuteri talab qilinadi.

@@ -1,4 +1,4 @@
-param([string]$Configuration = 'Release')
+param([string]$Configuration = 'Release', [switch]$VisualGhost)
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
@@ -11,9 +11,14 @@ if (-not (Test-Path -LiteralPath $interop)) { throw 'Build the add-in first to g
 $outputDir = Join-Path $repoRoot "tests\WordSmoke\bin\$Configuration"
 New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 Get-ChildItem -LiteralPath $product -Filter *.dll | Copy-Item -Destination $outputDir
+$dataOutput = Join-Path $outputDir 'Data'
+New-Item -ItemType Directory -Path $dataOutput -Force | Out-Null
+foreach ($dataFile in @('uzbek_main.dic', 'uzbek_dictionary_metadata.json', 'uzbek_suffixes.json', 'translit_exceptions.json')) {
+    Copy-Item -LiteralPath (Join-Path $repoRoot "src\UzbekOrfoAddIn\Data\$dataFile") -Destination $dataOutput -Force
+}
 $outputExe = Join-Path $outputDir 'WordSmoke.exe'
-& $compiler /nologo /langversion:7.3 /target:exe "/link:$interop" "/r:$product\UzbekOrfoAddIn.dll" "/out:$outputExe" (Join-Path $repoRoot 'tests\WordSmoke\Program.cs')
+& $compiler /nologo /langversion:7.3 /target:exe /r:System.Web.Extensions.dll /r:System.Windows.Forms.dll /r:System.Drawing.dll "/link:$interop" "/r:$product\UzbekOrfoAddIn.dll" "/out:$outputExe" (Join-Path $repoRoot 'tests\WordSmoke\Program.cs') (Join-Path $repoRoot 'tests\WordSmoke\GhostVisualChecks.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Word smoke harness compilation failed.' }
 # Creates a separate hidden Word instance and blank documents, closed without saving.
-& $outputExe
+if ($VisualGhost) { & $outputExe --visual-ghost } else { & $outputExe }
 if ($LASTEXITCODE -ne 0) { throw 'Word smoke checks failed.' }

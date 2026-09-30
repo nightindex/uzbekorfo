@@ -1,0 +1,13 @@
+{
+  "schema": "uzbekorfo-spelling-evaluation-v1",
+  "reviewStatus": "pending-independent-review",
+  "description": "Provisional regression examples from existing Word smoke tests. Not a representative corpus or linguistic approval. No artificial missing-root negatives.",
+  "cases": [
+    { "id": "latin-chain", "word": "kitoblarimizdan", "expectedCorrect": true, "category": "latin-core", "source": "tests/WordSmoke/Program.cs" },
+    { "id": "cyrillic-chain", "word": "китобларимиздан", "expectedCorrect": true, "category": "cyrillic-core", "source": "tests/WordSmoke/Program.cs" },
+    { "id": "latin-import", "word": "kitoblar-a", "expectedCorrect": true, "category": "latin-imported", "source": "tests/WordSmoke/Program.cs" },
+    { "id": "cyrillic-import", "word": "китоблар-а", "expectedCorrect": true, "category": "cyrillic-imported", "source": "tests/WordSmoke/Program.cs" },
+    { "id": "import-chaining", "word": "kitoblar-alar", "expectedCorrect": false, "category": "latin-imported", "source": "tests/WordSmoke/Program.cs" },
+    { "id": "typo", "word": "китоп", "expectedCorrect": false, "category": "cyrillic-core", "source": "tests/WordSmoke/Program.cs" }
+  ]
+}
